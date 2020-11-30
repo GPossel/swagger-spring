@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1l0m5kMzp5WAIWXulKDzF15aTFb" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="" />
+      <created>1606742202399</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1606742202399</updated>
+      <workItem from="1606742209591" duration="58000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="721" y="-805" key="FileChooserDialogImpl" timestamp="1606742260674">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state x="721" y="-805" key="FileChooserDialogImpl/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742260674" />
+    <state x="442" y="-917" key="SettingsEditor" timestamp="1606742266767">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state x="442" y="-917" key="SettingsEditor/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742266767" />
+    <state x="637" y="-736" key="com.intellij.ide.util.TipDialog" timestamp="1606742208248">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state x="637" y="-736" key="com.intellij.ide.util.TipDialog/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742208248" />
+  </component>
+</project>
