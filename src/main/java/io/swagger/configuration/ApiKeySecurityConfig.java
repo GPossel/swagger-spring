@@ -34,7 +34,7 @@ public class ApiKeySecurityConfig extends WebSecurityConfigurerAdapter {
         this.repositoryApiKey = repository;
         this.userApiService = userApiService;
     }
-
+    //test
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
