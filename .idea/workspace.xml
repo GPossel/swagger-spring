@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="" />
+    <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/code-generatie-herkansing.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code-generatie-herkansing.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,9 +20,19 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RunManager">
@@ -53,6 +66,7 @@
       <option name="presentableId" value="Default" />
       <updated>1606742202399</updated>
       <workItem from="1606742209591" duration="58000" />
+      <workItem from="1606745514051" duration="2255000" />
     </task>
     <servers />
   </component>
@@ -76,14 +90,47 @@
       <screen x="-19" y="-1080" width="1920" height="1040" />
     </state>
     <state x="721" y="-805" key="FileChooserDialogImpl/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742260674" />
+    <state width="1877" height="242" key="GridCell.Tab.0.bottom" timestamp="1606751480338">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="242" key="GridCell.Tab.0.bottom/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
+    <state width="1877" height="242" key="GridCell.Tab.0.center" timestamp="1606751480337">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="242" key="GridCell.Tab.0.center/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480337" />
+    <state width="1877" height="242" key="GridCell.Tab.0.left" timestamp="1606751480337">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="242" key="GridCell.Tab.0.left/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480337" />
+    <state width="1877" height="242" key="GridCell.Tab.0.right" timestamp="1606751480338">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="242" key="GridCell.Tab.0.right/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
+    <state width="1877" height="242" key="GridCell.Tab.1.bottom" timestamp="1606751480338">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="242" key="GridCell.Tab.1.bottom/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
+    <state width="1877" height="242" key="GridCell.Tab.1.center" timestamp="1606751480338">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="242" key="GridCell.Tab.1.center/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
+    <state width="1877" height="242" key="GridCell.Tab.1.left" timestamp="1606751480338">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="242" key="GridCell.Tab.1.left/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
+    <state width="1877" height="242" key="GridCell.Tab.1.right" timestamp="1606751480338">
+      <screen x="-19" y="-1080" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="242" key="GridCell.Tab.1.right/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
     <state x="442" y="-917" key="SettingsEditor" timestamp="1606742266767">
       <screen x="-19" y="-1080" width="1920" height="1040" />
     </state>
     <state x="442" y="-917" key="SettingsEditor/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742266767" />
-    <state x="583" y="304" key="com.intellij.ide.util.TipDialog" timestamp="1606745513513">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state x="1311" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1606846779861">
+      <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state x="583" y="304" key="com.intellij.ide.util.TipDialog/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@0.0.1707.920" timestamp="1606745513513" />
     <state x="637" y="-736" key="com.intellij.ide.util.TipDialog/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742208248" />
+    <state x="1311" y="344" key="com.intellij.ide.util.TipDialog/0.0.3840.1040@0.0.3840.1040" timestamp="1606846779861" />
   </component>
 </project>
