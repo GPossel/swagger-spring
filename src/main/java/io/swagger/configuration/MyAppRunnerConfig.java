@@ -41,6 +41,7 @@ public class MyAppRunnerConfig implements ApplicationRunner {
 
         List<Account> accounts = new ArrayList<>(
                 Arrays.asList(
+                        new Account(1000051L, "NL01INHO0000000001", CURRENT, ACTIVE, 100000.000D, "EUR"),
                         new Account(1000052L, "NL77INHO0123456789", CURRENT, ACTIVE, 1660.00D, "EUR"),
                         new Account(1000053L, "NL22INHO9876543210", SAVING, ACTIVE, 5504.00D, "EUR"),
                         new Account(1000053L, "NL22INHO9999999999", CURRENT, ACTIVE, 904.00D, "EUR"),
@@ -53,9 +54,9 @@ public class MyAppRunnerConfig implements ApplicationRunner {
 
         List<Transaction> transactions = new ArrayList<>(
                 Arrays.asList(
-                        new Transaction("NL77INHO0123456789", "NL11INHO1111111111", "GPOSSEL", new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()), 140D),
-                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", "SBOERE", new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()), 9D),
-                        new Transaction("NL11INHO1111111111", "NL22INHO9876543210", "TWUBBEN", new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()), 100D)
+                        new Transaction("NL77INHO0123456789", "NL11INHO1111111111", "GPOSSEL", 140D),
+                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", "SBOERE", 9D),
+                        new Transaction("NL11INHO1111111111", "NL22INHO9876543210", "TWUBBEN", 100D)
                 )
         );
 
@@ -69,13 +70,14 @@ public class MyAppRunnerConfig implements ApplicationRunner {
                         new User("Klaas", "Vaak", "klaasvaak@email.com", "test", "0600112233", "2000-1-21", "10-03-2020", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE));
 
         users.forEach(repositoryUser::save);
+        repositoryUser.findAll().forEach(System.out::println);
 
         for(User u : users){
             UUID uuid = UUID.randomUUID();
             apiKeyRepository.save(new ApiKey(uuid.toString(), u.getId()));
         }
         // tes@email.com heeft user Id 1000055 en daarmee apikey 1234-abcd-5678-efgh
-        repositoryUser.save(new User("Test", "Nye", "tes@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE));
+        repositoryUser.save(new User("Test", "Nye", "test@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE));
         apiKeyRepository.save(new ApiKey("1234-abcd-5678-efgh", 1000055L, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30)));
 
         System.out.println(repositoryUser.findByFirstname("Test"));
