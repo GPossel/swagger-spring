@@ -37,8 +37,8 @@ public class TransactionApiService {
         try{
             /// Use account services to
             /// Find account receiver & sender
-            Account receiver = accountApiService.getAccountFromIBAN(transaction.getIbanReceiver());
-            Account sender = accountApiService.getAccountFromIBAN(transaction.getIbanSender());
+            Account receiver = accountApiService.getAccountByIBAN(transaction.getIbanReceiver()).get();
+            Account sender = accountApiService.getAccountByIBAN(transaction.getIbanSender()).get();
 
             // Calculate new balance for account receiver
             Double Rbalance = receiver.getBalance();
@@ -66,8 +66,8 @@ public class TransactionApiService {
 
 
     public void checkValidTransaction(Transaction body) throws Exception {
-        Account accountSender = accountApiService.getAccountFromIBAN(body.getIbanSender());
-        Account accountReceiver = accountApiService.getAccountFromIBAN(body.getIbanReceiver());
+        Account accountSender = accountApiService.getAccountByIBAN(body.getIbanSender()).get();
+        Account accountReceiver = accountApiService.getAccountByIBAN(body.getIbanReceiver()).get();
         if ((accountSender == null) || accountReceiver == null) {
             throw new Exception("Account sender or receiver does not exists!");
             //  Account does not exists!

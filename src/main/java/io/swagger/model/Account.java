@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,22 +19,24 @@ import java.util.Objects;
  * Account
  */
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "IBAN"})})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-18T09:28:40.437Z[GMT]")
 @Data
 public class Account {
-  @JsonProperty("userId")
-  private Long userId = null;
-
   @Id
   @JsonProperty("IBAN")
   @Column(name = "IBAN")
   private String IBAN = null;
 
-  public Account() {
-  }
+  @JsonProperty("userId")
+  @Column(name = "USERID")
+  private Long userId = null;
 
   public Account(Long userId, String IBAN, RankEnum rank, StatusEnum status, Double balance, String currency) {
     this.userId = userId;
@@ -59,8 +61,8 @@ public class Account {
    */
   public enum RankEnum {
     CURRENT("Current"),
-
-    SAVING("Saving");
+    SAVING("Saving"),
+    BANK("Bank");
 
     private String value;
 
@@ -167,8 +169,8 @@ public class Account {
   }
 
   public void setIBAN(String IBAN) {
-    if (!IBAN.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d")) {
-      throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXX");
+    if (!IBAN.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d")) {
+      throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX");
     }
     this.IBAN = IBAN;
   }
