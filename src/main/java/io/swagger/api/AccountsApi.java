@@ -7,25 +7,29 @@ package io.swagger.api;
 
 import io.swagger.model.Account;
 import io.swagger.annotations.*;
+import io.swagger.model.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Map;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-02T09:24:14.507Z[GMT]")
 @Api(value = "accounts", description = "the accounts API")
 public interface AccountsApi {
+
+    @ApiOperation(value = "Add a new account", nickname = "addAccount", notes = "", response = Account.class, tags={ "account", })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "A account was created succesfully.", response = Account.class)})
+    @RequestMapping(value = "/accounts",
+            produces = { "application/json" },
+            consumes = { "application/json" },
+            method = RequestMethod.POST)
+    ResponseEntity<Account> createAccount(@ApiParam(value = "created accounts" ,required=true )  @Valid @RequestBody Account body
+    );
 
     @ApiOperation(value = "", nickname = "getAccounts", notes = "Get a list of accounts", response = Account.class, responseContainer = "List", tags={ "account", })
     @ApiResponses(value = { 
@@ -35,5 +39,27 @@ public interface AccountsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<List<Account>> getAccounts();
+
+    @ApiOperation(value = "Get Accounts by iban", nickname = "getAccountByIban", notes = "", response = Account.class, tags={ "account", })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "account by iban", response = Account.class),
+            @ApiResponse(code = 400, message = "Invalid username supplied"),
+            @ApiResponse(code = 404, message = "Account not found") })
+    @RequestMapping(value = "/accounts/{IBAN}",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<Account> getAccountByIban(@ApiParam(value = "",required=true) @PathVariable("IBAN") String iban
+    );
+
+    @ApiOperation(value = "", nickname = "getAccountsForUser", notes = "Get a list of accounts", response = Account.class, responseContainer=  "List", tags = { "account", })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Accounts for user by its id", response = List.class),
+            @ApiResponse(code = 400, message = "Invalid username supplied"),
+            @ApiResponse(code = 404, message = "No accounts for user found") })
+    @RequestMapping(value = "/accounts/user/{USERID}",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<Account>> getAccountsForUser(@ApiParam(value = "",required=true) @PathVariable("USERID") Long userId
+    );
 
 }

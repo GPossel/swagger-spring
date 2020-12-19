@@ -38,17 +38,17 @@ public interface AccountApi {
 ,@ApiParam(value = "the Account you want to delete",required=true) @PathVariable("IBAN") Account IBAN
 );
 
-
-    @ApiOperation(value = "Get Accounts by user id", nickname = "accountIdGet", notes = "", response = Account.class, tags={ "account", })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "list of accounts", response = Account.class),
-        @ApiResponse(code = 400, message = "Invalid username supplied"),
-        @ApiResponse(code = 404, message = "User not found") })
-    @RequestMapping(value = "/account/{Id}",
-        produces = { "application/json", "application/xml" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<Account> accountIdGet(@ApiParam(value = "The id that needs to be fetched. Use user1 for testing.",required=true) @PathVariable("Id") List<Account> id
-);
+//
+//    @ApiOperation(value = "Get Accounts by user id", nickname = "accountIdGet", notes = "", response = Account.class, tags={ "account", })
+//    @ApiResponses(value = {
+//        @ApiResponse(code = 200, message = "list of accounts", response = Account.class),
+//        @ApiResponse(code = 400, message = "Invalid username supplied"),
+//        @ApiResponse(code = 404, message = "User not found") })
+//    @RequestMapping(value = "/account/{Id}",
+//        produces = { "application/json", "application/xml" },
+//        method = RequestMethod.GET)
+//    ResponseEntity<Account> accountIdGet(@ApiParam(value = "The id that needs to be fetched. Use user1 for testing.",required=true) @PathVariable("Id") List<Account> id
+//);
 
 
     @ApiOperation(value = "Add new account for user", nickname = "addAccount", notes = "", tags={ "account", })
