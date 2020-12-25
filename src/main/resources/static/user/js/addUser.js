@@ -24,7 +24,7 @@
 
        let xhr = new XMLHttpRequest();
        xhr.open("POST", "http://localhost:8080/users");
-        const session = sessionStorage.getItem("X-AUTHENTICATION");
+        const session = sessionStorage.setItem("Authorization", authorization);
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.setRequestHeader("X-AUTHENTICATION", session);

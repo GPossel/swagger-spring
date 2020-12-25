@@ -1,9 +1,14 @@
 var xhr;
 window.addEventListener("load", function (name, value) {
 
-    function RedirectPage() {
-        var URL = "/Transactions.html";
-        window.open(URL);
+    function RedirectPage(authorization) {
+        xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://localhost:8080/transactions');
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.setRequestHeader("Authorization", authorization);
+        xhr.send();
+        window.location.replace("http://localhost:8080/Transactions.html");
     }
 
     document.getElementById('button_login').addEventListener('click', function (e) {
@@ -17,8 +22,9 @@ window.addEventListener("load", function (name, value) {
                 alert(xhr.status + ":" + xhr.responseText);
                 let response = JSON.parse(xhr.response);
                 console.log(response);
-                sessionStorage.setItem("X-AUTHENTICATION", response.apiKey);
-                RedirectPage();
+                let authorization = "Bearer " + response.jwt;
+                sessionStorage.setItem("Authorization", authorization);
+                RedirectPage(authorization);
             }
         }
         xhr.send(JSON.stringify({
@@ -27,18 +33,4 @@ window.addEventListener("load", function (name, value) {
         },));
     });
 
-
-    function DELETELogout() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('DELETE', 'http://localhost:8080/logout');
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("X-AUTHENTICATION", sessionStorage.getItem("ApiKey"));
-        xhr.onload = (e) => {
-            alert(xhr.status);
-            sessionStorage.setItem("ApiKey", "");
-            sessionStorage.setItem("userId", "");
-            location.reload();
-        }
-        xhr.send();
-    }
 });

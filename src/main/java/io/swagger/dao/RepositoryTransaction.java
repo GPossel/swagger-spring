@@ -11,12 +11,26 @@ import java.util.List;
 @Repository
 public interface RepositoryTransaction extends CrudRepository<Transaction, Long> {
 
-    @Query("select t from Transaction t where t.nameSender = :username")
-    List<Transaction> findAllWithUsername(@Param("username") String username);
+    @Query("select t from Transaction t where t.userPerformer = :userPerformer")
+    List<Transaction> findAllWithUserId(@Param("userPerformer") Long userPerformer);
 
     @Query("select t from Transaction t where t.ibanSender =:IBAN OR t.ibanReceiver =:IBAN")
     List<Transaction> getTransactionsFromIBAN(@Param("IBAN") String IBAN);
 
     @Query("select t from Transaction t where t.transferAmount =:transferAmount")
     List<Transaction> getTransactionsFromAmount(@Param("transferAmount") Double transferAmount);
+
+
+    // Customer only
+    @Query("select t from Transaction t where t.userPerformer = :userPerformer and t.ibanSender = :account OR t.ibanReceiver = :account")
+    List<Transaction> findAllWithUserIdCustomer(@Param("userPerformer") Long userPerformer, @Param("account") String account);
+
+    @Query("select t from Transaction t where t.ibanSender =:IBAN OR t.ibanReceiver =:IBAN and t.ibanSender = :account OR t.ibanReceiver = :account")
+    List<Transaction> getTransactionsFromIBANCustomer(@Param("IBAN") String IBAN, @Param("account") String account);
+
+    @Query("select t from Transaction t where t.transferAmount =:transferAmount and t.ibanSender = :account OR t.ibanReceiver = :account")
+    List<Transaction> getTransactionsFromAmountCustomer(@Param("transferAmount") Double transferAmount, @Param("account") String account);
+
+
+
 }

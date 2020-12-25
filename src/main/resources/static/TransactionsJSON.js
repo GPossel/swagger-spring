@@ -1,19 +1,32 @@
 var xhr;
+
 window.addEventListener("load", function (name, value) {
 
-    document.getElementById('btn_allTransactions').addEventListener('click',function (e) {
+
+    document.getElementById('btn_to_user_addUser').addEventListener('click', function (e) {
+        xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://localhost:8080/users');
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.setRequestHeader("Content-type", "application/json");
+        let authorization  = sessionStorage.getItem("Authorization");
+        xhr.setRequestHeader("Authorization", authorization);
+        xhr.send();
+        window.location.replace("http://localhost:8080/user/AddUser.html");
+    });
+
+    document.getElementById('btn_allTransactions').addEventListener('click', function (e) {
         xhr = new XMLHttpRequest();
         var url = 'http://localhost:8080/transactions'
         console.log(url);
 
-        var nameSender = document.getElementById('nameSender_search').value;
+        var userPerformer = document.getElementById('userPerformer_search').value;
         var transactionId = document.getElementById('transactionId_search').value;
         var IBAN = document.getElementById('IBAN_search').value;
         var transferAmount = document.getElementById('transferAmount_search').value;
         var MaxNumberOfResults = document.getElementById('MaxNumberOfResults_search').value;
         url = url + '?transactionId='+transactionId+
             '&IBAN='+IBAN+
-            '&nameSender='+nameSender+
+            '&userPerformer='+userPerformer+
             '&transferAmount='+transferAmount+
             '&MaxNumberOfResults='+MaxNumberOfResults;
 
@@ -24,10 +37,10 @@ window.addEventListener("load", function (name, value) {
             }
         };
         xhr.open('GET', url);
-        const session = sessionStorage.getItem("X-AUTHENTICATION");
+        const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("X-AUTHENTICATION", session);
+        xhr.setRequestHeader("Authorization", session);
         xhr.send();
     });
 
@@ -38,32 +51,32 @@ window.addEventListener("load", function (name, value) {
         //Send the proper header information along with the request
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
-        const session = sessionStorage.getItem("X-AUTHENTICATION");
-        xhr.setRequestHeader("X-AUTHENTICATION", session)
+        const session = sessionStorage.getItem("Authorization");
+        xhr.setRequestHeader("Authorization", session)
         xhr.onload = function () {
-                switch (xhr.status) {
-                    case 201:
-                        alert(xhr.status + ":" + xhr.responseText);
-                        break;
-                    case 400:
-                        alert(xhr.status + ":" + xhr.responseText);
-                        break;
-                    case 422:
-                        alert(xhr.status + ":" + xhr.responseText);
-                        break;
-                    case 500:
-                        alert(xhr.status + ":" + xhr.responseText);
-                        break;
-                    default:
-                        alert(xhr.status + ":" + xhr.responseText);
-                        break;
+            switch (xhr.status) {
+                case 201:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                case 400:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                case 422:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                case 500:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                default:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
             }
             console.log(xhr.responseText);
         }
         xhr.send(JSON.stringify({
             "ibanSender": document.getElementById('ibanSender').value,
             "ibanReceiver": document.getElementById('ibanReceiver').value,
-            "nameSender": document.getElementById('nameSender').value,
+            "userPerformer": document.getElementById('userPerformer').value,
             "transferAmount": document.getElementById('transferAmount').value
         }, ));
 

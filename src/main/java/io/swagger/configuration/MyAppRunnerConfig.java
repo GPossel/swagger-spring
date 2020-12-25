@@ -5,6 +5,7 @@ import io.swagger.model.*;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -28,7 +29,7 @@ public class MyAppRunnerConfig implements ApplicationRunner {
     private RepositoryApiKey apiKeyRepository;
 
 
-    public MyAppRunnerConfig(RepositoryAccount accountRepository, RepositoryTransaction repositoryTransaction, RepositoryUser repositoryUser, PropertyConfig properties, RepositoryApiKey apiKeyRepository) {
+    public MyAppRunnerConfig(RepositoryApiKey apiKeyRepository, RepositoryAccount accountRepository, RepositoryTransaction repositoryTransaction, RepositoryUser repositoryUser, PropertyConfig properties) {
         this.repositoryAccount = accountRepository;
         this.repositoryTransaction = repositoryTransaction;
         this.repositoryUser = repositoryUser;
@@ -51,13 +52,14 @@ public class MyAppRunnerConfig implements ApplicationRunner {
         );
 
         accounts.forEach(repositoryAccount::save);
-        repositoryAccount.findAll().forEach(System.out::println);
 
         List<Transaction> transactions = new ArrayList<>(
                 Arrays.asList(
-                        new Transaction("NL77INHO0123456789", "NL11INHO1111111111", "GPOSSEL", 140D),
-                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", "SBOERE", 9D),
-                        new Transaction("NL11INHO1111111111", "NL22INHO9876543210", "TWUBBEN", 100D)
+                        new Transaction("NL77INHO0123456789", "NL11INHO1111111111", 1000055L, 140D),
+                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000055L, 9D),
+                        new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
+                        new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
+                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000053L, 100D)
                 )
         );
 
@@ -66,9 +68,9 @@ public class MyAppRunnerConfig implements ApplicationRunner {
 
         List<User> users =
                 Arrays.asList(
-                        new User("Bill", "Nye", "billnye@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE),
-                        new User("Henk", "Anders", "henkanders@email.com", "test", "0687654321", "1994-2-23", "05-02-2020", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE),
-                        new User("Klaas", "Vaak", "klaasvaak@email.com", "test", "0600112233", "2000-1-21", "10-03-2020", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE));
+                        new User(1000052L, "Bill", "Nye", "billnye@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE),
+                        new User(1000053L, "Henk", "Anders", "customer@email.com", "test", "0687654321", "1994-2-23", "05-02-2020", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE),
+                        new User(1000054L,"Klaas", "Vaak", "klaasvaak@email.com", "test", "0600112233", "2000-1-21", "10-03-2020", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE));
 
         users.forEach(repositoryUser::save);
         repositoryUser.findAll().forEach(System.out::println);
@@ -77,12 +79,11 @@ public class MyAppRunnerConfig implements ApplicationRunner {
             UUID uuid = UUID.randomUUID();
             apiKeyRepository.save(new ApiKey(uuid.toString(), u.getId()));
         }
-        // tes@email.com heeft user Id 1000055 en daarmee apikey 1234-abcd-5678-efgh
-        repositoryUser.save(new User("Test", "Nye", "test@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE));
+        // test@email.com heeft user Id 1000055 en daarmee apikey 1234-abcd-5678-efgh
+        repositoryUser.save(new User(1000055L, "Test", "Nye", "test@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE));
+        repositoryUser.save(new User(1000056L, "Test", "Nye", "Admin@email.com", "admin", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.ADMIN, User.StatusEnum.ACTIVE));
+
         apiKeyRepository.save(new ApiKey("1234-abcd-5678-efgh", 1000055L, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30)));
-
-        apiKeyRepository.findAll().forEach(System.out::println);
-
 
         System.out.println(repositoryUser.findByFirstname("Test"));
         System.out.println("Application name: " + properties.getApplicationName());

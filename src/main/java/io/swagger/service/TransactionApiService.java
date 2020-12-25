@@ -5,9 +5,11 @@ import io.swagger.model.Account;
 import io.swagger.model.Transaction;
 import io.swagger.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -57,7 +59,7 @@ public class TransactionApiService {
             // now the transaction was successful save the transaction
             repositoryTransaction.save(transaction);
             return true;
-            }catch(Exception ex)
+        }catch(Exception ex)
         {
             System.out.println(ex.getMessage());
             return false;
@@ -110,8 +112,8 @@ public class TransactionApiService {
         return true;
     }
 
-    public List<Transaction> getTransactionsFromName(String username) {
-        return repositoryTransaction.findAllWithUsername(username);
+    public List<Transaction> getTransactionsFromName(Long username) {
+        return repositoryTransaction.findAllWithUserId(username);
     }
 
     public List<Transaction> getTransactionsFromIBAN(String IBAN) {
@@ -122,36 +124,87 @@ public class TransactionApiService {
         return repositoryTransaction.getTransactionsFromAmount(transferAmount);
     }
 
-    public List<Transaction> FindAllMatches(String nameSender, Long transactionId, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
+    public List<Transaction> FindAllMatches(Long userPerformer, Long transactionId, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
         List<Transaction> myList = new ArrayList<Transaction>();
-        if (nameSender != null) {
-            for (Transaction t : getTransactionsFromName(nameSender)) {
-                myList.add(t);
-            }
-        }
-        if (transactionId != null) {
-             Transaction transaction = repositoryTransaction.findById(transactionId).get();
-            if(transaction != null) { myList.add(transaction);  }
-        }
-        if (IBAN != null) {
-            for(Transaction t : getTransactionsFromIBAN(IBAN))
-            {
-                myList.add(t);
-            }
-        }
-        if (transferAmount != null) {
-            List<Transaction> transactions = getTransactionsFromAmount(transferAmount);
-            for(Transaction t : transactions) {
-                myList.add(t);
-            }
-        }
-        if (myList.size() == 0) {
-            myList = getTransactions();
-        }
-        if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
-            myList = myList.subList(0, maxNumberOfResults);
-        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = (User)authentication.getPrincipal();
 
-        return myList;
+        if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
+            Long userId = loggedInUser.getId();
+            // customer could not see any transactions not related to him
+            List<Account> accounts = accountApiService.getAccountsForUser(userId);
+            for (Account account : accounts) {
+                if (userPerformer != null) {
+                    for (Transaction t : repositoryTransaction.findAllWithUserIdCustomer(userPerformer, account.getIBAN())) {
+                        myList.add(t);
+                    }
+                }
+                if (transactionId != null) {
+                    List<Transaction> transactions = repositoryTransaction.findAllWithUserIdCustomer(transactionId, account.getIBAN());
+                    for (Transaction t : transactions) {
+                        myList.add(t);
+                    }
+                }
+                if (IBAN != null) {
+                    for (Transaction t : repositoryTransaction.getTransactionsFromIBANCustomer(IBAN, account.getIBAN())) {
+                        myList.add(t);
+                    }
+                }
+                if (transferAmount != null) {
+                    List<Transaction> transactions = repositoryTransaction.getTransactionsFromAmountCustomer(transferAmount, account.getIBAN());
+                    for (Transaction t : transactions) {
+                        myList.add(t);
+                    }
+                }
+                if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
+                    myList = myList.subList(0, maxNumberOfResults);
+                }
+            }
+
+            return myList;
+        }
+        else {
+
+            if (userPerformer != null) {
+                for (Transaction t : getTransactionsFromName(userPerformer)) {
+                    myList.add(t);
+                }
+            }
+            if (transactionId != null) {
+                Transaction transaction = repositoryTransaction.findById(transactionId).get();
+
+                if (transaction != null) {
+                    myList.add(transaction);
+                }
+            }
+            if (IBAN != null) {
+                for (Transaction t : getTransactionsFromIBAN(IBAN)) {
+                    myList.add(t);
+                }
+            }
+            if (transferAmount != null) {
+                List<Transaction> transactions = getTransactionsFromAmount(transferAmount);
+                for (Transaction t : transactions) {
+                    myList.add(t);
+                }
+            }
+            if (myList.size() == 0) {
+                List<Transaction> transactions = getTransactions();
+                for (Transaction t : transactions) {
+                    myList.add(t);
+                }
+            }
+            if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
+                myList = myList.subList(0, maxNumberOfResults);
+            }
+
+            return myList;
+        }
+    }
+
+    public List<Transaction> searchTransactionsUser(UserDetails user) {
+        List<Transaction> transactionsForUser = new ArrayList<Transaction>();
+
+        return transactionsForUser;
     }
 }
