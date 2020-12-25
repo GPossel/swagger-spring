@@ -40,10 +40,10 @@ $(document).ready(function (){
             }
         };
         xhr.open('GET', url);
-        const session = sessionStorage.getItem("X-AUTHENTICATION");
+        const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("X-AUTHENTICATION", session);
+        xhr.setRequestHeader("Authorization", session);
         xhr.send();
     }
 
@@ -54,10 +54,10 @@ $(document).ready(function (){
         };
         let userId = $(this).attr('rel');
         xhr.open('DELETE', 'http://localhost:8080/users/' + userId);
-        const session = sessionStorage.getItem("X-AUTHENTICATION");
+        const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("X-AUTHENTICATION", session);
+        xhr.setRequestHeader("Authorization", session);
         xhr.send();
     });
 
@@ -93,10 +93,10 @@ $(document).ready(function (){
 
         let userId = $(this).attr('rel');
         xhr.open('GET', 'http://localhost:8080/users/' + userId);
-        const session = sessionStorage.getItem("X-AUTHENTICATION");
+        const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("X-AUTHENTICATION", session);
+        xhr.setRequestHeader("Authorization", session);
         xhr.send();
     });
 

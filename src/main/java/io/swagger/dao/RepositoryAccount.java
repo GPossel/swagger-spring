@@ -31,8 +31,4 @@ public interface RepositoryAccount extends CrudRepository<Account, String> {
     @Modifying
     @Query("select a from Account a where a.userId =:userId")
     List<Account> getAccountsForUser(@Param("userId") Long userId);
-
-
-  //  @Query("select a from Account a where a.IBAN =:IBAN")
- //   Account findOneFromIBANSender(@Param("IBAN") String ibanSender);
 }

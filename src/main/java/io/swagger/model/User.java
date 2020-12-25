@@ -4,10 +4,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,7 +24,7 @@ import java.util.Objects;
 @Validated
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-18T09:28:40.437Z[GMT]")
-public class User {
+public class User implements UserDetails{
   @Id
   @SequenceGenerator(name="transaction_seq", initialValue = 1000001)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="transaction_seq")
@@ -58,17 +65,19 @@ public class User {
     this.status = status;
   }
 
-  public User(String firstname, String lastname, String email, String phone, String birthdate, RankEnum rank, StatusEnum status) {
-    this.firstname = firstname;
-    this.lastname = lastname;
-    this.email = email;
-    this.phone = phone;
-    this.birthdate = birthdate;
-    this.rank = rank;
-    this.status = status;
+  public User() {
   }
 
-  public User() {
+    public User(long id, String firstname, String lastname, String email, String password, String phone, String birthdate, String registrationdate, RankEnum rank, StatusEnum status) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.birthdate = birthdate;
+        this.rank = rank;
+        this.status = status;
   }
 
     /**
@@ -76,9 +85,9 @@ public class User {
    */
   public enum RankEnum {
     CUSTOMER("Customer"),
-    
+
     EMPLOYEE("Employee"),
-    
+
     ADMIN("Admin");
 
     private String value;
@@ -111,7 +120,7 @@ public class User {
    */
   public enum StatusEnum {
     ACTIVE("Active"),
-    
+
     BLOCKED("Blocked");
 
     private String value;
@@ -147,10 +156,10 @@ public class User {
   /**
    * Get id
    * @return id
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public Long getId() {
+
+  public Long getId() {
     return id;
   }
 
@@ -166,10 +175,10 @@ public class User {
   /**
    * Get firstname
    * @return firstname
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public String getFirstname() {
+
+  public String getFirstname() {
     return firstname;
   }
 
@@ -185,10 +194,10 @@ public class User {
   /**
    * Get lastname
    * @return lastname
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public String getLastname() {
+
+  public String getLastname() {
     return lastname;
   }
 
@@ -204,10 +213,10 @@ public class User {
   /**
    * Get email
    * @return email
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public String getEmail() {
+
+  public String getEmail() {
     return email;
   }
 
@@ -220,14 +229,50 @@ public class User {
     return this;
   }
 
+  //  String ROLE_PREFIX = "ROLE_"; ROLE_PREFIX +
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
+    String role = this.rank.toString(); // "ROLE_EMPLOYEE";//
+    list.add(new SimpleGrantedAuthority(role));
+
+    return list;
+  }
+
   /**
    * Get password
    * @return password
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public String getPassword() {
+
+  public String getPassword() {
     return password;
+  }
+
+  @Override
+  public String getUsername() {
+    return this.getEmail();
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
   }
 
   public void setPassword(String password) {
@@ -247,10 +292,10 @@ public class User {
   /**
    * Get phone
    * @return phone
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public String getPhone() {
+
+  public String getPhone() {
     return phone;
   }
 
@@ -266,10 +311,10 @@ public class User {
   /**
    * Get birthdate
    * @return birthdate
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public String getBirthdate() {
+
+  public String getBirthdate() {
     return birthdate;
   }
 
@@ -285,10 +330,10 @@ public class User {
   /**
    * Get registrationdate
    * @return registrationdate
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public String getRegistrationdate() {
+
+  public String getRegistrationdate() {
     return registrationdate;
   }
 
@@ -304,10 +349,10 @@ public class User {
   /**
    * User Rank
    * @return rank
-  **/
+   **/
   @ApiModelProperty(value = "User Rank")
-  
-    public RankEnum getRank() {
+
+  public RankEnum getRank() {
     return rank;
   }
 
@@ -323,10 +368,10 @@ public class User {
   /**
    * Get status
    * @return status
-  **/
+   **/
   @ApiModelProperty(value = "")
-  
-    public StatusEnum getStatus() {
+
+  public StatusEnum getStatus() {
     return status;
   }
 
@@ -345,15 +390,15 @@ public class User {
     }
     User user = (User) o;
     return Objects.equals(this.id, user.id) &&
-        Objects.equals(this.firstname, user.firstname) &&
-        Objects.equals(this.lastname, user.lastname) &&
-        Objects.equals(this.email, user.email) &&
-        Objects.equals(this.password, user.password) &&
-        Objects.equals(this.phone, user.phone) &&
-        Objects.equals(this.birthdate, user.birthdate) &&
-        Objects.equals(this.registrationdate, user.registrationdate) &&
-        Objects.equals(this.rank, user.rank) &&
-        Objects.equals(this.status, user.status);
+            Objects.equals(this.firstname, user.firstname) &&
+            Objects.equals(this.lastname, user.lastname) &&
+            Objects.equals(this.email, user.email) &&
+            Objects.equals(this.password, user.password) &&
+            Objects.equals(this.phone, user.phone) &&
+            Objects.equals(this.birthdate, user.birthdate) &&
+            Objects.equals(this.registrationdate, user.registrationdate) &&
+            Objects.equals(this.rank, user.rank) &&
+            Objects.equals(this.status, user.status);
   }
 
   @Override
@@ -365,7 +410,7 @@ public class User {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class User {\n");
-    
+
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    firstname: ").append(toIndentedString(firstname)).append("\n");
     sb.append("    lastname: ").append(toIndentedString(lastname)).append("\n");
@@ -390,4 +435,7 @@ public class User {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+
+
 }

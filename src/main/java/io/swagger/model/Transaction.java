@@ -39,8 +39,8 @@ public class Transaction {
   @JsonProperty("ibanReceiver")
   private String ibanReceiver = null;
 
-  @JsonProperty("nameSender")
-  private String nameSender = null;
+  @JsonProperty("userPerformer")
+  private Long userPerformer = null;
 
   @JsonProperty("transactionDate")
   private Timestamp transactionDate = null;
@@ -52,18 +52,18 @@ public class Transaction {
   public Transaction()
   {}
 
-  public Transaction(String ibanSender, String ibanReceiver, String nameSender, Timestamp transactionDate, double transferAmount) {
+  public Transaction(String ibanSender, String ibanReceiver, Long userPerformer, Timestamp transactionDate, double transferAmount) {
     this.ibanSender = ibanSender;
     this.ibanReceiver = ibanReceiver;
-    this.nameSender = nameSender;
+    this.userPerformer = userPerformer;
     this.transactionDate = transactionDate;
     this.transferAmount = transferAmount;
   }
 
-  public Transaction(String ibanSender, String ibanReceiver, String nameSender, Double transferAmount) {
+  public Transaction(String ibanSender, String ibanReceiver, Long userPerformer, Double transferAmount) {
     this.ibanSender = ibanSender;
     this.ibanReceiver = ibanReceiver;
-    this.nameSender = nameSender;
+    this.userPerformer = userPerformer;
     this.transactionDate = new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
     this.transferAmount = transferAmount;
   }
@@ -127,12 +127,12 @@ public class Transaction {
    **/
   @ApiModelProperty(value = "")
 
-  public String getNameSender() {
-    return nameSender;
+  public Long getNameSender() {
+    return userPerformer;
   }
 
-  public void setNameSender(String nameSender) {
-    this.nameSender = nameSender;
+  public void setNameSender(Long userPerformer) {
+    this.userPerformer = userPerformer;
   }
 
   /**
@@ -182,14 +182,14 @@ public class Transaction {
     return Objects.equals(this.ibanSender, transaction.ibanSender) &&
             Objects.equals(this.ibanReceiver, transaction.ibanReceiver) &&
             Objects.equals(this.transactionId, transaction.transactionId) &&
-            Objects.equals(this.nameSender, transaction.nameSender) &&
+            Objects.equals(this.userPerformer, transaction.userPerformer) &&
             Objects.equals(this.transactionDate, transaction.transactionDate) &&
             Objects.equals(this.transferAmount, transaction.transferAmount);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(ibanSender, ibanReceiver, transactionId, nameSender, transactionDate, transferAmount);
+    return Objects.hash(ibanSender, ibanReceiver, transactionId, userPerformer, transactionDate, transferAmount);
   }
 
   @Override
@@ -200,7 +200,7 @@ public class Transaction {
     sb.append("    ibanSender: ").append(toIndentedString(ibanSender)).append("\n");
     sb.append("    ibanReceiver: ").append(toIndentedString(ibanReceiver)).append("\n");
     sb.append("    transactionId: ").append(toIndentedString(transactionId)).append("\n");
-    sb.append("    nameSender: ").append(toIndentedString(nameSender)).append("\n");
+    sb.append("    userPerformer: ").append(toIndentedString(userPerformer)).append("\n");
     sb.append("    transactionDate: ").append(toIndentedString(transactionDate)).append("\n");
     sb.append("    transferAmount: ").append(toIndentedString(transferAmount)).append("\n");
     sb.append("}");

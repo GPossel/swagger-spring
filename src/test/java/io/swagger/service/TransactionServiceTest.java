@@ -22,7 +22,7 @@ public class TransactionServiceTest {
     @Test
     public void ListMustNotBeNull() throws Exception
     {
-        List<Transaction> transactions = transactionApiService.FindAllMatches("", null, "", null,null);
+        List<Transaction> transactions = transactionApiService.FindAllMatches(1L, null, "", null,null);
         assertNotNull(transactions);
     }
 }

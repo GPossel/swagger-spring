@@ -23,7 +23,7 @@ public class TransactionRepositoryTest {
 
     @Test
     public void findAllWithUsernameShouldReturnNotNull() throws Exception{
-    List<Transaction> transactions = repositoryTransaction.findAllWithUsername("GPOSSEL");
+    List<Transaction> transactions = repositoryTransaction.findAllWithUserId(1000055L);
     assertNotNull(transactions);
     }
 

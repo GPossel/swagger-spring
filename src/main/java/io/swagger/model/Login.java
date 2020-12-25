@@ -16,7 +16,7 @@ import java.util.Objects;
 @Entity
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-18T09:28:40.437Z[GMT]")
-public class Login   {
+public class Login {
   @Id
   @JsonProperty("username")
   private String username = null;
@@ -38,7 +38,7 @@ public class Login   {
   /**
    * Get username
    * @return username
-  **/
+   **/
   @ApiModelProperty(example = "FrankWester", value = "")
   public String getUsername() {
     return username;
@@ -56,10 +56,9 @@ public class Login   {
   /**
    * Get password
    * @return password
-  **/
+   **/
   @ApiModelProperty(example = "Password1!", value = "")
-  
-    public String getPassword() {
+  public String getPassword() {
     return password;
   }
 
@@ -81,7 +80,7 @@ public class Login   {
     }
     Login login = (Login) o;
     return Objects.equals(this.username, login.username) &&
-        Objects.equals(this.password, login.password);
+            Objects.equals(this.password, login.password);
   }
 
   @Override
@@ -93,7 +92,7 @@ public class Login   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Login {\n");
-    
+
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("}");

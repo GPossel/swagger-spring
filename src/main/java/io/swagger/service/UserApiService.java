@@ -4,14 +4,16 @@ import io.swagger.dao.RepositoryUser;
 import io.swagger.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserApiService {
+public class UserApiService implements UserDetailsService {
 
     User userError = new User();
 
@@ -166,5 +168,11 @@ public class UserApiService {
 
     public User getUser(String username) {
         return repositoryUser.findByUserName(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = repositoryUser.findByUserName(username);
+        return user;
     }
 }

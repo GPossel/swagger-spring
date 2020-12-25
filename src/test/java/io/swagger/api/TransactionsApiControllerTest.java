@@ -50,7 +50,7 @@ public class TransactionsApiControllerTest{
     @Test
     public void makeWrongAmountTransactionsShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
         Transaction newObjectInstance = new Transaction("NL22INHO9876543210",
-                "NL33INHO3333333333", "GPOSSEL",
+                "NL33INHO3333333333", 1000055L,
                 new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()),
                 40000D);
 
@@ -81,7 +81,7 @@ public class TransactionsApiControllerTest{
     @Test
     public void makeCorrectTransactionsShouldReturnCREATED() throws Exception {
         Transaction newObjectInstance = new Transaction("NL77INHO0123456789",
-                "NL11INHO1111111111", "GPOSSEL",
+                "NL11INHO1111111111", 1000055L,
                 new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()),
                 140D);
 
@@ -99,7 +99,7 @@ public class TransactionsApiControllerTest{
     @Test
     public void makeWrongIBANTransactionsShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
         Transaction newObjectInstance = new Transaction("NL22INHO9876543210",
-                "NL33INHO3333333333", "GPOSSEL",
+                "NL33INHO3333333333", 1000055L,
                 new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()),
                 40D);
 
