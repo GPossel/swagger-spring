@@ -8,12 +8,19 @@ import javassist.NotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import io.swagger.model.Transaction;
+import io.swagger.model.User;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.KeyException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +54,7 @@ public class AccountApiService {
         if (user.getRank() == User.RankEnum.EMPLOYEE){
             return repositoryAccount.findAll();
         }
+
         return repositoryAccount.getAccountsForUser(userId);
     }
 
@@ -70,7 +78,7 @@ public class AccountApiService {
         account.setStatus(Account.StatusEnum.DELETED);
         Integer i = repositoryAccount.Update(account.getIBAN(), account);
         if (i == 0) {
-//            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 

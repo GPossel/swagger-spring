@@ -20,25 +20,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/code-generatie-herkansing.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code-generatie-herkansing.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/swagger/model/ATMrequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/AccountApi.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/AccountApiController.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/AccountsApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/api/AccountsApi.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/AccountsApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/api/AccountsApiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/LoginApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/api/LoginApiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/LogoutApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/api/LogoutApiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/TransactionsApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/api/TransactionsApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/TransactionsApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/api/TransactionsApiController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/UsersApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/api/UsersApiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/configuration/ApiKeyAuthFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/configuration/ApiKeySecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/configuration/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/configuration/HomeController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/configuration/MyAppRunnerConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/configuration/MyAppRunnerConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/configuration/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/configuration/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/dao/RepositoryAccount.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/dao/RepositoryAccount.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/dao/RepositoryApiKey.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/dao/RepositoryTransaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/dao/RepositoryTransaction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/model/Account.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/model/Account.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/model/Login.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/model/Login.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/model/Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/model/Transaction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/model/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/service/AccountApiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/service/AccountApiService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/service/ApiKeyService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/service/LogoutApiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/service/LogoutApiService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/service/TransactionApiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/service/TransactionApiService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/service/UserApiService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/service/UserApiService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/Login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/Login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/util/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/util/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/loginIn.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/loginIn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +174,7 @@
       <workItem from="1608896103966" duration="282000" />
       <workItem from="1608897835354" duration="15108000" />
       <workItem from="1608912978626" duration="2123000" />
-      <workItem from="1608984849944" duration="12669000" />
+      <workItem from="1608984849944" duration="14132000" />
     </task>
     <servers />
   </component>
@@ -251,70 +256,70 @@
       <screen x="-19" y="-1080" width="1920" height="1040" />
     </state>
     <state x="721" y="-805" key="FileChooserDialogImpl/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742260674" />
-    <state width="1874" height="327" key="GridCell.Tab.0.bottom" timestamp="1609001053744">
+    <state width="937" height="168" key="GridCell.Tab.0.bottom" timestamp="1609002437078">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state width="1877" height="419" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608570804424" />
     <state width="1493" height="255" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1608743725899" />
     <state width="1877" height="242" key="GridCell.Tab.0.bottom/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
     <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1608913984912" />
-    <state width="1874" height="327" key="GridCell.Tab.0.bottom/0.0.3840.1040@0.0.3840.1040" timestamp="1609001053744" />
-    <state width="1874" height="327" key="GridCell.Tab.0.center" timestamp="1609001053744">
+    <state width="937" height="168" key="GridCell.Tab.0.bottom/0.0.3840.1040@0.0.3840.1040" timestamp="1609002437078" />
+    <state width="937" height="168" key="GridCell.Tab.0.center" timestamp="1609002437078">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state width="1877" height="419" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608570804424" />
     <state width="1493" height="255" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1608743725899" />
     <state width="1877" height="242" key="GridCell.Tab.0.center/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480337" />
     <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1608913984912" />
-    <state width="1874" height="327" key="GridCell.Tab.0.center/0.0.3840.1040@0.0.3840.1040" timestamp="1609001053744" />
-    <state width="1874" height="327" key="GridCell.Tab.0.left" timestamp="1609001053743">
+    <state width="937" height="168" key="GridCell.Tab.0.center/0.0.3840.1040@0.0.3840.1040" timestamp="1609002437078" />
+    <state width="937" height="168" key="GridCell.Tab.0.left" timestamp="1609002437078">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state width="1877" height="419" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608570804424" />
     <state width="1493" height="255" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1608743725899" />
     <state width="1877" height="242" key="GridCell.Tab.0.left/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480337" />
     <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1608913984912" />
-    <state width="1874" height="327" key="GridCell.Tab.0.left/0.0.3840.1040@0.0.3840.1040" timestamp="1609001053743" />
-    <state width="1874" height="327" key="GridCell.Tab.0.right" timestamp="1609001053744">
+    <state width="937" height="168" key="GridCell.Tab.0.left/0.0.3840.1040@0.0.3840.1040" timestamp="1609002437078" />
+    <state width="937" height="168" key="GridCell.Tab.0.right" timestamp="1609002437078">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state width="1877" height="419" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608570804424" />
     <state width="1493" height="255" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1608743725899" />
     <state width="1877" height="242" key="GridCell.Tab.0.right/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
     <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1608913984912" />
-    <state width="1874" height="327" key="GridCell.Tab.0.right/0.0.3840.1040@0.0.3840.1040" timestamp="1609001053744" />
-    <state width="1874" height="327" key="GridCell.Tab.1.bottom" timestamp="1609001053744">
+    <state width="937" height="168" key="GridCell.Tab.0.right/0.0.3840.1040@0.0.3840.1040" timestamp="1609002437078" />
+    <state width="937" height="168" key="GridCell.Tab.1.bottom" timestamp="1609002437079">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state width="1877" height="419" key="GridCell.Tab.1.bottom/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608570804425" />
     <state width="1493" height="255" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1608743725900" />
     <state width="1877" height="242" key="GridCell.Tab.1.bottom/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
     <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1608914000495" />
-    <state width="1874" height="327" key="GridCell.Tab.1.bottom/0.0.3840.1040@0.0.3840.1040" timestamp="1609001053744" />
-    <state width="1874" height="327" key="GridCell.Tab.1.center" timestamp="1609001053744">
+    <state width="937" height="168" key="GridCell.Tab.1.bottom/0.0.3840.1040@0.0.3840.1040" timestamp="1609002437079" />
+    <state width="937" height="168" key="GridCell.Tab.1.center" timestamp="1609002437079">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state width="1877" height="419" key="GridCell.Tab.1.center/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608570804425" />
     <state width="1493" height="255" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1608743725900" />
     <state width="1877" height="242" key="GridCell.Tab.1.center/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
     <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1608914000494" />
-    <state width="1874" height="327" key="GridCell.Tab.1.center/0.0.3840.1040@0.0.3840.1040" timestamp="1609001053744" />
-    <state width="1874" height="327" key="GridCell.Tab.1.left" timestamp="1609001053744">
+    <state width="937" height="168" key="GridCell.Tab.1.center/0.0.3840.1040@0.0.3840.1040" timestamp="1609002437079" />
+    <state width="937" height="168" key="GridCell.Tab.1.left" timestamp="1609002437079">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state width="1877" height="419" key="GridCell.Tab.1.left/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608570804424" />
     <state width="1493" height="255" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1608743725900" />
     <state width="1877" height="242" key="GridCell.Tab.1.left/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
     <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1608914000494" />
-    <state width="1874" height="327" key="GridCell.Tab.1.left/0.0.3840.1040@0.0.3840.1040" timestamp="1609001053744" />
-    <state width="1874" height="327" key="GridCell.Tab.1.right" timestamp="1609001053744">
+    <state width="937" height="168" key="GridCell.Tab.1.left/0.0.3840.1040@0.0.3840.1040" timestamp="1609002437079" />
+    <state width="937" height="168" key="GridCell.Tab.1.right" timestamp="1609002437079">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state width="1877" height="419" key="GridCell.Tab.1.right/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1608570804425" />
     <state width="1493" height="255" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1608743725900" />
     <state width="1877" height="242" key="GridCell.Tab.1.right/0.0.1707.920/-19.-1080.1920.1040/1901.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606751480338" />
     <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1608914000495" />
-    <state width="1874" height="327" key="GridCell.Tab.1.right/0.0.3840.1040@0.0.3840.1040" timestamp="1609001053744" />
+    <state width="937" height="168" key="GridCell.Tab.1.right/0.0.3840.1040@0.0.3840.1040" timestamp="1609002437079" />
     <state width="1874" height="230" key="GridCell.Tab.2.bottom" timestamp="1609000951969">
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
@@ -405,18 +410,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/io/swagger/service/AccountApiService.java</url>
-          <line>110</line>
+          <line>118</line>
           <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/io/swagger/service/AccountApiService.java</url>
-          <line>65</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/io/swagger/api/AccountsApiController.java</url>
-          <line>111</line>
-          <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/io/swagger/service/TransactionApiService.java</url>

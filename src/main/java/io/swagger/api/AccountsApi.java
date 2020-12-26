@@ -5,14 +5,13 @@
  */
 package io.swagger.api;
 
+import io.swagger.model.ATMrequest;
 import io.swagger.model.Account;
 import io.swagger.annotations.*;
+import io.swagger.model.Transaction;
 import io.swagger.model.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,7 +33,7 @@ public interface AccountsApi {
             produces = { "application/json" },
             consumes = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<Account> createAccount(@ApiParam(value = "created accounts" ,required=true )  @Valid @RequestBody Account body
+    ResponseEntity<Account> createAccount(@ApiParam(value = "created accounts" , required=true )  @Valid @RequestBody Account body
     );
 
     @ApiOperation(value = "", nickname = "getAccounts", notes = "Get a list of accounts", response = Account.class, responseContainer = "List", tags={ "accounts", })
@@ -95,5 +94,30 @@ public interface AccountsApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Account>> getAccountsForUser(@ApiParam(value = "",required=true) @PathVariable("userid") Long userId
     );
+
+
+    @ApiOperation(value = "Making a withdraw", nickname = "withdraw", notes = "", response = ResponseEntity.class, responseContainer = "List", tags={ "withdraw", "accounts" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Succesful withdraw.", response = Transaction.class, responseContainer = "List"),
+            @ApiResponse(code = 403, message = "Authorization information is missing or invalid."),
+            @ApiResponse(code = 404, message = "An account with the specified IBAN was not found."),
+            @ApiResponse(code = 500, message = "Unexpected error.") })
+    @RequestMapping(value = "/accounts/withdrawing",
+            produces = { "application/json" },
+            method = RequestMethod.PUT)
+    ResponseEntity withdraw(@ApiParam(value = "created withdraw" , required=true)  @Valid @RequestBody ATMrequest body);
+
+
+    @ApiOperation(value = "Making a deposit", nickname = "deposit", notes = "", response = ResponseEntity.class, responseContainer = "List", tags={ "deposit", "accounts" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Succesful withdraw.", response = Transaction.class, responseContainer = "List"),
+            @ApiResponse(code = 403, message = "Authorization information is missing or invalid."),
+            @ApiResponse(code = 404, message = "An account with the specified IBAN was not found."),
+            @ApiResponse(code = 500, message = "Unexpected error.") })
+    @RequestMapping(value = "/accounts/deposit",
+            produces = { "application/json" },
+            method = RequestMethod.PUT)
+    ResponseEntity deposit(@ApiParam(value = "created deposit" , required=true)  @Valid @RequestBody ATMrequest body);
+
 
 }

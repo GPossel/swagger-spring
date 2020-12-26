@@ -35,7 +35,4 @@ public interface RepositoryTransaction extends CrudRepository<Transaction, Long>
 
     @Query(value = "select t  from Transaction t where t.ibanSender = :iban and t.transactionDate between :startPeriod and :endPeriod")
     List<Transaction> getTransactionsForAccountAndToday(@Param("iban") String iban, @Param("startPeriod")Timestamp startPeriod, @Param("endPeriod")Timestamp endPeriod);
-
-
-
 }

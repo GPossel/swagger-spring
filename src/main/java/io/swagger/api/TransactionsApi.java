@@ -31,8 +31,7 @@ public interface TransactionsApi {
     ResponseEntity<Transaction> getTransaction(@Min(0L)@ApiParam(value = "",required=true, allowableValues="") @PathVariable("transactionId") Long transactionId
     );
 
-    @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = Transaction.class, responseContainer = "List", authorizations = {
-            @Authorization(value = "ApiKeyAuth")    }, tags={ "transactions", })
+    @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = Transaction.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Succesful request.", response = Transaction.class, responseContainer = "List"),
             @ApiResponse(code = 401, message = "Authorization information is missing or invalid."),
@@ -41,7 +40,8 @@ public interface TransactionsApi {
     @RequestMapping(value = "/transactions",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<Transaction>> searchTansaction(@ApiParam(value = "nameSender") @Valid @RequestParam(value = "userPerformer", required = false) Long userPerformer
+    ResponseEntity<List<Transaction>> searchTansaction(
+            @ApiParam(value = "nameSender") @Valid @RequestParam(value = "userPerformer", required = false) Long userPerformer
             ,@ApiParam(value = "transactionId") @Valid @RequestParam(value = "transactionId", required = false) Long transactionId
             ,@ApiParam(value = "IBAN") @Valid @RequestParam(value = "IBAN", required = false) String IBAN
             ,@ApiParam(value = "transferAmount") @Valid @RequestParam(value = "transferAmount", required = false) Double transferAmount
@@ -49,8 +49,7 @@ public interface TransactionsApi {
     );
 
 
-    @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = Transaction.class, responseContainer = "List", authorizations = {
-            @Authorization(value = "ApiKeyAuth")    }, tags={ "transactions", })
+    @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = Transaction.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Succesful request.", response = Transaction.class, responseContainer = "List"),
             @ApiResponse(code = 401, message = "Authorization information is missing or invalid."),
@@ -61,8 +60,7 @@ public interface TransactionsApi {
             method = RequestMethod.GET)
     ResponseEntity<List<Transaction>> getTransactions();
 
-    @ApiOperation(value = "Making a transaction", nickname = "transferFunds", notes = "", response = Transaction.class, responseContainer = "List", authorizations = {
-            @Authorization(value = "ApiKeyAuth")    }, tags={ "transactions", })
+    @ApiOperation(value = "Making a transaction", nickname = "transferFunds", notes = "", response = Transaction.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Succesful post.", response = Transaction.class, responseContainer = "List"),
             @ApiResponse(code = 401, message = "Authorization information is missing or invalid."),
@@ -72,4 +70,5 @@ public interface TransactionsApi {
             produces = { "application/json" },
             method = RequestMethod.POST)
     ResponseEntity<Transaction> transferFunds(@ApiParam(value = "Transaction created", required = true) @Valid @RequestBody Transaction transaction);
+
 }
