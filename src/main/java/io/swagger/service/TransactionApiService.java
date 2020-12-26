@@ -90,6 +90,7 @@ public class TransactionApiService {
             throw new Exception("Sender account has not enough money");
             //     Account has not enough money
         }
+
         // Checks if accounts are from type saving and if so, has same owner then proceed transaction,
         if(!IsTransactionAllowed(accountSender, accountReceiver))
         { throw new Exception("Transactions from or to a savings account must be from the owner"); }
@@ -164,7 +165,6 @@ public class TransactionApiService {
             return myList;
         }
         else {
-
             if (userPerformer != null) {
                 for (Transaction t : getTransactionsFromName(userPerformer)) {
                     myList.add(t);

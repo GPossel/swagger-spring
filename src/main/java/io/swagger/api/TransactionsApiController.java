@@ -2,35 +2,24 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
-import io.swagger.filters.JwtRequestFilter;
-import io.swagger.model.Account;
 import io.swagger.model.Transaction;
 import io.swagger.model.User;
 import io.swagger.service.AccountApiService;
 import io.swagger.service.TransactionApiService;
 import io.swagger.service.UserApiService;
-import io.swagger.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -54,7 +43,6 @@ public class TransactionsApiController implements TransactionsApi {
 
     private AccountApiService accountApiService;
 
-    @Autowired
     private UserApiService userApiService;
 
     @Autowired
@@ -93,7 +81,7 @@ public class TransactionsApiController implements TransactionsApi {
         return status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 
-    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer') or hasAuthority('Admin')")
     public ResponseEntity<List<Transaction>> searchTansaction
             (@ApiParam(value = "") @Valid @RequestParam(value = "userPerformer", required = false) Long userPerformer,
              @ApiParam(value = "") @Valid @RequestParam(value = "transactionId", required = false) Long transactionId,
@@ -102,16 +90,10 @@ public class TransactionsApiController implements TransactionsApi {
              @ApiParam(value = "") @Valid @RequestParam(value = "MaxNumberOfResults", required = false) Integer maxNumberOfResults) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
-        String jwt = request.getHeader("Authorization");
-
         if (accept != null && content.contains("application/json")) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            User loggedInUser = (User)authentication.getPrincipal();
-
             try {
                     List<Transaction> myList = transactionApiService.FindAllMatches(userPerformer, transactionId, IBAN, transferAmount, maxNumberOfResults);
                     return new ResponseEntity<List<Transaction>>(objectMapper.readValue(objectMapper.writeValueAsString(myList), List.class), HttpStatus.OK);
-                        // set parameters for this customer specifically
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -141,11 +123,6 @@ public class TransactionsApiController implements TransactionsApi {
             }
         }
         return null;
-    }
-
-    protected Transaction mapTransactionData(Transaction body) {
-        Transaction transaction = new Transaction(body.getIbanSender(), body.getIbanReceiver(), body.getNameSender(), body.getTransferAmount());
-        return transaction;
     }
 }
 

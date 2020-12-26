@@ -26,6 +26,9 @@ window.addEventListener("load", function (name, value) {
                 sessionStorage.setItem("Authorization", authorization);
                 RedirectPage(authorization);
             }
+            else {
+                alert(xhr.status + ":" + xhr.responseText);
+            }
         }
         xhr.send(JSON.stringify({
             "username": document.getElementById('username').value,
