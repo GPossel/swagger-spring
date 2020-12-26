@@ -24,7 +24,6 @@ import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-18T09:28:40.437Z[GMT]")
 @Controller
-@PreAuthorize("hasAuthority('Admin')")
 public class UsersApiController implements UsersApi {
 
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
@@ -41,12 +40,12 @@ public class UsersApiController implements UsersApi {
         this.request = request;
     }
 
+    @PreAuthorize("hasAuthority('Admin')")
     public ResponseEntity<User> addUser(@ApiParam(value = "created users", required = true) @Valid @RequestBody User body
     ) {
         String accept = request.getHeader("Accept");
-        String authKey = request.getHeader("X-AUTHENTICATION");
-
-        if (accept != null && accept.contains("application/json")) {
+        String content = request.getHeader("Content-Type");
+        if (accept != null && content.contains("application/json")) {
             try {
                 if (body != null && body.getFirstname() != null) {
                     return new ResponseEntity<User>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.postUser(body)), User.class), HttpStatus.CREATED);
@@ -69,9 +68,8 @@ public class UsersApiController implements UsersApi {
     public ResponseEntity<Void> deleteUser(@ApiParam(value = "The userId that needs to be deleted", required = true) @PathVariable("userId") String userId
     ) {
         String accept = request.getHeader("Accept");
-        String authKey = request.getHeader("X-AUTHENTICATION");
-
-        if (accept != null) {
+        String content = request.getHeader("Content-Type");
+        if (accept != null && content.contains("application/json")) {
             try {
                 userApiService.delete(userId);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body((JsonNode) objectMapper.createObjectNode().put("message", "Deleted Successfully!"));
@@ -89,9 +87,8 @@ public class UsersApiController implements UsersApi {
     public ResponseEntity<User> getUserById(@ApiParam(value = "Id of the user to return", required = true) @PathVariable("userId") Long userId
     ) {
         String accept = request.getHeader("Accept");
-        String authKey = request.getHeader("X-AUTHENTICATION");
-
-        if (accept != null /*&& accept.contains("application/json")*/) {
+        String content = request.getHeader("Content-Type");
+        if (accept != null && content.contains("application/json")) {
             try {
                 return new ResponseEntity<User>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getById(userId)), User.class), HttpStatus.OK);
             } catch (IOException e) {
@@ -105,15 +102,15 @@ public class UsersApiController implements UsersApi {
         }
     }
 
-
+    @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
     public ResponseEntity<List<User>> getUsers(@ApiParam(value = "") @Valid @RequestParam(value = "firstname", required = false) String firstname
             , @ApiParam(value = "") @Valid @RequestParam(value = "lastname", required = false) String lastname
             , @ApiParam(value = "", allowableValues = "Customer, Employee, Admin") @Valid @RequestParam(value = "RankOfUser", required = false) String rankOfUser
             , @ApiParam(value = "", allowableValues = "Active, Blocked") @Valid @RequestParam(value = "StatusOfUser", required = false) String statusOfUser
     ) {
         String accept = request.getHeader("Accept");
-
-        if (accept != null /*&& accept.contains("application/json")*/) {
+        String content = request.getHeader("Content-Type");
+        if (accept != null && content.contains("application/json")) {
             try {
                 return new ResponseEntity<List<User>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getUsersWithFilters(firstname, lastname, rankOfUser, statusOfUser)), List.class), HttpStatus.OK);
             } catch (IOException e) {
@@ -131,9 +128,8 @@ public class UsersApiController implements UsersApi {
             , @ApiParam(value = "userId that need to be updated", required = true) @PathVariable("userId") String userId
     ) {
         String accept = request.getHeader("Accept");
-        String authKey = request.getHeader("X-AUTHENTICATION");
-
-        if (accept != null && accept.contains("application/json")) {
+        String content = request.getHeader("Content-Type");
+        if (accept != null && content.contains("application/json")) {
             try {
                 return new ResponseEntity<User>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.update(userId, body)), User.class), HttpStatus.OK);
             } catch (IOException e) {

@@ -5,15 +5,12 @@ import io.swagger.model.*;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.*;
 
-import static io.swagger.model.Account.RankEnum.CURRENT;
-import static io.swagger.model.Account.RankEnum.SAVING;
+import static io.swagger.model.Account.RankEnum.*;
 import static io.swagger.model.Account.StatusEnum.ACTIVE;
 import static io.swagger.model.Account.StatusEnum.BLOCKED;
 
@@ -26,15 +23,13 @@ public class MyAppRunnerConfig implements ApplicationRunner {
     private RepositoryTransaction repositoryTransaction;
     private RepositoryUser repositoryUser;
     private PropertyConfig properties;
-    private RepositoryApiKey apiKeyRepository;
 
 
-    public MyAppRunnerConfig(RepositoryApiKey apiKeyRepository, RepositoryAccount accountRepository, RepositoryTransaction repositoryTransaction, RepositoryUser repositoryUser, PropertyConfig properties) {
+    public MyAppRunnerConfig(RepositoryAccount accountRepository, RepositoryTransaction repositoryTransaction, RepositoryUser repositoryUser, PropertyConfig properties) {
         this.repositoryAccount = accountRepository;
         this.repositoryTransaction = repositoryTransaction;
         this.repositoryUser = repositoryUser;
         this.properties = properties;
-        this.apiKeyRepository = apiKeyRepository;
     }
 
     @Override
@@ -42,7 +37,7 @@ public class MyAppRunnerConfig implements ApplicationRunner {
 
         List<Account> accounts = new ArrayList<>(
                 Arrays.asList(
-                        new Account(1000051L, "NL01INHO0000000001", CURRENT, ACTIVE, 100000.000D, "EUR"),
+                        new Account(1000051L, "NL01INHO0000000001", BANK, ACTIVE, 100000.000D, "EUR"),
                         new Account(1000052L, "NL77INHO0123456789", CURRENT, ACTIVE, 1660.00D, "EUR"),
                         new Account(1000053L, "NL22INHO9876543210", SAVING, ACTIVE, 5504.00D, "EUR"),
                         new Account(1000053L, "NL22INHO9999999999", CURRENT, ACTIVE, 904.00D, "EUR"),
@@ -59,7 +54,9 @@ public class MyAppRunnerConfig implements ApplicationRunner {
                         new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000055L, 9D),
                         new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
                         new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
-                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000053L, 100D)
+                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000053L, 100D),
+                        new Transaction("NL11INHO1111111111", "NL22INHO9876543210", 1000055L, 90D),
+                        new Transaction("NL11INHO1111111111", "NL33INHO3333333333", 1000055L, 73D)
                 )
         );
 
@@ -75,15 +72,9 @@ public class MyAppRunnerConfig implements ApplicationRunner {
         users.forEach(repositoryUser::save);
         repositoryUser.findAll().forEach(System.out::println);
 
-        for(User u : users){
-            UUID uuid = UUID.randomUUID();
-            apiKeyRepository.save(new ApiKey(uuid.toString(), u.getId()));
-        }
-        // test@email.com heeft user Id 1000055 en daarmee apikey 1234-abcd-5678-efgh
         repositoryUser.save(new User(1000055L, "Test", "Nye", "test@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE));
         repositoryUser.save(new User(1000056L, "Test", "Nye", "Admin@email.com", "admin", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.ADMIN, User.StatusEnum.ACTIVE));
-
-        apiKeyRepository.save(new ApiKey("1234-abcd-5678-efgh", 1000055L, LocalDateTime.now(), LocalDateTime.now().plusMinutes(30)));
+        repositoryUser.save(new User(1000057L,"Blok", "Blokker", "blocked@email.com", "test", "0600112233", "2000-1-21", "10-03-2020", User.RankEnum.CUSTOMER, User.StatusEnum.BLOCKED));
 
         System.out.println(repositoryUser.findByFirstname("Test"));
         System.out.println("Application name: " + properties.getApplicationName());

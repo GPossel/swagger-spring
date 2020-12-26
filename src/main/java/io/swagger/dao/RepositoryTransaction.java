@@ -30,7 +30,4 @@ public interface RepositoryTransaction extends CrudRepository<Transaction, Long>
 
     @Query("select t from Transaction t where t.transferAmount =:transferAmount and t.ibanSender = :account OR t.ibanReceiver = :account")
     List<Transaction> getTransactionsFromAmountCustomer(@Param("transferAmount") Double transferAmount, @Param("account") String account);
-
-
-
 }

@@ -2,10 +2,15 @@ package io.swagger.service;
 
 import io.swagger.dao.RepositoryAccount;
 import io.swagger.model.Account;
+import io.swagger.model.Transaction;
+import io.swagger.model.User;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +35,7 @@ public class AccountApiService {
     }
 
     public List<Account> getAccountsForUser(Long userId) {
+
 //        if (!UserHasRights(account.getUserId())){
 //            throw new Error();
 //        }

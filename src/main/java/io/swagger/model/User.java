@@ -235,8 +235,9 @@ public class User implements UserDetails{
   public Collection<? extends GrantedAuthority> getAuthorities() {
     List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
     String role = this.rank.toString(); // "ROLE_EMPLOYEE";//
+    String status = this.status.toString(); // "ROLE_Active / ROLE_ACTIVE / Active //"
     list.add(new SimpleGrantedAuthority(role));
-
+    list.add(new SimpleGrantedAuthority(status));
     return list;
   }
 
