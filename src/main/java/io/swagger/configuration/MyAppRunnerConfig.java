@@ -50,8 +50,8 @@ public class MyAppRunnerConfig implements ApplicationRunner {
                         new Account(1000055L, "NL11INHO1111111111", CURRENT, ACTIVE, 1700.00D, "EUR")
                 )
         );
-
         accounts.forEach(repositoryAccount::save);
+        repositoryAccount.findAll().forEach(System.out::println);
 
         List<Transaction> transactions = new ArrayList<>(
                 Arrays.asList(
@@ -59,7 +59,10 @@ public class MyAppRunnerConfig implements ApplicationRunner {
                         new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000055L, 9D),
                         new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
                         new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
-                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000053L, 100D)
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, 100D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, 100D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, 100D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, 100D)
                 )
         );
 

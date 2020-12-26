@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -47,7 +48,6 @@ public class Transaction {
 
   @JsonProperty("transferAmount")
   private Double transferAmount = null;
-
 
   public Transaction()
   {}

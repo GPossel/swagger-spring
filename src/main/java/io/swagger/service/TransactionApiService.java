@@ -5,11 +5,18 @@ import io.swagger.model.Account;
 import io.swagger.model.Transaction;
 import io.swagger.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -39,8 +46,8 @@ public class TransactionApiService {
         try{
             /// Use account services to
             /// Find account receiver & sender
-            Account receiver = accountApiService.getAccountByIBAN(transaction.getIbanReceiver()).get();
-            Account sender = accountApiService.getAccountByIBAN(transaction.getIbanSender()).get();
+            Account receiver = accountApiService.getAccountByIBAN(transaction.getIbanReceiver());
+            Account sender = accountApiService.getAccountByIBAN(transaction.getIbanSender());
 
             // Calculate new balance for account receiver
             Double Rbalance = receiver.getBalance();
@@ -68,17 +75,15 @@ public class TransactionApiService {
 
 
     public void checkValidTransaction(Transaction body) throws Exception {
-        Account accountSender = accountApiService.getAccountByIBAN(body.getIbanSender()).get();
-        Account accountReceiver = accountApiService.getAccountByIBAN(body.getIbanReceiver()).get();
+        Account accountSender = accountApiService.getAccountByIBAN(body.getIbanSender());
+        Account accountReceiver = accountApiService.getAccountByIBAN(body.getIbanReceiver());
         if ((accountSender == null) || accountReceiver == null) {
             throw new Exception("Account sender or receiver does not exists!");
             //  Account does not exists!
         }
         //	The maximum amount per transaction cannot be higher than a predefined number, referred to a transaction limit
         if(userApiService.getById(accountSender.getUserId()).getRank() == User.RankEnum.CUSTOMER){
-            if(accountSender.isPassedCumulativeTransactions()) {
-                throw new Exception("Account sender overstayed transactions per day.");
-            }
+            this.validateDailyLimit(accountSender, body.getTransferAmount());
         }
         // Make more transaction daily limit
 
@@ -132,7 +137,7 @@ public class TransactionApiService {
         if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
             Long userId = loggedInUser.getId();
             // customer could not see any transactions not related to him
-            List<Account> accounts = accountApiService.getAccountsForUser(userId);
+            Iterable<Account> accounts = accountApiService.getAccountsForUser(userId);
             for (Account account : accounts) {
                 if (userPerformer != null) {
                     for (Transaction t : repositoryTransaction.findAllWithUserIdCustomer(userPerformer, account.getIBAN())) {
@@ -206,5 +211,30 @@ public class TransactionApiService {
         List<Transaction> transactionsForUser = new ArrayList<Transaction>();
 
         return transactionsForUser;
+    }
+
+    public void validateDailyLimit(Account account, Double transferAmount) {
+        Double transferAmountToday = 0.00;
+        Timestamp startPeriod = getDateWithoutTimeUsingCalendar();
+        long oneDay = 1 * 24 * 60 * 60 * 1000; // 84600000 milliseconds in a day
+        Timestamp endPeriod = new Timestamp(startPeriod.getTime() + oneDay);
+
+
+        List<Transaction> transactions = repositoryTransaction.getTransactionsForAccountAndToday(account.getIBAN(), startPeriod, endPeriod);
+        for (Transaction transaction : transactions) {
+            transferAmountToday += transaction.getTransferAmount();
+        }
+        if ((transferAmountToday + transferAmount) > account.getDailyLimit()){
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Reached day limit");
+        }
+    }
+
+    public static Timestamp getDateWithoutTimeUsingCalendar() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return new Timestamp(calendar.getTimeInMillis());
     }
 }

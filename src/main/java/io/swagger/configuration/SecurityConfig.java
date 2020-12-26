@@ -45,8 +45,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/Transactions.html").permitAll()
                 .antMatchers("/TransactionsJSON.js").permitAll()
                 .antMatchers("/authenticate").permitAll()
-                .antMatchers("/users").access("hasAuthority('Admin')")
+                .antMatchers("/users").permitAll()
+                .antMatchers("/users/**").permitAll()
+                .antMatchers("/accounts").permitAll()
+                .antMatchers("/accounts/**").permitAll()
                 .antMatchers("/transactions").access("hasAuthority('Employee') or hasAuthority('Customer') or hasAuthority('Admin')")
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 // now we need to add the filter
                 .and()
