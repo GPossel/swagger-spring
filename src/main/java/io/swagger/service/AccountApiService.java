@@ -35,6 +35,8 @@ public class AccountApiService {
     @Autowired
     private  UserApiService userApiService;
 
+    User loggedInUser;
+
     // post /accounts
     public Account createAccount(Account body) {
         return repositoryAccount.save(body);
@@ -42,38 +44,28 @@ public class AccountApiService {
 
     //get /accounts
     public Iterable<Account> getAllAccounts() {
-        return repositoryAccount.findAll();
-    }
-
-    public Iterable<Account> getAccountsForUser(Long userId) {
-        if (!UserHasRights(userId)){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        if (this.loggedInUser == null) {
+            this.loggedInUser = userApiService.getLoggedInUser();
+            if (this.loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            }
         }
 
-        User user = userApiService.getById(userId);
-        if (user.getRank() == User.RankEnum.EMPLOYEE){
-            return repositoryAccount.findAll();
-        }
-
-        return repositoryAccount.getAccountsForUser(userId);
+        return repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
     }
 
-    // Get /accounts/Iban
-    public Account getAccountByIBAN(String iban) {
-        Optional<Account> user = repositoryAccount.findById(iban);
-
-        if (!user.isPresent()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        return user.get();
-    }
-
-
-    public void deleteAccount(String iban)  {
+    // Get /accounts/{iban}
+    public Account getAccountByIbanWithAuth(String iban) {
         Account account = this.getAccountByIBAN(iban);
         if (!UserHasRights(account.getUserId())){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
+        return account;
+    }
+
+    ///Delete /accounts/{iban}
+    public void deleteAccount(String iban)  {
+        Account account = this.getAccountByIBAN(iban);
 
         account.setStatus(Account.StatusEnum.DELETED);
         Integer i = repositoryAccount.Update(account.getIBAN(), account);
@@ -82,12 +74,18 @@ public class AccountApiService {
         }
     }
 
-    // Post /accounts/iban/deposit
+    //get /accounts/{userId}/users
+    public Iterable<Account> getAccountsForUser(Long userId) {
+        if (!UserHasRights(userId)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        return repositoryAccount.getAccountsForUser(userId);
+    }
+
+    // Post /accounts/{iban}/deposit
     public Account depositAccount(String ibanReceiver, double deposit) {
         Account account = this.getAccountByIBAN(ibanReceiver);
-        if (!UserHasRights(account.getUserId())){
-            throw new Error();
-        }
 
         account.setBalance(account.getBalance() + deposit);
 
@@ -95,12 +93,9 @@ public class AccountApiService {
         return repositoryAccount.findById(ibanReceiver).get();
     }
 
-    // Post /accounts/iban/deposit
+    // Post /accounts/{iban}/deposit
     public Account withdrawAccount(String ibanReceiver, double withdraw) {
         Account account = this.getAccountByIBAN(ibanReceiver);
-        if (!UserHasRights(account.getUserId())){
-            throw new Error();
-        }
         account.setBalance(account.getBalance() - withdraw);
 
         repositoryAccount.Update(ibanReceiver, account);
@@ -115,10 +110,22 @@ public class AccountApiService {
         repositoryAccount.Update(IBAN, account);
     }
 
+    public Account getAccountByIBAN(String iban) {
+        Optional<Account> optionalAccount = repositoryAccount.findById(iban);
+        if (!optionalAccount.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Account account = optionalAccount.get();
+        return account;
+    }
+
     public boolean UserHasRights(Long userId){
-        User loggedInUser = userApiService.getLoggedInUser();
-        if (loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
-            if (loggedInUser.getId() != userId){
+        if (this.loggedInUser == null) {
+            this.loggedInUser = userApiService.getLoggedInUser();
+        }
+
+        if (this.loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
+            if (this.loggedInUser.getId() != userId){
                 return false;
             }
         }
