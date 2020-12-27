@@ -77,6 +77,7 @@ public class MyAppRunnerConfig implements ApplicationRunner {
         repositoryUser.findAll().forEach(System.out::println);
 
         repositoryUser.save(new User(1000055L, "Test", "Nye", "test@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE));
+        repositoryUser.save(new User(1000058L, "Test", "Nye", "test1@email.com", "test1", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE));
         repositoryUser.save(new User(1000056L, "Test", "Nye", "Admin@email.com", "admin", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.ADMIN, User.StatusEnum.ACTIVE));
         repositoryUser.save(new User(1000057L,"Blok", "Blokker", "blocked@email.com", "test", "0600112233", "2000-1-21", "10-03-2020", User.RankEnum.CUSTOMER, User.StatusEnum.BLOCKED));
 

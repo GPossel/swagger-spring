@@ -90,7 +90,7 @@ public class AccountsApiController implements AccountsApi {
 
             if (accept != null) {
                 try {
-                    Account account = accountApiService.getAccountByIBAN(iban);
+                    Account account = accountApiService.getAccountByIbanWithAuth(iban);
                     return new ResponseEntity<Account>(objectMapper.readValue(objectMapper.writeValueAsString(account), Account.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
@@ -149,7 +149,7 @@ public class AccountsApiController implements AccountsApi {
                 Double newBalance = 0d;
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-                    oldBalance = accountApiService.getAccountByIBAN(body.getIBAN()).getBalance();
+                    oldBalance = accountApiService.getAccountByIbanWithAuth(body.getIBAN()).getBalance();
                     Account account = accountApiService.withdrawAccount(body.getIBAN(), body.getTransferAmount());
                     newBalance = account.getBalance();
                 }
@@ -177,7 +177,7 @@ public class AccountsApiController implements AccountsApi {
                 Double newBalance = 0d;
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-                    oldBalance = accountApiService.getAccountByIBAN(body.getIBAN()).getBalance();
+                    oldBalance = accountApiService.getAccountByIbanWithAuth(body.getIBAN()).getBalance();
                     Account account = accountApiService.depositAccount(body.getIBAN(), body.getTransferAmount());
                     newBalance = account.getBalance();
                 }
