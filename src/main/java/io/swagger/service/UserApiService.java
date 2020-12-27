@@ -4,6 +4,8 @@ import io.swagger.dao.RepositoryUser;
 import io.swagger.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -62,6 +64,8 @@ public class UserApiService implements UserDetailsService {
     }
 
     private List<User> getUsers() {
+        User user = this.getLoggedInUser();
+        System.out.println(user);
         return (List<User>) repositoryUser.findAll();
     }
 
@@ -168,6 +172,13 @@ public class UserApiService implements UserDetailsService {
 
     public User getUser(String username) {
         return repositoryUser.findByUserName(username);
+    }
+
+    public User getLoggedInUser(){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = (User)authentication.getPrincipal();
+        return loggedInUser;
     }
 
     @Override

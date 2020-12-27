@@ -39,7 +39,7 @@ public class Login {
    * Get username
    * @return username
    **/
-  @ApiModelProperty(example = "FrankWester", value = "")
+  @ApiModelProperty(example = "test@email.com", value = "")
   public String getUsername() {
     return username;
   }
@@ -57,7 +57,7 @@ public class Login {
    * Get password
    * @return password
    **/
-  @ApiModelProperty(example = "Password1!", value = "")
+  @ApiModelProperty(example = "test", value = "")
   public String getPassword() {
     return password;
   }

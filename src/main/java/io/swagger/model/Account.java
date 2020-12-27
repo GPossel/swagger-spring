@@ -45,6 +45,7 @@ public class Account {
     this.status = status;
     this.balance = balance;
     this.currency = currency;
+    this.dailyLimit = 500.00;
   }
 
   public Account(String nlfout) {
@@ -52,9 +53,12 @@ public class Account {
   }
 
   public Double getDailyLimit() {
-    return 500d;
+    return dailyLimit;
   }
 
+  public void setDailyLimit(Double dailyLimit) {
+    this.dailyLimit = dailyLimit;
+  }
 
   /**
    * Gets or Sets rank
@@ -96,13 +100,16 @@ public class Account {
   @JsonProperty("currency")
   private String currency = null;
 
+  @JsonProperty("dailyLimit")
+  private Double dailyLimit = null;
+
   /**
    * Gets or Sets status
    */
   public enum StatusEnum {
     ACTIVE("Active"),
-
-    BLOCKED("Blocked");
+    BLOCKED("Blocked"),
+    DELETED("Deleted");
 
     private String value;
 
@@ -292,6 +299,7 @@ public class Account {
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
+    sb.append("    dailyLimit: ").append(toIndentedString(dailyLimit)).append("\n");
     sb.append("}");
     return sb.toString();
   }
