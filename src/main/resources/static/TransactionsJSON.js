@@ -76,9 +76,8 @@ window.addEventListener("load", function (name, value) {
         xhr.send(JSON.stringify({
             "ibanSender": document.getElementById('ibanSender').value,
             "ibanReceiver": document.getElementById('ibanReceiver').value,
-            "userPerformer": document.getElementById('userPerformer').value,
             "transferAmount": document.getElementById('transferAmount').value
-        }, ));
+        }));
 
     });
 });

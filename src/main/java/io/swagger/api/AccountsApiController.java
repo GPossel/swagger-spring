@@ -123,10 +123,11 @@ public class AccountsApiController implements AccountsApi {
         }
     }
 
+    @PreAuthorize("hasAuthority('Customer')")
     public ResponseEntity<List<Account>> getAccountsForUser(@ApiParam(value= "", required = true) @PathVariable("userid") Long userId){
         String accept = request.getHeader("Accept");
-
-            if (accept != null) {
+        String content = request.getHeader("Content-Type");
+        if (accept != null && content.contains("application/json")) {
                 try {
                     Iterable<Account> accounts = accountApiService.getAccountsForUser(userId);
                     return new ResponseEntity<List<Account>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
@@ -177,8 +178,10 @@ public class AccountsApiController implements AccountsApi {
                 Double newBalance = 0d;
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-                    oldBalance = accountApiService.getAccountByIbanWithAuth(body.getIBAN()).getBalance();
-                    Account account = accountApiService.depositAccount(body.getIBAN(), body.getTransferAmount());
+                    // oldBalance = accountApiService.getAccountByIbanWithAuth(body.getIBAN()).getBalance();
+                    Account account = accountApiService.getAccountByIbanWithAuth(body.getIBAN());
+                    oldBalance = account.getBalance();
+                    account = accountApiService.depositAccount(body.getIBAN(), body.getTransferAmount());
                     newBalance = account.getBalance();
                 }
 

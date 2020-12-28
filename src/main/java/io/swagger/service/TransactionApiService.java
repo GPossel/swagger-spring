@@ -77,28 +77,44 @@ public class TransactionApiService {
     public void checkValidTransaction(Transaction body) throws Exception {
         Account accountSender = accountApiService.getAccountByIBAN(body.getIbanSender());
         Account accountReceiver = accountApiService.getAccountByIBAN(body.getIbanReceiver());
-        if ((accountSender == null) || accountReceiver == null) {
-            throw new Exception("Account sender or receiver does not exists!");
-            //  Account does not exists!
-        }
-        //	The maximum amount per transaction cannot be higher than a predefined number, referred to a transaction limit
-        if(userApiService.getById(accountSender.getUserId()).getRank() == User.RankEnum.CUSTOMER){
-            this.validateDailyLimit(accountSender, body.getTransferAmount());
-        }
-        // Make more transaction daily limit
 
-        if ((body.getTransferAmount() < 0) || (body.getTransferAmount() >= accountSender.getDailyLimit())) {
-            throw new Exception("Transaction must be between 0 and " + accountSender.getDailyLimit().toString() + "!");
-            //    Transaction must be between 0 and the daily limit
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = (User)authentication.getPrincipal();
 
-        } else if (body.getTransferAmount() > (accountSender.getBalance() - 500)) {
-            throw new Exception("Sender account has not enough money");
-            //     Account has not enough money
+        // validate this account belongs to the logged in user, validate the account is still active
+    if(accountSender.getUserId().equals(loggedInUser.getId())) {
+        if(accountSender.getStatus() == Account.StatusEnum.ACTIVE){
+
+            if ((accountSender == null) || accountReceiver == null) {
+                throw new Exception("Account sender or receiver does not exists!");
+                //  Account does not exists!
+            }
+
+            //	The maximum amount per transaction cannot be higher than a predefined number, referred to a transaction limit
+//        if(userApiService.getById(loggedInUser.getId()).getRank() == User.RankEnum.CUSTOMER){
+            if (loggedInUser.getRank() == User.RankEnum.CUSTOMER) {
+                this.validateDailyLimit(accountSender, body.getTransferAmount());
+            }
+            // Make more transaction daily limit
+            // if ((body.getTransferAmount() < 0) || (body.getTransferAmount() >= accountSender.getDailyLimit())) {
+            if ((body.getTransferAmount() < 0) || (body.getTransferAmount() >= accountSender.getDailyLimit())) {
+                throw new Exception("Transaction must be between 0 and " + accountSender.getDailyLimit().toString() + "!");
+                //    Transaction must be between 0 and the daily limit
+
+            } else if (body.getTransferAmount() > (accountSender.getBalance() - 500)) {
+                throw new Exception("Sender account has not enough money");
+                //     Account has not enough money
+            }
+
+            // Checks if accounts are from type saving and if so, has same owner then proceed transaction,
+            if (!IsTransactionAllowed(accountSender, accountReceiver)) {
+                throw new Exception("Transactions from or to a savings account must be from the owner");
+            }
         }
+    } else {
+        throw new Exception("Transactions from: " + body.getIbanSender() +" is not account of: " + loggedInUser.getEmail());
+    }
 
-        // Checks if accounts are from type saving and if so, has same owner then proceed transaction,
-        if(!IsTransactionAllowed(accountSender, accountReceiver))
-        { throw new Exception("Transactions from or to a savings account must be from the owner"); }
     }
 
     // Checks if account is a saving and if so is account from same owner allowed to proceed,
@@ -132,13 +148,12 @@ public class TransactionApiService {
 
     public List<Transaction> FindAllMatches(Long userPerformer, Long transactionId, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
         List<Transaction> myList = new ArrayList<Transaction>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loggedInUser = (User)authentication.getPrincipal();
+        User loggedInUser = userApiService.getLoggedInUser();
 
         if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
             Long userId = loggedInUser.getId();
             // customer could not see any transactions not related to him
-            Iterable<Account> accounts = accountApiService.getAccountsForUser(userId);
+            List<Account> accounts = (List<Account>) accountApiService.getAccountsForUser(userId);
             for (Account account : accounts) {
                 if (userPerformer != null) {
                     for (Transaction t : repositoryTransaction.findAllWithUserIdCustomer(userPerformer, account.getIBAN())) {
@@ -162,9 +177,16 @@ public class TransactionApiService {
                         myList.add(t);
                     }
                 }
+                if (myList.size() == 0) {
+                    List<Transaction> transactions = repositoryTransaction.getAllTransactionsFromCustomer(account.getIBAN());
+                    for (Transaction t : transactions) {
+                        myList.add(t);
+                    }
+                }
                 if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
                     myList = myList.subList(0, maxNumberOfResults);
                 }
+
             }
 
             return myList;
@@ -236,5 +258,11 @@ public class TransactionApiService {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return new Timestamp(calendar.getTimeInMillis());
+    }
+
+    public Transaction FillInTransactionSpecifics(Transaction transaction) {
+        User loggedInUser = userApiService.getLoggedInUser();
+        transaction.setUserPerformer(loggedInUser.getId());
+        return transaction;
     }
 }
