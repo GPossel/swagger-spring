@@ -45,7 +45,8 @@ public class Account {
     this.status = status;
     this.balance = balance;
     this.currency = currency;
-    this.dailyLimit = 1000d;
+    this.dailyLimit = 10000d;
+    this.transferLimit = 500d;
   }
 
   public Account(String nlfout) {
@@ -58,6 +59,14 @@ public class Account {
 
   public void setDailyLimit(Double dailyLimit) {
     this.dailyLimit = dailyLimit;
+  }
+
+  public Double getTransferLimit() {
+    return transferLimit;
+  }
+
+  public void setTransferLimit(Double transferLimit) {
+    this.transferLimit = transferLimit;
   }
 
   /**
@@ -102,6 +111,10 @@ public class Account {
 
   @JsonProperty("dailyLimit")
   private Double dailyLimit = null;
+
+  @JsonProperty("transferLimit")
+  private Double transferLimit = null;
+
 
   /**
    * Gets or Sets status

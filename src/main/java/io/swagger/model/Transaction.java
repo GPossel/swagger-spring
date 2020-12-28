@@ -49,9 +49,6 @@ public class Transaction {
   @JsonProperty("transferAmount")
   private Double transferAmount = null;
 
-  @JsonProperty("transferLimit")
-  private Double transferLimit = null;
-
   public Transaction()
   {}
 
@@ -76,7 +73,6 @@ public class Transaction {
     this.ibanReceiver = ibanReceiver;
     this.transactionDate = new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
     this.transferAmount = transferAmount;
-    this.transferLimit = 500d;
   }
 
 

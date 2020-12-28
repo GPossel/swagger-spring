@@ -90,11 +90,14 @@ public class TransactionApiService {
             this.validateDailyLimit(accountSender, body.getTransferAmount());
         }
 
+        if (body.getTransferAmount() > accountSender.getTransferLimit()) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transfer amount is more than the limit");
+        }
+
         // Make more transaction daily limit
         if ((body.getTransferAmount() < 0) || (body.getTransferAmount() >= accountSender.getDailyLimit())) {
             throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transaction must be between 0 and " + accountSender.getDailyLimit().toString() + "!");
             //    Transaction must be between 0 and the daily limit
-
         }
         //     Account has not enough money
         else if (body.getTransferAmount() > (accountSender.getBalance() - 500)) {
