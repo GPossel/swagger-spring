@@ -68,6 +68,13 @@ public class Transaction {
     this.transferAmount = transferAmount;
   }
 
+  public Transaction(String ibanSender, String ibanReceiver, Double transferAmount) {
+    this.ibanSender = ibanSender;
+    this.ibanReceiver = ibanReceiver;
+    this.transactionDate = new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
+    this.transferAmount = transferAmount;
+  }
+
 
   /**
    * Get ibanSender
@@ -127,11 +134,11 @@ public class Transaction {
    **/
   @ApiModelProperty(value = "")
 
-  public Long getNameSender() {
+  public Long getUserPerformer() {
     return userPerformer;
   }
 
-  public void setNameSender(Long userPerformer) {
+  public void setUserPerformer(Long userPerformer) {
     this.userPerformer = userPerformer;
   }
 

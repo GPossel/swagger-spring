@@ -69,7 +69,7 @@ public class MyAppRunnerConfig implements ApplicationRunner {
 
         List<User> users =
                 Arrays.asList(
-                        new User(1000052L, "Bill", "Nye", "billnye@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE),
+                        new User(1000052L, "Bill", "Nye", "billnye@email.com", "test", "0612345678", "1990-11-20", "20-10-2019", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE),
                         new User(1000053L, "Henk", "Anders", "customer@email.com", "test", "0687654321", "1994-2-23", "05-02-2020", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE),
                         new User(1000054L,"Klaas", "Vaak", "klaasvaak@email.com", "test", "0600112233", "2000-1-21", "10-03-2020", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE));
 

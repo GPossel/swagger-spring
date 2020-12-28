@@ -125,7 +125,7 @@ public class AccountApiService {
         }
 
         if (this.loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
-            if (this.loggedInUser.getId() != userId){
+            if (!this.loggedInUser.getId().equals(userId)){
                 return false;
             }
         }

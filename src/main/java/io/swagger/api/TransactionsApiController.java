@@ -4,18 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.model.Transaction;
-import io.swagger.model.User;
 import io.swagger.service.AccountApiService;
 import io.swagger.service.TransactionApiService;
-import io.swagger.service.UserApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,17 +35,17 @@ public class TransactionsApiController implements TransactionsApi {
 
     private final HttpServletRequest request;
 
+    @Autowired
     private TransactionApiService transactionApiService;
 
+    @Autowired
     private AccountApiService accountApiService;
 
-    private UserApiService userApiService;
-
     @Autowired
-    public TransactionsApiController(TransactionApiService transactionApiService, ObjectMapper objectMapper, HttpServletRequest request) {
+    public TransactionsApiController(/*TransactionApiService transactionApiService,*/ ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
-        this.transactionApiService = transactionApiService;
+//        this.transactionApiService = transactionApiService;
     }
 
     @PreAuthorize("hasAuthority('Employee')")
@@ -108,8 +104,11 @@ public class TransactionsApiController implements TransactionsApi {
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
             try {
-                transactionApiService.checkValidTransaction(body);
-                Transaction transaction = new Transaction(body.getIbanSender(), body.getIbanReceiver(), body.getNameSender(), body.getTransferAmount());
+                Transaction transaction = new Transaction(body.getIbanSender(), body.getIbanReceiver(), body.getTransferAmount());
+                // adding the userperformer and transaction time data
+                transaction = transactionApiService.FillInTransactionSpecifics(transaction);
+                
+                transactionApiService.checkValidTransaction(transaction);
                 Boolean transSucces = transactionApiService.makeTransaction(transaction);
                 if (transSucces == true) {
                     return new ResponseEntity<Transaction>(objectMapper.readValue(objectMapper.writeValueAsString(transaction), Transaction.class), HttpStatus.CREATED);
