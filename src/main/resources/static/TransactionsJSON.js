@@ -61,6 +61,9 @@ window.addEventListener("load", function (name, value) {
                 case 400:
                     alert(xhr.status + ":" + xhr.responseText);
                     break;
+                case 405:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
                 case 422:
                     alert(xhr.status + ":" + xhr.responseText);
                     break;

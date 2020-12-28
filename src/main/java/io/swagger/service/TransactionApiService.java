@@ -10,13 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -43,7 +39,6 @@ public class TransactionApiService {
     }
 
     public Boolean makeTransaction(Transaction transaction) {
-        try{
             /// Use account services to
             /// Find account receiver & sender
             Account receiver = accountApiService.getAccountByIBAN(transaction.getIbanReceiver());
@@ -66,11 +61,6 @@ public class TransactionApiService {
             // now the transaction was successful save the transaction
             repositoryTransaction.save(transaction);
             return true;
-        }catch(Exception ex)
-        {
-            System.out.println(ex.getMessage());
-            return false;
-        }
     }
 
 
@@ -81,44 +71,44 @@ public class TransactionApiService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loggedInUser = (User)authentication.getPrincipal();
 
-        // validate this account belongs to the logged in user, validate the account is still active
-    if(accountSender.getUserId().equals(loggedInUser.getId())) {
-        if(accountSender.getStatus() == Account.StatusEnum.ACTIVE){
-
-            if ((accountSender == null) || accountReceiver == null) {
-                throw new Exception("Account sender or receiver does not exists!");
-                //  Account does not exists!
-            }
-
-            //	The maximum amount per transaction cannot be higher than a predefined number, referred to a transaction limit
-//        if(userApiService.getById(loggedInUser.getId()).getRank() == User.RankEnum.CUSTOMER){
-            if (loggedInUser.getRank() == User.RankEnum.CUSTOMER) {
-                this.validateDailyLimit(accountSender, body.getTransferAmount());
-            }
-            // Make more transaction daily limit
-            // if ((body.getTransferAmount() < 0) || (body.getTransferAmount() >= accountSender.getDailyLimit())) {
-            if ((body.getTransferAmount() < 0) || (body.getTransferAmount() >= accountSender.getDailyLimit())) {
-                throw new Exception("Transaction must be between 0 and " + accountSender.getDailyLimit().toString() + "!");
-                //    Transaction must be between 0 and the daily limit
-
-            } else if (body.getTransferAmount() > (accountSender.getBalance() - 500)) {
-                throw new Exception("Sender account has not enough money");
-                //     Account has not enough money
-            }
-
-            // Checks if accounts are from type saving and if so, has same owner then proceed transaction,
-            if (!IsTransactionAllowed(accountSender, accountReceiver)) {
-                throw new Exception("Transactions from or to a savings account must be from the owner");
-            }
+            // validate this account belongs to the logged in user,
+        if(!accountSender.getUserId().equals(loggedInUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transactions from: " + body.getIbanSender() + " is not account of: " + loggedInUser.getEmail());
         }
-    } else {
-        throw new Exception("Transactions from: " + body.getIbanSender() +" is not account of: " + loggedInUser.getEmail());
+
+        // validate the account is still active and the receivers account is active
+        if (accountSender.getStatus() != Account.StatusEnum.ACTIVE || accountReceiver.getStatus() != Account.StatusEnum.ACTIVE) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transactions from: " + body.getIbanSender() + " is not account of: " + loggedInUser.getEmail());
+        }
+
+        if ((accountSender == null) || accountReceiver == null) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Account sender or receiver does not exists!");
+        }
+
+        //	The maximum amount per transaction cannot be higher than a predefined number, referred to a transaction limit
+        if (loggedInUser.getRank() == User.RankEnum.CUSTOMER) {
+            this.validateDailyLimit(accountSender, body.getTransferAmount());
+        }
+
+        // Make more transaction daily limit
+        if ((body.getTransferAmount() < 0) || (body.getTransferAmount() >= accountSender.getDailyLimit())) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transaction must be between 0 and " + accountSender.getDailyLimit().toString() + "!");
+            //    Transaction must be between 0 and the daily limit
+
+        }
+        //     Account has not enough money
+        else if (body.getTransferAmount() > (accountSender.getBalance() - 500)) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Sender account has not enough money");
+        }
+
+        // Checks if accounts are from type saving and if so, has same owner then proceed transaction,
+        if (!validateAccountForAccountByType(accountSender, accountReceiver)) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transactions from or to a savings account must be from the owner");
+        }
     }
 
-    }
-
-    // Checks if account is a saving and if so is account from same owner allowed to proceed,
-    private Boolean IsTransactionAllowed(Account sender, Account receiver) {
+    // Checks if account is a saving and if so is this account from same owner then allowed to proceed,
+    private Boolean validateAccountForAccountByType(Account sender, Account receiver) {
         if((sender.getRank() == Account.RankEnum.SAVING) || (receiver.getRank() == Account.RankEnum.SAVING))
         {
             if(receiver.getUserId() == sender.getUserId())
@@ -127,7 +117,7 @@ public class TransactionApiService {
                 return true;
             }
 
-            // Saving does NOT  have same owner, must return false
+            // Saving does NOT have same owner, must return false
             return false;
         }
         // Account is not saving
@@ -231,7 +221,6 @@ public class TransactionApiService {
 
     public List<Transaction> searchTransactionsUser(UserDetails user) {
         List<Transaction> transactionsForUser = new ArrayList<Transaction>();
-
         return transactionsForUser;
     }
 
