@@ -29,7 +29,7 @@ import java.util.Objects;
 public class Transaction {
   @Id
   @SequenceGenerator(name="transaction_seq", initialValue = 1000001)
-  @GeneratedValue(strategy =GenerationType.SEQUENCE, generator="transaction_seq")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="transaction_seq")
   @JsonProperty("transactionId")
   @Column(unique=true, nullable=false)
   private Long transactionId = null;
