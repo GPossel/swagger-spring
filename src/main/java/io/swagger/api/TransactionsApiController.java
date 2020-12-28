@@ -107,7 +107,7 @@ public class TransactionsApiController implements TransactionsApi {
                 Transaction transaction = new Transaction(body.getIbanSender(), body.getIbanReceiver(), body.getTransferAmount());
                 // adding the userperformer and transaction time data
                 transaction = transactionApiService.FillInTransactionSpecifics(transaction);
-                
+
                 transactionApiService.checkValidTransaction(transaction);
                 Boolean transSucces = transactionApiService.makeTransaction(transaction);
                 if (transSucces == true) {
