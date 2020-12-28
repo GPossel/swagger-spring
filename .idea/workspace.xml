@@ -21,7 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/api/TransactionsApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/api/TransactionsApiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/model/Account.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/model/Account.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/swagger/model/Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/swagger/model/Transaction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -157,12 +158,13 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
@@ -360,11 +362,11 @@
       <screen x="0" y="0" width="3840" height="1040" />
     </state>
     <state x="769" y="441" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.3840.1040@0.0.3840.1040" timestamp="1608997105444" />
-    <state x="602" y="255" width="607" height="536" key="find.popup" timestamp="1609000801017">
-      <screen x="0" y="0" width="3840" height="1040" />
+    <state x="302" y="256" width="607" height="536" key="find.popup" timestamp="1609173077770">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="302" y="256" width="607" height="536" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1608912515759" />
-    <state x="602" y="255" width="607" height="536" key="find.popup/0.0.3840.1040@0.0.3840.1040" timestamp="1609000801017" />
+    <state x="302" y="256" width="607" height="536" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1609173077770" />
+    <state x="602" y="255" width="607" height="536" key="find.popup/0.0.3840.1040@0.0.3840.1040" timestamp="1609173043362" />
     <state x="611" y="170" key="refactoring.ChangeSignatureDialog" timestamp="1608133153053">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -381,12 +383,11 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/target/classes/static/TransactionsJSON.js</url>
           <line>75</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="58" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/io/swagger/model/Transaction.java</url>
-          <line>73</line>
+          <line>76</line>
           <option name="timeStamp" value="72" />
         </line-breakpoint>
       </breakpoints>

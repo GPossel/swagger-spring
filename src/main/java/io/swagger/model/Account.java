@@ -45,7 +45,7 @@ public class Account {
     this.status = status;
     this.balance = balance;
     this.currency = currency;
-    this.dailyLimit = 500.00;
+    this.dailyLimit = 1000d;
   }
 
   public Account(String nlfout) {
