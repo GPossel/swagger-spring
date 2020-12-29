@@ -51,6 +51,29 @@ $(document).ready(function (){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function(result){
             loadUsers();
+            switch (xhr.status) {
+                case 200:
+                    alert("User delete.");
+                    break;
+                case 400:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                case 403:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                case 405:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                case 422:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                case 500:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+                default:
+                    alert(xhr.status + ":" + xhr.responseText);
+                    break;
+            }
         };
         let userId = $(this).attr('rel');
         xhr.open('DELETE', 'http://localhost:8080/users/' + userId);

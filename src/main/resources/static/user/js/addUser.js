@@ -23,14 +23,36 @@
         }
 
        let xhr = new XMLHttpRequest();
-       xhr.open("POST", "http://localhost:8080/users");
-        const session = sessionStorage.setItem("Authorization", authorization);
+        xhr.open("POST", "http://localhost:8080/users");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("X-AUTHENTICATION", session);
+        const session = sessionStorage.getItem("Authorization");
+        xhr.setRequestHeader("Authorization", session)
        xhr.onload = (e) => {
-           alert("Successful added User.");
-           $(location).attr('href', 'http://localhost:8080/user/AllUsers.html');
+           switch (xhr.status) {
+               case 201:
+                   alert("Successful added User.");
+                   $(location).attr('href', 'http://localhost:8080/user/AllUsers.html');
+                   break;
+               case 400:
+                   alert(xhr.status + ":" + xhr.responseText);
+                   break;
+               case 403:
+                   alert(xhr.status + ":" + xhr.responseText);
+                   break;
+               case 405:
+                   alert(xhr.status + ":" + xhr.responseText);
+                   break;
+               case 422:
+                   alert(xhr.status + ":" + xhr.responseText);
+                   break;
+               case 500:
+                   alert(xhr.status + ":" + xhr.responseText);
+                   break;
+               default:
+                   alert(xhr.status + ":" + xhr.responseText);
+                   break;
+           }
        }
 
        let data = JSON .stringify({

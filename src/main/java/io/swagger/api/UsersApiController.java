@@ -70,6 +70,7 @@ public class UsersApiController implements UsersApi {
     }
 
     /*Delete User*/
+    @PreAuthorize("hasAuthority('Admin')")
     public ResponseEntity<Void> deleteUser(@ApiParam(value = "The userId that needs to be deleted", required = true) @PathVariable("userId") String userId
     ) {
         String accept = request.getHeader("Accept");
@@ -89,6 +90,7 @@ public class UsersApiController implements UsersApi {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<User> getUserById(@ApiParam(value = "Id of the user to return", required = true) @PathVariable("userId") Long userId
     ) {
         String accept = request.getHeader("Accept");
@@ -129,6 +131,7 @@ public class UsersApiController implements UsersApi {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
     public ResponseEntity<User> updateUser(@ApiParam(value = "Updated user object", required = true) @Valid @RequestBody User body
             , @ApiParam(value = "userId that need to be updated", required = true) @PathVariable("userId") String userId
     ) {

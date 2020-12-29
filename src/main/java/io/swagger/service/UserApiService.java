@@ -175,7 +175,6 @@ public class UserApiService implements UserDetailsService {
     }
 
     public User getLoggedInUser(){
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loggedInUser = (User)authentication.getPrincipal();
         return loggedInUser;
