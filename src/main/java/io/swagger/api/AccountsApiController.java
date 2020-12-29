@@ -150,7 +150,6 @@ public class AccountsApiController implements AccountsApi {
                 Double newBalance = 0d;
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-   //                 oldBalance = accountApiService.getAccountByIbanWithAuth(body.getIBAN()).getBalance();
                     Account account = accountApiService.getAccountByIbanWithAuth(body.getIBAN());
                     oldBalance = account.getBalance();
                     account = accountApiService.withdrawAccount(body.getIBAN(), body.getTransferAmount());
@@ -180,7 +179,6 @@ public class AccountsApiController implements AccountsApi {
                 Double newBalance = 0d;
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-          //          oldBalance = accountApiService.getAccountByIbanWithAuth(body.getIBAN()).getBalance();
                     Account account = accountApiService.getAccountByIbanWithAuth(body.getIBAN());
                     oldBalance = account.getBalance();
                     account = accountApiService.depositAccount(body.getIBAN(), body.getTransferAmount());
@@ -192,7 +190,7 @@ public class AccountsApiController implements AccountsApi {
                 return responseEntity;
 
             } catch (Exception e) {
-                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
+                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", "Wrong user or no user was logged in. No Authentication. \n" + e.getMessage()));
                 return responseEntity;
             }
         }

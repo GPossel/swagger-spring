@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create new user</title>
+    <title>Create new ATM request</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="js/addUser.js"></script>
+    <script src="ATMrequest.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -27,18 +27,17 @@
                 <a class="nav-link" href="../Transactions.html">Transactions</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="../ATM/ATM.html">ATM</a>
+                <a class="nav-link" href="../ATMrequest.html">ATM</a>
             </li>
         </ul>
     </div>
 </nav>
-
 <form>
     <section id="create">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2>Create User</h2>
+                    <h2>Create Transaction</h2>
                     <hr class="star-primary">
                 </div>
             </div>
@@ -46,38 +45,20 @@
                 <div class="col-lg-8 col-lg-offset-2 ">
                     <form name="createTransaction" id="createTransaction" >
                         <div id="result-add" class="row control-group">
-                            <label for="firstname">firstname: </label>
-                            <input type="text" name="firstname" id="firstname" class="form-control" value="">
+                            <label for="IBAN">Account (IBAN): </label>
+                            <input type="text" name="IBAN" id="IBAN" class="form-control" value="NLxxINHOxxxxxxxxxx">
 
-                            <label for="lastname">lastname: </label>
-                            <input type="text" name="lastname" id="lastname" class="form-control" value="">
+                            <label for="pincode">pincode: </label>
+                            <input type="text" name="pincode" id="pincode" class="form-control" value="1234">
 
-                            <label for="email">email: </label>
-                            <input type="email" name="email" id="email" class="form-control" value="">
+                            <label for="transferAmount">Amount to transfer: </label>
+                            <input type="number" name="transferAmount" id="transferAmount" class="form-control" value="10">
 
-                            <label for="password">password: </label>
-                            <input type="password" name="password" id="password" class="form-control" value="">
 
-                            <label for="rPassword">repeat password: </label>
-                            <input type="password" name="rPassword" id="rPassword" class="form-control" value="">
-
-                            <label for="phone">phone: </label>
-                            <input type="text" name="phone" id="phone" class="form-control" placeholder="0600000000">
-
-                            <label for="birthdate">birthdate: </label>
-                            <input type="text" name="birthdate" id="birthdate" class="form-control" placeholder="23-1-2000">
-
-                            <label for="rank">rank: </label>
-                            <select name="rank" id="rank" class="form-control">
-                                <option value="Customer">CUSTOMER</option>
-                                <option value="Employee">EMPLOYEE</option>
-                                <option value="Admin" disabled>ADMIN</option>
-                            </select>
-
-                            <label for="status">status: </label>
-                            <select name="status" id="status" class="form-control">
-                                <option value="Active">ACTIVE</option>
-                                <option value="Blocked">BLOCKED</option>
+                            <label for="request">request: </label>
+                            <select name="request" id="request" class="form-control">
+                                <option value="deposit">Deposit</option>
+                                <option value="withdraw">Withdraw</option>
                             </select>
 
                             <p class="help-block text-danger"></p>
@@ -85,7 +66,7 @@
                         <br>
                         <div class="row">
                             <div class="form-group col-xs-12">
-                                <button id="submit" type="submit" class="btn btn-success btn-lg">Insert User</button>
+                                <button id="submit" type="submit" class="btn btn-warning btn-lg">Make ATM request</button>
                             </div>
                         </div>
                     </form>
