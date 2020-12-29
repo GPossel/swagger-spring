@@ -42,7 +42,7 @@ public class AccountsApiController implements AccountsApi {
         this.request = request;
     }
 
-    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<Account> createAccount(@ApiParam(value = "created accounts", required = true) @Valid @RequestBody Account body
     ) {
         System.out.println(1);
@@ -69,10 +69,12 @@ public class AccountsApiController implements AccountsApi {
         return new ResponseEntity<Account>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-//    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<List<Account>> getAccounts(){
         String accept = request.getHeader("Accept");
-            if (accept != null) {
+        String content = request.getHeader("Content-type");
+
+        if (accept != null && content.contains("application/json")) {
                 try {
                     Iterable<Account> accounts = accountApiService.getAllAccounts();
                     return new ResponseEntity<List<Account>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
@@ -85,10 +87,12 @@ public class AccountsApiController implements AccountsApi {
         return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<Account> getAccountByIban(@ApiParam(value= "", required = true) @PathVariable("iban") String iban){
         String accept = request.getHeader("Accept");
+        String content = request.getHeader("Content-type");
 
-            if (accept != null) {
+        if (accept != null && content.contains("application/json")) {
                 try {
                     Account account = accountApiService.getAccountByIbanWithAuth(iban);
                     return new ResponseEntity<Account>(objectMapper.readValue(objectMapper.writeValueAsString(account), Account.class), HttpStatus.OK);
@@ -102,11 +106,13 @@ public class AccountsApiController implements AccountsApi {
     }
 
     /*Delete User*/
+    @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<Void> deleteAccount(@ApiParam(value = "The iban that needs to be deleted", required = true) @PathVariable("iban") String iban
     ) {
         String accept = request.getHeader("Accept");
+        String content = request.getHeader("Content-type");
 
-        if (accept != null) {
+        if (accept != null && content.contains("application/json")) {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 User loggedInUser = (User)authentication.getPrincipal();
@@ -123,7 +129,7 @@ public class AccountsApiController implements AccountsApi {
         }
     }
 
-    @PreAuthorize("hasAuthority('Customer')")
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<List<Account>> getAccountsForUser(@ApiParam(value= "", required = true) @PathVariable("userid") Long userId){
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
@@ -140,6 +146,7 @@ public class AccountsApiController implements AccountsApi {
         return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity withdraw(@ApiParam(value = "created withdraw", required = true) @Valid @RequestBody ATMrequest body)
     {
         String accept = request.getHeader("Accept");
@@ -169,6 +176,7 @@ public class AccountsApiController implements AccountsApi {
         return responseEntity;
     }
 
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity deposit(@ApiParam(value = "created deposit", required = true) @Valid @RequestBody ATMrequest body)
     {
         String accept = request.getHeader("Accept");

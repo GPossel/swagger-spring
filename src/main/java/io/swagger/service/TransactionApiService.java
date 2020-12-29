@@ -34,9 +34,11 @@ public class TransactionApiService {
         return (List<Transaction>) repositoryTransaction.findAll();
     }
 
+    // get transaction details -> id, (name sender, iban sender, datum, iban receiver, amount)
     public Transaction getTransaction(Long transactionId) {
         return repositoryTransaction.findById(transactionId).get();
     }
+
 
     public Boolean makeTransaction(Transaction transaction) {
             /// Use account services to

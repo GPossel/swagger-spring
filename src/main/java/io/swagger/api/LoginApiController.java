@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.model.AuthenticationResponse;
 import io.swagger.model.Login;
 import io.swagger.model.User;
+import io.swagger.service.LoginApiService;
 import io.swagger.service.UserApiService;
 import io.swagger.util.JwtUtil;
 import org.slf4j.Logger;
@@ -47,6 +48,9 @@ public class LoginApiController implements LoginApi {
     private UserApiService userDetailsService;
 
     @Autowired
+    private LoginApiService loginApiService;
+
+    @Autowired
     private JwtUtil jwtTokenUtil;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -72,17 +76,7 @@ public class LoginApiController implements LoginApi {
 
             final String jwt = jwtTokenUtil.generateToken(userDetails);
 
-            List<String> authorities = new ArrayList<>();
-            for(GrantedAuthority authority : userDetails.getAuthorities())
-            {
-                authorities.add(authority.getAuthority());
-            }
-
-            if(authorities.contains("Blocked")){
-                SecurityContextHolder.clearContext();
-                ResponseEntity responseEntity = ResponseEntity.status(401).body((JsonNode) objectMapper.createObjectNode().put("message", "The user is blocked"));
-                return responseEntity;
-            }
+            loginApiService.checkForBlocks(userDetails);
 
             return ResponseEntity.ok(new AuthenticationResponse(jwt));
         }

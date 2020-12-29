@@ -4,6 +4,7 @@ import io.swagger.filters.JwtRequestFilter;
 import io.swagger.service.UserApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -44,15 +45,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/UpdateUsers.html").permitAll()
                 .antMatchers("/Transactions.html").permitAll()
                 .antMatchers("/TransactionsJSON.js").permitAll()
-                .antMatchers("/authenticate").permitAll()
 
-                .antMatchers("/accounts").permitAll()
-                .antMatchers("/accounts/**").permitAll()
-                .antMatchers("/users").access("hasAuthority('Admin') or hasAuthority('Employee')")
-                .antMatchers("/users/**").permitAll()
-                .antMatchers("/transactions").access("hasAuthority('Employee') or hasAuthority('Customer') or hasAuthority('Admin')")
-                .antMatchers("/transactions/**").permitAll()
-                .antMatchers("/**").permitAll()
+                .antMatchers("/accounts").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/accounts/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/users").access("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/users/**").access("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/transactions").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/transactions/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
                 .anyRequest().authenticated()
                 // now we need to add the filter
                 .and()

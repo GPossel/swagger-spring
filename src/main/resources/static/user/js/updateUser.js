@@ -40,10 +40,10 @@
 
         let xhr = new XMLHttpRequest();
         xhr.open("PUT", "http://localhost:8080/users/"+ urlParam("id"));
-        const session = sessionStorage.getItem("X-AUTHENTICATION");
+        const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("X-AUTHENTICATION", session);
+        xhr.setRequestHeader("Authorization", session);
         xhr.onload = (e) => {
             switch (xhr.status) {
                 case 201:
@@ -52,6 +52,9 @@
                     break;
                 case 401:
                     alert("Unauthorized action.");
+                    break;
+                case 403:
+                    alert(xhr.status + ":" + xhr.responseText);
                     break;
                 case 500:
                 case 501:

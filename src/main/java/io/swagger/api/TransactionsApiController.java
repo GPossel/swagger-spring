@@ -42,10 +42,9 @@ public class TransactionsApiController implements TransactionsApi {
     private AccountApiService accountApiService;
 
     @Autowired
-    public TransactionsApiController(/*TransactionApiService transactionApiService,*/ ObjectMapper objectMapper, HttpServletRequest request) {
+    public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
-//        this.transactionApiService = transactionApiService;
     }
 
     @PreAuthorize("hasAuthority('Employee')")
@@ -65,7 +64,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @PreAuthorize("hasAuthority('Employee')")
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<Transaction> getTransaction(@Min(0L) @ApiParam(value = "", required = true, allowableValues = "") @PathVariable("transactionId") Long transactionId
     ) {
         String accept = request.getHeader("Accept");
@@ -77,9 +76,12 @@ public class TransactionsApiController implements TransactionsApi {
         return status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 
-    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer') or hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<List<Transaction>> searchTansaction
+            // transaction moet niet terug sturen wie de performer is, wel de iban
+            // user performer naam
             (@ApiParam(value = "") @Valid @RequestParam(value = "userPerformer", required = false) Long userPerformer,
+             // transactionId moet weg, ook niet terug geven
              @ApiParam(value = "") @Valid @RequestParam(value = "transactionId", required = false) Long transactionId,
              @ApiParam(value = "") @Valid @RequestParam(value = "IBAN", required = false) String IBAN,
              @ApiParam(value = "") @Valid @RequestParam(value = "transferAmount", required = false) Double transferAmount,
@@ -98,7 +100,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer') or hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<Transaction> transferFunds(@ApiParam(value = "Transaction object", required = true) @Valid @RequestBody Transaction body) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
