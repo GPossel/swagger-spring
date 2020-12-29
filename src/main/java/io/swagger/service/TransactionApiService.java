@@ -41,8 +41,8 @@ public class TransactionApiService {
     public Boolean makeTransaction(Transaction transaction) {
             /// Use account services to
             /// Find account receiver & sender
-            Account receiver = accountApiService.getAccountByIBAN(transaction.getIbanReceiver());
-            Account sender = accountApiService.getAccountByIBAN(transaction.getIbanSender());
+            Account receiver = accountApiService.getByIBAN(transaction.getIbanReceiver());
+            Account sender = accountApiService.getByIBAN(transaction.getIbanSender());
 
             // Calculate new balance for account receiver
             Double Rbalance = receiver.getBalance();
@@ -55,8 +55,8 @@ public class TransactionApiService {
             sender.setBalance(Sbalance);
 
             // UPDATE accounts in database with included new balance
-            accountApiService.updateNewBalanceServiceAccounts(receiver.getBalance(), receiver.getIBAN());
-            accountApiService.updateNewBalanceServiceAccounts(sender.getBalance(), sender.getIBAN());
+            accountApiService.updateNewBalanceServiceAccounts(receiver.getBalance(), receiver.getIban());
+            accountApiService.updateNewBalanceServiceAccounts(sender.getBalance(), sender.getIban());
 
             // now the transaction was successful save the transaction
             repositoryTransaction.save(transaction);
@@ -65,8 +65,8 @@ public class TransactionApiService {
 
 
     public void checkValidTransaction(Transaction body) throws Exception {
-        Account accountSender = accountApiService.getAccountByIBAN(body.getIbanSender());
-        Account accountReceiver = accountApiService.getAccountByIBAN(body.getIbanReceiver());
+        Account accountSender = accountApiService.getByIBAN(body.getIbanSender());
+        Account accountReceiver = accountApiService.getByIBAN(body.getIbanReceiver());
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loggedInUser = (User)authentication.getPrincipal();
@@ -149,29 +149,29 @@ public class TransactionApiService {
             List<Account> accounts = (List<Account>) accountApiService.getAccountsForUser(userId);
             for (Account account : accounts) {
                 if (userPerformer != null) {
-                    for (Transaction t : repositoryTransaction.findAllWithUserIdCustomer(userPerformer, account.getIBAN())) {
+                    for (Transaction t : repositoryTransaction.findAllWithUserIdCustomer(userPerformer, account.getIban())) {
                         myList.add(t);
                     }
                 }
                 if (transactionId != null) {
-                    List<Transaction> transactions = repositoryTransaction.findAllWithUserIdCustomer(transactionId, account.getIBAN());
+                    List<Transaction> transactions = repositoryTransaction.findAllWithUserIdCustomer(transactionId, account.getIban());
                     for (Transaction t : transactions) {
                         myList.add(t);
                     }
                 }
                 if (IBAN != null) {
-                    for (Transaction t : repositoryTransaction.getTransactionsFromIBANCustomer(IBAN, account.getIBAN())) {
+                    for (Transaction t : repositoryTransaction.getTransactionsFromIBANCustomer(IBAN, account.getIban())) {
                         myList.add(t);
                     }
                 }
                 if (transferAmount != null) {
-                    List<Transaction> transactions = repositoryTransaction.getTransactionsFromAmountCustomer(transferAmount, account.getIBAN());
+                    List<Transaction> transactions = repositoryTransaction.getTransactionsFromAmountCustomer(transferAmount, account.getIban());
                     for (Transaction t : transactions) {
                         myList.add(t);
                     }
                 }
                 if (myList.size() == 0) {
-                    List<Transaction> transactions = repositoryTransaction.getAllTransactionsFromCustomer(account.getIBAN());
+                    List<Transaction> transactions = repositoryTransaction.getAllTransactionsFromCustomer(account.getIban());
                     for (Transaction t : transactions) {
                         myList.add(t);
                     }
@@ -234,7 +234,7 @@ public class TransactionApiService {
         Timestamp endPeriod = new Timestamp(startPeriod.getTime() + oneDay);
 
 
-        List<Transaction> transactions = repositoryTransaction.getTransactionsForAccountAndToday(account.getIBAN(), startPeriod, endPeriod);
+        List<Transaction> transactions = repositoryTransaction.getTransactionsForAccountAndToday(account.getIban(), startPeriod, endPeriod);
         for (Transaction transaction : transactions) {
             transferAmountToday += transaction.getTransferAmount();
         }

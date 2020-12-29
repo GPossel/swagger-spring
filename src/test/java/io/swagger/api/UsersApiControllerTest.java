@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,8 +75,8 @@ public class UsersApiControllerTest {
     /*Create a User*/
     @Test
     public void makeCorrectUsersShouldReturnCREATED() throws Exception {
-        User newObjectInstance = new User("Sander", "Boeree", "625874@student.inholland.nl", "Welkom123",
-                "0615022324", "23-04-2000", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "Sander", "Boeree", "625874@student.inholland.nl", "Welkom123",
+                "0615022324", "23-04-2000", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")
@@ -98,8 +99,8 @@ public class UsersApiControllerTest {
     /* all wrong credentials for transaction */
     @Test
     public void makeWrong_FirstNameWithInteger_UserShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
-        User newObjectInstance = new User("Sander1", "Boeree", "625874@student.inholland.nl", "Welkom123",
-                "0615992392", "23-04-2000", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "Sander1", "Boeree", "625874@student.inholland.nl", "Welkom123",
+                "0615992392", "23-04-2000", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")
@@ -112,8 +113,8 @@ public class UsersApiControllerTest {
 
     @Test
     public void makeWrong_FirstNameToLong_UserShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
-        User newObjectInstance = new User("SanderAlexanderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", "Boeree", "625874@student.inholland.nl", "Welkom123",
-                "0615992392", "23-04-2000", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "SanderAlexanderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", "Boeree", "625874@student.inholland.nl", "Welkom123",
+                "0615992392", "23-04-2000", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")
@@ -126,8 +127,8 @@ public class UsersApiControllerTest {
 
     @Test
     public void makeWrong_LastNameWithInteger_UserShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
-        User newObjectInstance = new User("Sander", "Boeree1", "625874@student.inholland.nl", "Welkom123",
-                "0615992392", "23-04-2000", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "Sander", "Boeree1", "625874@student.inholland.nl", "Welkom123",
+                "0615992392", "23-04-2000", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")
@@ -140,8 +141,8 @@ public class UsersApiControllerTest {
 
     @Test
     public void makeWrong_LastNameToLong_UserShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
-        User newObjectInstance = new User("Sander", "Boereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "625874@student.inholland.nl", "Welkom123",
-                "0615992392", "23-04-2000", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "Sander", "Boereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "625874@student.inholland.nl", "Welkom123",
+                "0615992392", "23-04-2000", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")
@@ -154,8 +155,8 @@ public class UsersApiControllerTest {
 
     @Test
     public void makeInvalid_Email_UserShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
-        User newObjectInstance = new User("Sander", "Boeree", "foute#email.com", "Welkom123",
-                "0615992392", "23-04-2000", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "Sander", "Boeree", "foute#email.com", "Welkom123",
+                "0615992392", "23-04-2000", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")
@@ -168,8 +169,8 @@ public class UsersApiControllerTest {
 
     @Test
     public void makeInvalid_Password_UserShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
-        User newObjectInstance = new User("Sander", "Boeree", "625874@student.inholland.nl", "test",
-                "0615992392", "23-04-2000", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "Sander", "Boeree", "625874@student.inholland.nl", "test",
+                "0615992392", "23-04-2000", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")
@@ -182,8 +183,8 @@ public class UsersApiControllerTest {
 
     @Test
     public void makeInvalid_PhoneNumber_UserShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
-        User newObjectInstance = new User("Sander", "Boeree", "625874@student.inholland.nl", "Welkom123",
-                "261G599A2C392", "23-04-2000", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "Sander", "Boeree", "625874@student.inholland.nl", "Welkom123",
+                "261G599A2C392", "23-04-2000", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")
@@ -196,8 +197,8 @@ public class UsersApiControllerTest {
 
     @Test
     public void makeInvalid_BirtDate_UserShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
-        User newObjectInstance = new User("Sander", "Boeree", "625874@student.inholland.nl", "Welkom123",
-                "261G599A2C392", "16-01-2024", "16-01-2020", RankEnum.ADMIN, StatusEnum.BLOCKED);
+        User newObjectInstance = new User(000000L, "Sander", "Boeree", "625874@student.inholland.nl", "Welkom123",
+                "261G599A2C392", "16-01-2024", "20-06-2000 12:23:12", RankEnum.ADMIN, StatusEnum.ACTIVE);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .header("Accept", "application/json")

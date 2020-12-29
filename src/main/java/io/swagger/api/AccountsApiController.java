@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.model.ATMrequest;
 import io.swagger.model.Account;
+import io.swagger.model.AccountRequest;
 import io.swagger.model.User;
 import io.swagger.service.AccountApiService;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Admin')")
-    public ResponseEntity<Account> createAccount(@ApiParam(value = "created accounts", required = true) @Valid @RequestBody Account body
+    public ResponseEntity<Account> create(@ApiParam(value = "created accounts", required = true) @Valid @RequestBody AccountRequest body
     ) {
         System.out.println(1);
         System.out.println(body);
@@ -53,7 +54,7 @@ public class AccountsApiController implements AccountsApi {
         if (accept != null && content.contains("application/json")) {
             try {
                 if (body != null) {
-                    return new ResponseEntity<Account>(objectMapper.readValue(objectMapper.writeValueAsString(accountApiService.createAccount(body)), Account.class), HttpStatus.CREATED);
+                    return new ResponseEntity<Account>(objectMapper.readValue(objectMapper.writeValueAsString(accountApiService.create(body)), Account.class), HttpStatus.CREATED);
                 }
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
@@ -62,19 +63,16 @@ public class AccountsApiController implements AccountsApi {
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
-            }
-        else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<Account>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
     }
 
 //    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Admin')")
-    public ResponseEntity<List<Account>> getAccounts(){
+    public ResponseEntity<List<Account>> getAll(){
         String accept = request.getHeader("Accept");
             if (accept != null) {
                 try {
-                    Iterable<Account> accounts = accountApiService.getAllAccounts();
+                    Iterable<Account> accounts = accountApiService.getAll();
                     return new ResponseEntity<List<Account>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
@@ -82,15 +80,15 @@ public class AccountsApiController implements AccountsApi {
                     return responseEntity;
                 }
             }
-        return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<List<Account>>(HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity<Account> getAccountByIban(@ApiParam(value= "", required = true) @PathVariable("iban") String iban){
+    public ResponseEntity<Account> getByIban(@ApiParam(value= "", required = true) @PathVariable("iban") String iban){
         String accept = request.getHeader("Accept");
 
             if (accept != null) {
                 try {
-                    Account account = accountApiService.getAccountByIbanWithAuth(iban);
+                    Account account = accountApiService.getByIbanWithAuth(iban);
                     return new ResponseEntity<Account>(objectMapper.readValue(objectMapper.writeValueAsString(account), Account.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
@@ -98,11 +96,11 @@ public class AccountsApiController implements AccountsApi {
                     return responseEntity;
                 }
             }
-        return new ResponseEntity<Account>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
     }
 
     /*Delete User*/
-    public ResponseEntity<Void> deleteAccount(@ApiParam(value = "The iban that needs to be deleted", required = true) @PathVariable("iban") String iban
+    public ResponseEntity<Void> delete(@ApiParam(value = "The iban that needs to be deleted", required = true) @PathVariable("iban") String iban
     ) {
         String accept = request.getHeader("Accept");
 
@@ -110,7 +108,7 @@ public class AccountsApiController implements AccountsApi {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 User loggedInUser = (User)authentication.getPrincipal();
-                accountApiService.deleteAccount(iban);
+                accountApiService.delete(iban);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body((JsonNode) objectMapper.createObjectNode().put("message", "Deleted Successfully!"));
                 return responseEntity;
             } catch (Exception e) {
@@ -119,7 +117,7 @@ public class AccountsApiController implements AccountsApi {
             }
         }
         else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -137,7 +135,7 @@ public class AccountsApiController implements AccountsApi {
                     return responseEntity;
                 }
             }
-        return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity withdraw(@ApiParam(value = "created withdraw", required = true) @Valid @RequestBody ATMrequest body)
@@ -151,9 +149,9 @@ public class AccountsApiController implements AccountsApi {
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
    //                 oldBalance = accountApiService.getAccountByIbanWithAuth(body.getIBAN()).getBalance();
-                    Account account = accountApiService.getAccountByIbanWithAuth(body.getIBAN());
+                    Account account = accountApiService.getByIbanWithAuth(body.getIBAN());
                     oldBalance = account.getBalance();
-                    account = accountApiService.withdrawAccount(body.getIBAN(), body.getTransferAmount());
+                    account = accountApiService.withdraw(body.getIBAN(), body.getTransferAmount());
                     newBalance = account.getBalance();
                 }
 
@@ -181,9 +179,9 @@ public class AccountsApiController implements AccountsApi {
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
           //          oldBalance = accountApiService.getAccountByIbanWithAuth(body.getIBAN()).getBalance();
-                    Account account = accountApiService.getAccountByIbanWithAuth(body.getIBAN());
+                    Account account = accountApiService.getByIbanWithAuth(body.getIBAN());
                     oldBalance = account.getBalance();
-                    account = accountApiService.depositAccount(body.getIBAN(), body.getTransferAmount());
+                    account = accountApiService.deposit(body.getIBAN(), body.getTransferAmount());
                     newBalance = account.getBalance();
                 }
 

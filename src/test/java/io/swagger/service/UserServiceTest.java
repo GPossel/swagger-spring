@@ -22,7 +22,7 @@ public class UserServiceTest {
 
     @Test
     public void ListMustNotBeNull() throws Exception {
-        List<User> users = userApiService.getUsersWithFilters("", "", "", "");
+        Iterable<User> users = userApiService.getAll();
         assertNotNull(users);
     }
 }

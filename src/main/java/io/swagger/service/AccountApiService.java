@@ -2,26 +2,14 @@ package io.swagger.service;
 
 import io.swagger.dao.RepositoryAccount;
 import io.swagger.model.Account;
-import io.swagger.model.AccountUser;
+import io.swagger.model.AccountRequest;
 import io.swagger.model.User;
-import javassist.NotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import io.swagger.model.Transaction;
-import io.swagger.model.User;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.KeyException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -37,13 +25,14 @@ public class AccountApiService {
 
     User loggedInUser;
 
-    // post /accounts
-    public Account createAccount(Account body) {
-        return repositoryAccount.save(body);
+    public Account create(AccountRequest body) {
+        if (body.getRank() == Account.RankEnum.BANK){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't create an account with rank: BANK");
+        }
+        return repositoryAccount.save(new Account(body));
     }
 
-    //get /accounts
-    public Iterable<Account> getAllAccounts() {
+    public Iterable<Account> getAll() {
         if (this.loggedInUser == null) {
             this.loggedInUser = userApiService.getLoggedInUser();
             if (this.loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
@@ -54,27 +43,32 @@ public class AccountApiService {
         return repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
     }
 
-    // Get /accounts/{iban}
-    public Account getAccountByIbanWithAuth(String iban) {
-        Account account = this.getAccountByIBAN(iban);
+    public Account getByIBAN(String iban) {
+        Optional<Account> optionalAccount = repositoryAccount.findById(iban);
+        if (!optionalAccount.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return optionalAccount.get();
+    }
+
+    public Account getByIbanWithAuth(String iban) {
+        Account account = this.getByIBAN(iban);
         if (!UserHasRights(account.getUserId())){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         return account;
     }
 
-    ///Delete /accounts/{iban}
-    public void deleteAccount(String iban)  {
-        Account account = this.getAccountByIBAN(iban);
+    public void delete(String iban)  {
+        Account account = this.getByIBAN(iban);
 
         account.setStatus(Account.StatusEnum.DELETED);
-        Integer i = repositoryAccount.Update(account.getIBAN(), account);
+        Integer i = repositoryAccount.Update(account.getIban(), account);
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
-    //get /accounts/{userId}/users
     public Iterable<Account> getAccountsForUser(Long userId) {
         if (!UserHasRights(userId)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -83,9 +77,8 @@ public class AccountApiService {
         return repositoryAccount.getAccountsForUser(userId);
     }
 
-    // Post /accounts/{iban}/deposit
-    public Account depositAccount(String ibanReceiver, double deposit) {
-        Account account = this.getAccountByIBAN(ibanReceiver);
+    public Account deposit(String ibanReceiver, double deposit) {
+        Account account = this.getByIBAN(ibanReceiver);
 
         account.setBalance(account.getBalance() + deposit);
 
@@ -93,9 +86,8 @@ public class AccountApiService {
         return repositoryAccount.findById(ibanReceiver).get();
     }
 
-    // Post /accounts/{iban}/deposit
-    public Account withdrawAccount(String ibanReceiver, double withdraw) {
-        Account account = this.getAccountByIBAN(ibanReceiver);
+    public Account withdraw(String ibanReceiver, double withdraw) {
+        Account account = this.getByIBAN(ibanReceiver);
         account.setBalance(account.getBalance() - withdraw);
 
         repositoryAccount.Update(ibanReceiver, account);
@@ -103,20 +95,11 @@ public class AccountApiService {
     }
 
     public void updateNewBalanceServiceAccounts(double NewBalance, String IBAN) {
-        Account account = this.getAccountByIBAN(IBAN);
+        Account account = this.getByIBAN(IBAN);
 
         account.setBalance(NewBalance);
 
         repositoryAccount.Update(IBAN, account);
-    }
-
-    public Account getAccountByIBAN(String iban) {
-        Optional<Account> optionalAccount = repositoryAccount.findById(iban);
-        if (!optionalAccount.isPresent()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Account account = optionalAccount.get();
-        return account;
     }
 
     public boolean UserHasRights(Long userId){

@@ -11,14 +11,15 @@ import org.springframework.stereotype.Repository;
 import org.threeten.bp.LocalDate;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface RepositoryUser extends CrudRepository<User, Long> {
     @Transactional
     @Modifying
-    @Query("UPDATE User u SET u.firstname = :firstname, u.lastname = :lastname, u.email = :email, u.phone = :phone, u.birthdate = :birthdate, u.rank = :rank, u.status = :status  WHERE u.id = :userId")
-    void updateUser(@Param("userId") Long userId, @Param("firstname") String firstname, @Param("lastname") String lastname, @Param("email") String email, @Param("phone") String phone, @Param("birthdate") String birthdate, @Param("rank") User.RankEnum rank, @Param("status") User.StatusEnum status);
+    @Query("UPDATE User u SET u = :user WHERE u.id = :id")
+    Integer updateUser( @Param("id") Long id, @Param("user") User user);
 
     @Query("select u from User u where u.email =:email and u.password = :password")
     User findUserByUserCredentials(@Param("email") String username, @Param("password") String password);
