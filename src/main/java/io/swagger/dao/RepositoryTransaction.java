@@ -14,7 +14,7 @@ import java.util.List;
 public interface RepositoryTransaction extends CrudRepository<Transaction, Long> {
 
     @Query("select t from Transaction t where t.userPerformer = :userPerformer")
-    List<Transaction> findAllWithUserId(@Param("userPerformer") Long userPerformer);
+    List<Transaction> findAllWithUserId(@Param("userPerformer") String userPerformer);
 
     @Query("select t from Transaction t where t.ibanSender =:IBAN OR t.ibanReceiver =:IBAN")
     List<Transaction> getTransactionsFromIBAN(@Param("IBAN") String IBAN);
@@ -24,9 +24,6 @@ public interface RepositoryTransaction extends CrudRepository<Transaction, Long>
 
 
     // Customer only
-    @Query("select t from Transaction t where t.userPerformer = :userPerformer and t.ibanSender = :account OR t.ibanReceiver = :account")
-    List<Transaction> findAllWithUserIdCustomer(@Param("userPerformer") Long userPerformer, @Param("account") String account);
-
     @Query("select t from Transaction t where t.ibanSender =:IBAN OR t.ibanReceiver =:IBAN and t.ibanSender = :account OR t.ibanReceiver = :account")
     List<Transaction> getTransactionsFromIBANCustomer(@Param("IBAN") String IBAN, @Param("account") String account);
 

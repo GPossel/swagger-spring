@@ -50,7 +50,8 @@ public class MyAppRunnerConfig implements ApplicationRunner {
 
         List<Transaction> transactions = new ArrayList<>(
                 Arrays.asList(
-                        new Transaction("NL77INHO0123456789", "NL11INHO1111111111", 1000055L, 140D),
+                        new Transaction("NL33INHO3333333333", "NL77INHO0123456789", 1000054L, 140D),
+                        new Transaction("NL77INHO0123456789", "NL22INHO9876543210", 1000052L, 10D),
                         new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000055L, 9D),
                         new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
                         new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),

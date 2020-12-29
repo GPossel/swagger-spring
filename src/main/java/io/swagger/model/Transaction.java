@@ -3,17 +3,11 @@ package io.swagger.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.service.AccountApiService;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -49,6 +43,9 @@ public class Transaction {
   @JsonProperty("transferAmount")
   private Double transferAmount = null;
 
+  @JsonProperty("nameSender")
+  private String nameSender = null;
+
   public Transaction()
   {}
 
@@ -56,6 +53,14 @@ public class Transaction {
     this.ibanSender = ibanSender;
     this.ibanReceiver = ibanReceiver;
     this.userPerformer = userPerformer;
+    this.transactionDate = transactionDate;
+    this.transferAmount = transferAmount;
+  }
+
+  public Transaction(String nameSender, String ibanSender, String ibanReceiver, Double transferAmount, Timestamp transactionDate) {
+    this.ibanSender = ibanSender;
+    this.ibanReceiver = ibanReceiver;
+    this.nameSender = nameSender;
     this.transactionDate = transactionDate;
     this.transferAmount = transferAmount;
   }
@@ -223,6 +228,14 @@ public class Transaction {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public String getNameSender() {
+    return nameSender;
+  }
+
+  public void setNameSender(String nameSender) {
+    this.nameSender = nameSender;
   }
 
 }
