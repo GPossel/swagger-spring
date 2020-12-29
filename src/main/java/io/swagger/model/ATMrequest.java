@@ -1,10 +1,5 @@
 package io.swagger.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import javax.persistence.Entity;
-
 public class ATMrequest {
 
     private String IBAN;

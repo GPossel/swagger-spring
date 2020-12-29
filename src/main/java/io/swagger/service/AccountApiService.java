@@ -2,26 +2,15 @@ package io.swagger.service;
 
 import io.swagger.dao.RepositoryAccount;
 import io.swagger.model.Account;
-import io.swagger.model.AccountUser;
 import io.swagger.model.User;
-import javassist.NotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import io.swagger.model.Transaction;
-import io.swagger.model.User;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.KeyException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -85,28 +74,40 @@ public class AccountApiService {
 
     // Post /accounts/{iban}/deposit
     public Account depositAccount(String ibanReceiver, double deposit) {
-        Account account = this.getAccountByIBAN(ibanReceiver);
-
+        Account account = validateATMRequest(ibanReceiver, deposit);
         account.setBalance(account.getBalance() + deposit);
-
         repositoryAccount.Update(ibanReceiver, account);
         return repositoryAccount.findById(ibanReceiver).get();
     }
 
     // Post /accounts/{iban}/deposit
     public Account withdrawAccount(String ibanReceiver, double withdraw) {
-        Account account = this.getAccountByIBAN(ibanReceiver);
+        Account account = validateATMRequest(ibanReceiver, withdraw);
         account.setBalance(account.getBalance() - withdraw);
-
         repositoryAccount.Update(ibanReceiver, account);
         return repositoryAccount.findById(ibanReceiver).get();
     }
 
+    private Account validateATMRequest(String iban, double amount) {
+        Account account = getAccountByIBAN(iban);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = (User)authentication.getPrincipal();
+
+        // validate this account belongs to the logged in user,
+        if(!account.getUserId().equals(loggedInUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Account: " + iban + " is not account of: " + loggedInUser.getEmail());
+        }
+        if(amount < 0) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Amount was negative. Please enter positive amounts only > 0.");
+        }
+
+        return account;
+    }
+
     public void updateNewBalanceServiceAccounts(double NewBalance, String IBAN) {
         Account account = this.getAccountByIBAN(IBAN);
-
         account.setBalance(NewBalance);
-
         repositoryAccount.Update(IBAN, account);
     }
 
