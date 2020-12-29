@@ -78,11 +78,7 @@ public class TransactionsApiController implements TransactionsApi {
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<List<Transaction>> searchTansaction
-            // transaction moet niet terug sturen wie de performer is, wel de iban
-            // user performer naam
-            (@ApiParam(value = "") @Valid @RequestParam(value = "userPerformer", required = false) Long userPerformer,
-             // transactionId moet weg, ook niet terug geven
-             @ApiParam(value = "") @Valid @RequestParam(value = "transactionId", required = false) Long transactionId,
+            (@ApiParam(value = "") @Valid @RequestParam(value = "userPerformer", required = false) String userPerformer,
              @ApiParam(value = "") @Valid @RequestParam(value = "IBAN", required = false) String IBAN,
              @ApiParam(value = "") @Valid @RequestParam(value = "transferAmount", required = false) Double transferAmount,
              @ApiParam(value = "") @Valid @RequestParam(value = "MaxNumberOfResults", required = false) Integer maxNumberOfResults) {
@@ -90,7 +86,7 @@ public class TransactionsApiController implements TransactionsApi {
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
             try {
-                    List<Transaction> myList = transactionApiService.FindAllMatches(userPerformer, transactionId, IBAN, transferAmount, maxNumberOfResults);
+                    List<Transaction> myList = transactionApiService.FindAllMatches(userPerformer, IBAN, transferAmount, maxNumberOfResults);
                     return new ResponseEntity<List<Transaction>>(objectMapper.readValue(objectMapper.writeValueAsString(myList), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
