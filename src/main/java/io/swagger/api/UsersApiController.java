@@ -3,9 +3,9 @@ package io.swagger.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
-import io.swagger.model.Account;
 import io.swagger.model.User;
 import io.swagger.model.UserRequest;
+import io.swagger.model.UserResponse;
 import io.swagger.service.UserApiService;
 import io.swagger.util.JwtUtil;
 import org.slf4j.Logger;
@@ -46,30 +46,30 @@ public class UsersApiController implements UsersApi {
     }
 
 //    @PreAuthorize("hasAuthority('Admin')")
-    public ResponseEntity<User> create(@ApiParam(value = "created users", required = true) @Valid @RequestBody UserRequest body
+    public ResponseEntity<UserResponse> create(@ApiParam(value = "created users", required = true) @Valid @RequestBody UserRequest body
     ) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
 
         if (accept != null && content.contains("application/json")) {
             try {
-                return new ResponseEntity<User>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.create(body)), User.class), HttpStatus.CREATED);
+                return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.create(body)), UserResponse.class), HttpStatus.CREATED);
             }  catch (Exception e) {
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
         }
-        return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<UserResponse>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
-    public ResponseEntity<List<User>> getAll() {
+    public ResponseEntity<List<UserResponse>> getAll() {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
 
         if (accept != null && content.contains("application/json")) {
             try {
-                return new ResponseEntity<List<User>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getAll()), List.class), HttpStatus.OK);
+                return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getAll()), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
@@ -118,7 +118,7 @@ public class UsersApiController implements UsersApi {
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
-    public ResponseEntity<List<User>> getUsers(@ApiParam(value = "") @Valid @RequestParam(value = "firstname", required = false) String firstname
+    public ResponseEntity<List<UserResponse>> getUsers(@ApiParam(value = "") @Valid @RequestParam(value = "firstname", required = false) String firstname
             , @ApiParam(value = "") @Valid @RequestParam(value = "lastname", required = false) String lastname
             , @ApiParam(value = "", allowableValues = "Customer, Employee, Admin") @Valid @RequestParam(value = "RankOfUser", required = false) String rankOfUser
             , @ApiParam(value = "", allowableValues = "Active, Blocked") @Valid @RequestParam(value = "StatusOfUser", required = false) String statusOfUser
@@ -127,7 +127,7 @@ public class UsersApiController implements UsersApi {
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
             try {
-                return new ResponseEntity<List<User>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getUsersForFilters(firstname, lastname, rankOfUser, statusOfUser)), List.class), HttpStatus.OK);
+                return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getUsersForFilters(firstname, lastname, rankOfUser, statusOfUser)), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
@@ -139,14 +139,14 @@ public class UsersApiController implements UsersApi {
         }
     }
 
-    public ResponseEntity<User> update(@ApiParam(value = "Updated user object", required = true) @Valid @RequestBody User body
-            , @ApiParam(value = "userId that need to be updated", required = true) @PathVariable("userId") Long id
+    public ResponseEntity<UserResponse> update(@ApiParam(value = "Updated user object", required = true) @Valid @RequestBody UserRequest body
+            , @ApiParam(value = "userId that need to be updated", required = true) @PathVariable("userId") Long userId
     ) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
             try {
-                return new ResponseEntity<User>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.update(id, body)), User.class), HttpStatus.OK);
+                return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.update(userId, body)), UserResponse.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));

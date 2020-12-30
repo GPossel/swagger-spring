@@ -29,7 +29,6 @@ import java.util.*;
 @Entity
 @Validated
 @NoArgsConstructor
-
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-18T09:28:40.437Z[GMT]")
 public class User implements UserDetails{
   @Id

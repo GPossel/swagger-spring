@@ -1,5 +1,10 @@
 package io.swagger.model;
 
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
+@NoArgsConstructor
+@Validated
 public class UserRequest {
     private String firstname;
     private String lastname;

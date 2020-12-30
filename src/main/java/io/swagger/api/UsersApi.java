@@ -6,13 +6,9 @@
 package io.swagger.api;
 
 import io.swagger.annotations.*;
-import io.swagger.model.Account;
-import io.swagger.model.Transaction;
-import io.swagger.model.User;
-import io.swagger.model.UserRequest;
+import io.swagger.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.threeten.bp.LocalDate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,10 +17,10 @@ import java.util.List;
 @Api(value = "users", description = "the users API")
 public interface UsersApi {
 
-    @ApiOperation(value = "Create a new user", nickname = "createUser", notes = "", response = User.class, authorizations = {
+    @ApiOperation(value = "Create a new user", nickname = "createUser", notes = "", response = UserResponse.class, authorizations = {
         @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 201, message = "A user was created succesfully.", response = User.class),
+        @ApiResponse(code = 201, message = "A user was created succesfully.", response = UserResponse.class),
         @ApiResponse(code = 400, message = "invalid operation"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
@@ -35,12 +31,12 @@ public interface UsersApi {
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<User> create(@ApiParam(value = "created users" ,required=true )  @Valid @RequestBody UserRequest body);
+    ResponseEntity<UserResponse> create(@ApiParam(value = "created users" ,required=true )  @Valid @RequestBody UserRequest body);
 
-    @ApiOperation(value = "returns list of all users", nickname = "getAll", notes = "", response = User.class, responseContainer = "List", authorizations = {
+    @ApiOperation(value = "returns list of all users", nickname = "getAll", notes = "", response = UserResponse.class, responseContainer = "List", authorizations = {
             @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Succesful request.", response = User.class, responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Succesful request.", response = UserResponse.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "invalid operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -50,7 +46,7 @@ public interface UsersApi {
     @RequestMapping(value = "/users",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<User>> getAll();
+    ResponseEntity<List<UserResponse>> getAll();
 
     @ApiOperation(value = "Delete user", nickname = "deleteUser", notes = "Deletes a user, only the current user or an employee can delete a user.", authorizations = {
         @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })
@@ -68,7 +64,7 @@ public interface UsersApi {
 
     @ApiOperation(value = "Get Users by userId", nickname = "getUserByIban", notes = "", response = User.class, tags={ "users", })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "account by userId", response = User.class),
+            @ApiResponse(code = 200, message = "account by userId", response = User.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "invalid operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -78,12 +74,12 @@ public interface UsersApi {
     @RequestMapping(value = "/users/{userId}",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<User> getById(@ApiParam(value = "",required=true) @PathVariable("userId") Long userId
-    );
-    @ApiOperation(value = "returns list of users", nickname = "getUsers", notes = "", response = User.class, responseContainer = "List", authorizations = {
+    ResponseEntity<User> getById(@ApiParam(value = "",required=true) @PathVariable("userId") Long userId);
+
+    @ApiOperation(value = "returns list of users", nickname = "getUsers", notes = "", response = UserResponse.class, responseContainer = "List", authorizations = {
         @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Succesful request.", response = User.class, responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Succesful request.", response = UserResponse.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "invalid operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -93,16 +89,16 @@ public interface UsersApi {
     @RequestMapping(value = "/users/filters",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<User>> getUsers(@ApiParam(value = "") @Valid @RequestParam(value = "firstname", required = false) String firstname
+    ResponseEntity<List<UserResponse>> getUsers(@ApiParam(value = "") @Valid @RequestParam(value = "firstname", required = false) String firstname
 , @ApiParam(value = "") @Valid @RequestParam(value = "lastname", required = false) String lastname
 , @ApiParam(value = "", allowableValues = "Customer, Employee, Admin") @Valid @RequestParam(value = "RankOfUser", required = false) String rankOfUser
 , @ApiParam(value = "", allowableValues = "Active, Blocked") @Valid @RequestParam(value = "StatusOfUser", required = false) String statusOfUser
 );
 
-    @ApiOperation(value = "Updated user", nickname = "updateUser", notes = "Updates the current logged in user.", response = User.class, responseContainer = "List", authorizations = {
+    @ApiOperation(value = "Updated user", nickname = "updateUser", notes = "Updates the current logged in user.", response = UserResponse.class, responseContainer = "List", authorizations = {
             @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful user update", response = User.class, responseContainer = "List"),
+            @ApiResponse(code = 201, message = "Successful user update", response = UserResponse.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "invalid operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -113,7 +109,7 @@ public interface UsersApi {
             produces = { "application/json" },
             consumes = { "application/json" },
             method = RequestMethod.PUT)
-    ResponseEntity<User> update(@ApiParam(value = "Updated user object" ,required=true )  @Valid @RequestBody User body
+    ResponseEntity<UserResponse> update(@ApiParam(value = "Updated user object" ,required=true )  @Valid @RequestBody UserRequest body
             ,@ApiParam(value = "userId that need to be updated",required=true) @PathVariable("userId") Long userId
     );
 

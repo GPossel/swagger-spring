@@ -5,6 +5,7 @@ import io.swagger.dao.RepositoryUser;
 import io.swagger.model.Account;
 import io.swagger.model.User;
 import io.swagger.model.UserRequest;
+import io.swagger.model.UserResponse;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,9 +31,10 @@ public class UserApiService implements UserDetailsService {
 
     private User loggedInUser;
 
-    public User create(UserRequest body) {
+    public UserResponse create(UserRequest body) {
         User user = new User(body);
-        return repositoryUser.save(user);
+        user = repositoryUser.save(user);
+        return new UserResponse(user);
     }
 
     public Iterable<User> getAll() {
@@ -60,13 +62,14 @@ public class UserApiService implements UserDetailsService {
         repositoryUser.deleteById(id);
     }
 
-    public User update(Long id, User body) {
+    public UserResponse update(Long id, UserRequest body) {
         getByIdWithAuth(id); //checks if user exist and has rights to delete
-        Integer i = repositoryUser.updateUser(id, body);
+
+        Integer i = repositoryUser.updateUser(id, new User(body));
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
-        return this.getById(id);
+        return new UserResponse(this.getById(id));
     }
 
     public Iterable<User> getUsersForFilters(String firstname, String lastname, String rank, String status) {
