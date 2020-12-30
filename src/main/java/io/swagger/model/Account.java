@@ -41,6 +41,24 @@ public class Account {
   @Column(name = "USERID")
   private Long userId = null;
 
+  @JsonProperty("rank")
+  private RankEnum rank = null;
+
+  @JsonProperty("balance")
+  private Double balance = null;
+
+  @JsonProperty("currency")
+  private String currency = null;
+
+  @JsonProperty("dailyLimit")
+  private Double dailyLimit = null;
+
+  @JsonProperty("transferLimit")
+  private Double transferLimit = null;
+
+  @JsonProperty("status")
+  private StatusEnum status = null;
+
   public Account(String IBAN, Long userId, RankEnum rank, StatusEnum status, Double balance, String currency) {
     this.userId = userId;
     this.iban = IBAN;
@@ -114,21 +132,6 @@ public class Account {
     }
   }
 
-  @JsonProperty("rank")
-  private RankEnum rank = null;
-
-  @JsonProperty("balance")
-  private Double balance = null;
-
-  @JsonProperty("currency")
-  private String currency = null;
-
-  @JsonProperty("dailyLimit")
-  private Double dailyLimit = null;
-
-  @JsonProperty("transferLimit")
-  private Double transferLimit = null;
-
   /**
    * Gets or Sets status
    */
@@ -160,8 +163,7 @@ public class Account {
     }
   }
 
-  @JsonProperty("status")
-  private StatusEnum status = null;
+
 
   public Account userId(Long userId) {
     this.userId = userId;

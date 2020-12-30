@@ -1,5 +1,6 @@
 package io.swagger.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
@@ -8,15 +9,33 @@ import java.util.Objects;
 @NoArgsConstructor
 @Validated
 public class UserResponse {
-    private Long id;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String phone;
-    private String birthdate;
-    private String registrationdate;
-    private String rank;
-    private String status;
+    @JsonProperty("id")
+    private Long id = null;
+
+    @JsonProperty("firstname")
+    private String firstname = null;
+
+    @JsonProperty("lastname")
+    private String lastname = null;
+
+    @JsonProperty("email")
+    private String email = null;
+
+    @JsonProperty("phone")
+    private String phone = null;
+
+    @JsonProperty("birthdate")
+    private String birthdate = null;
+
+    @JsonProperty("registrationdate")
+    private String registrationdate = null;
+
+    @JsonProperty("rank")
+    private String rank = null;
+
+    @JsonProperty("status")
+    private String status = null;
+
 
     public UserResponse(User u) {
         this.id = u.getId();
@@ -59,17 +78,8 @@ public class UserResponse {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class User {\n");
-
-        sb.append("    id: ").append(toIndentedString(id)).append("\n");
+        sb.append("class UserResponse {\n");
         sb.append("    firstname: ").append(toIndentedString(firstname)).append("\n");
-        sb.append("    lastname: ").append(toIndentedString(lastname)).append("\n");
-        sb.append("    email: ").append(toIndentedString(email)).append("\n");
-        sb.append("    phone: ").append(toIndentedString(phone)).append("\n");
-        sb.append("    birthdate: ").append(toIndentedString(birthdate)).append("\n");
-        sb.append("    registrationdate: ").append(toIndentedString(registrationdate)).append("\n");
-        sb.append("    rank: ").append(toIndentedString(rank)).append("\n");
-        sb.append("    status: ").append(toIndentedString(status)).append("\n");
         sb.append("}");
         return sb.toString();
     }

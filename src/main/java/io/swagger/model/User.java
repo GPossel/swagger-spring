@@ -1,11 +1,11 @@
 package io.swagger.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,8 +27,13 @@ import java.util.*;
  * User
  */
 @Entity
-@Validated
+@Getter
+@Setter
 @NoArgsConstructor
+@ToString
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-18T09:28:40.437Z[GMT]")
 public class User implements UserDetails{
   @Id
@@ -76,7 +81,7 @@ public class User implements UserDetails{
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        this.password = password;
+        setPasswordEncrypt(password);
         this.phone = phone;
         setBirthdate(birthdate);
         setRegistrationdate(registrationdate);

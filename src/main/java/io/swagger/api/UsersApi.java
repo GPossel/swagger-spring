@@ -62,9 +62,9 @@ public interface UsersApi {
         method = RequestMethod.DELETE)
     ResponseEntity<Void> delete(@ApiParam(value = "The userId that needs to be deleted",required=true) @PathVariable("userId") Long userId);
 
-    @ApiOperation(value = "Get Users by userId", nickname = "getUserByIban", notes = "", response = User.class, tags={ "users", })
+    @ApiOperation(value = "Get Users by userId", nickname = "getUserByIban", notes = "", response = UserResponse.class, tags={ "users", })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "account by userId", response = User.class, responseContainer = "List"),
+            @ApiResponse(code = 200, message = "account by userId", response = UserResponse.class),
             @ApiResponse(code = 400, message = "invalid operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -74,8 +74,8 @@ public interface UsersApi {
     @RequestMapping(value = "/users/{userId}",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<User> getById(@ApiParam(value = "",required=true) @PathVariable("userId") Long userId);
-
+    ResponseEntity<UserResponse> getById(@ApiParam(value = "",required=true) @PathVariable("userId") Long userId
+    );
     @ApiOperation(value = "returns list of users", nickname = "getUsers", notes = "", response = UserResponse.class, responseContainer = "List", authorizations = {
         @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })
     @ApiResponses(value = {

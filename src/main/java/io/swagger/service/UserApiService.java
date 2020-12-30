@@ -37,8 +37,13 @@ public class UserApiService implements UserDetailsService {
         return new UserResponse(user);
     }
 
-    public Iterable<User> getAll() {
-        return repositoryUser.findAll();
+    public Iterable<UserResponse> getAll() {
+        Iterable<User> users = repositoryUser.findAll();
+        List<UserResponse> userResponse = new ArrayList<>();
+        users.forEach(user -> {
+            userResponse.add(new UserResponse(user));
+        });
+        return userResponse;
     }
 
     public User getById(Long id) {
@@ -49,13 +54,13 @@ public class UserApiService implements UserDetailsService {
         return optionalUser.get();
     }
 
-    public User getByIdWithAuth(Long id) {
+    public UserResponse getByIdWithAuth(Long id) {
         User user = this.getById(id);
         if (!UserHasRights(id)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        return user;
+        return new UserResponse(user);
     }
 
     public void delete(Long id) {
@@ -65,7 +70,7 @@ public class UserApiService implements UserDetailsService {
     public UserResponse update(Long id, UserRequest body) {
         getByIdWithAuth(id); //checks if user exist and has rights to delete
 
-        Integer i = repositoryUser.updateUser(id, new User(body));
+        Integer i = repositoryUser.update(id, new User(body));
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }

@@ -45,7 +45,7 @@ public class UsersApiController implements UsersApi {
         this.request = request;
     }
 
-//    @PreAuthorize("hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Admin')")
     public ResponseEntity<UserResponse> create(@ApiParam(value = "created users", required = true) @Valid @RequestBody UserRequest body
     ) {
         String accept = request.getHeader("Accept");
@@ -101,20 +101,20 @@ public class UsersApiController implements UsersApi {
         }
     }
 
-    public ResponseEntity<User> getById(@ApiParam(value= "", required = true) @PathVariable("userId") Long userId){
+    public ResponseEntity<UserResponse> getById(@ApiParam(value= "", required = true) @PathVariable("userId") Long userId){
         String accept = request.getHeader("Accept");
 
         if (accept != null) {
             try {
-                User user = userApiService.getByIdWithAuth(userId);
-                return new ResponseEntity<User>(objectMapper.readValue(objectMapper.writeValueAsString(user), User.class), HttpStatus.OK);
+                UserResponse user = userApiService.getByIdWithAuth(userId);
+                return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(user), UserResponse.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
         }
-        return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<UserResponse>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
