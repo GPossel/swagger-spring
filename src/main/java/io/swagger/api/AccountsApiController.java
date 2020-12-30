@@ -3,9 +3,7 @@ package io.swagger.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
-import io.swagger.model.ATMrequest;
-import io.swagger.model.Account;
-import io.swagger.model.User;
+import io.swagger.model.*;
 import io.swagger.service.AccountApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +41,8 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAuthority('Employee')")
-    public ResponseEntity<Account> createAccount(@ApiParam(value = "created accounts", required = true) @Valid @RequestBody Account body
+    public ResponseEntity<AccountResponse> create(@ApiParam(value = "created accounts", required = true) @Valid @RequestBody AccountRequest body
+
     ) {
         System.out.println(1);
         System.out.println(body);
@@ -53,62 +52,58 @@ public class AccountsApiController implements AccountsApi {
         if (accept != null && content.contains("application/json")) {
             try {
                 if (body != null) {
-                    return new ResponseEntity<Account>(objectMapper.readValue(objectMapper.writeValueAsString(accountApiService.createAccount(body)), Account.class), HttpStatus.CREATED);
+                    return new ResponseEntity<AccountResponse>(objectMapper.readValue(objectMapper.writeValueAsString(accountApiService.create(body)), AccountResponse.class), HttpStatus.CREATED);
                 }
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Account>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<AccountResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (Exception e) {
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
-            }
-        else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<Account>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<AccountResponse>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Employee')")
-    public ResponseEntity<List<Account>> getAccounts(){
+    public ResponseEntity<List<AccountResponse>> getAll(){
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-type");
 
         if (accept != null && content.contains("application/json")) {
                 try {
-                    Iterable<Account> accounts = accountApiService.getAllAccounts();
-                    return new ResponseEntity<List<Account>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
+                    Iterable<AccountResponse> accounts = accountApiService.getAll();
+                    return new ResponseEntity<List<AccountResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
                     ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                     return responseEntity;
                 }
             }
-        return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<List<AccountResponse>>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Employee')")
-    public ResponseEntity<Account> getAccountByIban(@ApiParam(value= "", required = true) @PathVariable("iban") String iban){
+    public ResponseEntity<AccountResponse> getByIban(@ApiParam(value= "", required = true) @PathVariable("iban") String iban){
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-type");
 
         if (accept != null && content.contains("application/json")) {
                 try {
-                    Account account = accountApiService.getAccountByIbanWithAuth(iban);
-                    return new ResponseEntity<Account>(objectMapper.readValue(objectMapper.writeValueAsString(account), Account.class), HttpStatus.OK);
+                    AccountResponse account = accountApiService.getByIbanWithAuth(iban);
+                    return new ResponseEntity<AccountResponse>(objectMapper.readValue(objectMapper.writeValueAsString(account), AccountResponse.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
                     ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                     return responseEntity;
                 }
             }
-        return new ResponseEntity<Account>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<AccountResponse>(HttpStatus.BAD_REQUEST);
     }
 
     /*Delete User*/
     @PreAuthorize("hasAuthority('Employee')")
-    public ResponseEntity<Void> deleteAccount(@ApiParam(value = "The iban that needs to be deleted", required = true) @PathVariable("iban") String iban
-    ) {
+    public ResponseEntity<Void> delete(@ApiParam(value = "The iban that needs to be deleted", required = true) @PathVariable("iban") String iban) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-type");
 
@@ -116,7 +111,7 @@ public class AccountsApiController implements AccountsApi {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 User loggedInUser = (User)authentication.getPrincipal();
-                accountApiService.deleteAccount(iban);
+                accountApiService.delete(iban);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body((JsonNode) objectMapper.createObjectNode().put("message", "Deleted Successfully!"));
                 return responseEntity;
             } catch (Exception e) {
@@ -125,25 +120,25 @@ public class AccountsApiController implements AccountsApi {
             }
         }
         else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
-    public ResponseEntity<List<Account>> getAccountsForUser(@ApiParam(value= "", required = true) @PathVariable("userid") Long userId){
+    public ResponseEntity<List<AccountResponse>> getAccountsForUser(@ApiParam(value= "", required = true) @PathVariable("userid") Long userId){
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
                 try {
-                    Iterable<Account> accounts = accountApiService.getAccountsForUser(userId);
-                    return new ResponseEntity<List<Account>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
+                    Iterable<AccountResponse> accounts = accountApiService.getAccountsForUser(userId);
+                    return new ResponseEntity<List<AccountResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
-                    ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
+                    ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                     return responseEntity;
                 }
             }
-        return new ResponseEntity<List<Account>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
@@ -157,9 +152,10 @@ public class AccountsApiController implements AccountsApi {
                 Double newBalance = 0d;
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-                    Account account = accountApiService.getAccountByIbanWithAuth(body.getIBAN());
+                    //TODO: check response
+                    Account account = accountApiService.getByIBAN(body.getIBAN());
                     oldBalance = account.getBalance();
-                    account = accountApiService.withdrawAccount(body.getIBAN(), body.getTransferAmount());
+                    AccountResponse accountResponse = accountApiService.withdraw(body.getIBAN(), body.getTransferAmount());
                     newBalance = account.getBalance();
                 }
 
@@ -187,9 +183,10 @@ public class AccountsApiController implements AccountsApi {
                 Double newBalance = 0d;
 
                 if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-                    Account account = accountApiService.getAccountByIbanWithAuth(body.getIBAN());
+                    //TODO: check response
+                    Account account = accountApiService.getByIBAN(body.getIBAN());
                     oldBalance = account.getBalance();
-                    account = accountApiService.depositAccount(body.getIBAN(), body.getTransferAmount());
+                    AccountResponse accountResponse = accountApiService.deposit(body.getIBAN(), body.getTransferAmount());
                     newBalance = account.getBalance();
                 }
 

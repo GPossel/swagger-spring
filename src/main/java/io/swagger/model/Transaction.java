@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -69,14 +69,14 @@ public class Transaction {
     this.ibanSender = ibanSender;
     this.ibanReceiver = ibanReceiver;
     this.userPerformer = userPerformer;
-    this.transactionDate = new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
+    this.transactionDate = new Timestamp(new Date().getTime());
     this.transferAmount = transferAmount;
   }
 
   public Transaction(String ibanSender, String ibanReceiver, Double transferAmount) {
     this.ibanSender = ibanSender;
     this.ibanReceiver = ibanReceiver;
-    this.transactionDate = new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
+    this.transactionDate = new Timestamp(new Date().getTime());
     this.transferAmount = transferAmount;
   }
 

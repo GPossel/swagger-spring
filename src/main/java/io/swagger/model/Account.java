@@ -6,14 +6,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import net.bytebuddy.implementation.bytecode.Throw;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Account
@@ -30,17 +33,35 @@ import java.util.Objects;
 @Data
 public class Account {
   @Id
-  @JsonProperty("IBAN")
-  @Column(name = "IBAN")
-  private String IBAN = null;
+  @JsonProperty("iban")
+  @Column(name = "iban")
+  private String iban = null;
 
   @JsonProperty("userId")
   @Column(name = "USERID")
   private Long userId = null;
 
-  public Account(Long userId, String IBAN, RankEnum rank, StatusEnum status, Double balance, String currency) {
+  @JsonProperty("rank")
+  private RankEnum rank = null;
+
+  @JsonProperty("balance")
+  private Double balance = null;
+
+  @JsonProperty("currency")
+  private String currency = null;
+
+  @JsonProperty("dailyLimit")
+  private Double dailyLimit = null;
+
+  @JsonProperty("transferLimit")
+  private Double transferLimit = null;
+
+  @JsonProperty("status")
+  private StatusEnum status = null;
+
+  public Account(String IBAN, Long userId, RankEnum rank, StatusEnum status, Double balance, String currency) {
     this.userId = userId;
-    this.IBAN = IBAN;
+    this.iban = IBAN;
     this.rank = rank;
     this.status = status;
     this.balance = balance;
@@ -49,8 +70,19 @@ public class Account {
     this.transferLimit = 500d;
   }
 
+  public Account(AccountRequest accountRequest) {
+    setIban();
+    this.userId = accountRequest.getUserId();
+    this.rank = accountRequest.getRank();
+    this.status = StatusEnum.ACTIVE;
+    setBalance(0d);
+    this.currency = "EUR";
+    this.dailyLimit = 10000d;
+    this.transferLimit = 500d;
+  }
+
   public Account(String nlfout) {
-    this.IBAN = nlfout;
+    this.iban = nlfout;
   }
 
   public Double getDailyLimit() {
@@ -100,22 +132,6 @@ public class Account {
     }
   }
 
-  @JsonProperty("rank")
-  private RankEnum rank = null;
-
-  @JsonProperty("balance")
-  private Double balance = null;
-
-  @JsonProperty("currency")
-  private String currency = null;
-
-  @JsonProperty("dailyLimit")
-  private Double dailyLimit = null;
-
-  @JsonProperty("transferLimit")
-  private Double transferLimit = null;
-
-
   /**
    * Gets or Sets status
    */
@@ -147,8 +163,7 @@ public class Account {
     }
   }
 
-  @JsonProperty("status")
-  private StatusEnum status = null;
+
 
   public Account userId(Long userId) {
     this.userId = userId;
@@ -172,7 +187,7 @@ public class Account {
   }
 
   public Account IBAN(String IBAN) {
-    this.IBAN = IBAN;
+    this.iban = IBAN;
     return this;
   }
 
@@ -184,16 +199,19 @@ public class Account {
   @ApiModelProperty(example = "NLxxINHO0xxxxxxxxx", required = true, value = "")
   @NotNull
 
-  public String getIBAN() {
-    return IBAN;
+  public String getIban() {
+    return iban;
   }
 
-  public void setIBAN(String IBAN) {
-    if (!IBAN.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d")) {
-      throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX");
+  public void setIban() {
+    Random random = new Random();
+    String prefix1 = "NL";
+    String firstDigits = String.format("%02d", random.nextInt(100));
+    String prefix2 = "INHO"; // contains one of the 10 numbers: 0
+    String lastDigits = String.format("%09d", random.nextInt(1000000000));
+
+    this.iban = prefix1 + firstDigits + prefix2 + lastDigits;
     }
-    this.IBAN = IBAN;
-  }
 
   public Account rank(RankEnum rank) {
     this.rank = rank;
@@ -235,6 +253,13 @@ public class Account {
   }
 
   public void setBalance(Double balance) {
+    if (balance == null){
+      balance = 0d;
+    }
+    if (balance < 0){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "balance is invalid");
+    }
+
     this.balance = balance;
   }
 
@@ -289,7 +314,7 @@ public class Account {
     }
     Account account = (Account) o;
     return Objects.equals(this.userId, account.userId) &&
-            Objects.equals(this.IBAN, account.IBAN) &&
+            Objects.equals(this.iban, account.iban) &&
             Objects.equals(this.rank, account.rank) &&
             Objects.equals(this.balance, account.balance) &&
             Objects.equals(this.currency, account.currency) &&
@@ -298,7 +323,7 @@ public class Account {
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, IBAN, rank, balance, currency, status);
+    return Objects.hash(userId, iban, rank, balance, currency, status);
   }
 
   @Override
@@ -307,7 +332,7 @@ public class Account {
     sb.append("class Account {\n");
 
     sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
-    sb.append("    IBAN: ").append(toIndentedString(IBAN)).append("\n");
+    sb.append("    IBAN: ").append(toIndentedString(iban)).append("\n");
     sb.append("    rank: ").append(toIndentedString(rank)).append("\n");
     sb.append("    balance: ").append(toIndentedString(balance)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");

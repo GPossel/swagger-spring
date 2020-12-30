@@ -5,8 +5,7 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.ATMrequest;
-import io.swagger.model.Account;
+import io.swagger.model.*;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,39 +16,38 @@ import java.util.List;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-06-02T09:24:14.507Z[GMT]")
 @Api(value = "accounts", description = "the accounts API")
 public interface AccountsApi {
-    @ApiOperation(value = "Add a new account", nickname = "addAccount", notes = "", response = Account.class, tags={ "accounts", })
+    @ApiOperation(value = "Add a new account", nickname = "createAccount", notes = "", response = AccountResponse.class, tags={ "accounts", })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "A account was created succesfully.", response = Account.class),
-            @ApiResponse(code = 200, message = "account by iban", response = Account.class),
+            @ApiResponse(code = 201, message = "A account was created succesfully.", response = AccountResponse.class),
             @ApiResponse(code = 400, message = "invalid operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @RequestMapping(value = "/accounts",
             produces = { "application/json" },
             consumes = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<Account> createAccount(@ApiParam(value = "created accounts" , required=true )  @Valid @RequestBody Account body
+    ResponseEntity<AccountResponse> create(@ApiParam(value = "created accounts" , required=true )  @Valid @RequestBody AccountRequest body
     );
 
-    @ApiOperation(value = "", nickname = "getAccounts", notes = "Get a list of accounts", response = Account.class, responseContainer = "List", tags={ "accounts", })
+    @ApiOperation(value = "", nickname = "getAccounts", notes = "Get a list of accounts", response = AccountResponse.class, responseContainer = "List", tags={ "accounts", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "succesful operation", response = Account.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "succesful operation", response = AccountResponse.class, responseContainer = "List"),
         @ApiResponse(code = 400, message = "invalid operation"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @RequestMapping(value = "/accounts",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<Account>> getAccounts();
+    ResponseEntity<List<AccountResponse>> getAll();
 
-    @ApiOperation(value = "Get Accounts by iban", nickname = "getAccountByIban", notes = "", response = Account.class, tags={ "accounts", })
+    @ApiOperation(value = "Get Accounts by iban", nickname = "getAccountByIban", notes = "", response = AccountResponse.class, tags={ "accounts", })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "account by iban", response = Account.class),
+            @ApiResponse(code = 200, message = "account by iban", response = AccountResponse.class),
             @ApiResponse(code = 400, message = "invalid operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -59,7 +57,7 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/{iban}",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<Account> getAccountByIban(@ApiParam(value = "",required=true) @PathVariable("iban") String iban
+    ResponseEntity<AccountResponse> getByIban(@ApiParam(value = "",required=true) @PathVariable("iban") String iban
     );
 
     @ApiOperation(value = "Delete account", nickname = "deleteAccount", notes = "Deletes a account, only the current account or an employee can delete a account.", authorizations = {
@@ -74,13 +72,13 @@ public interface AccountsApi {
     })
     @RequestMapping(value = "/accounts/{iban}",
             method = RequestMethod.DELETE)
-    ResponseEntity<Void> deleteAccount(@ApiParam(value = "The IBAN that needs to be deleted",required=true) @PathVariable("iban") String iban
+    ResponseEntity<Void> delete(@ApiParam(value = "The IBAN that needs to be deleted",required=true) @PathVariable("iban") String iban
     );
 
 
-    @ApiOperation(value = "", nickname = "getAccountsForUser", notes = "Get a list of accounts", response = Account.class, responseContainer=  "List", tags = { "accounts", })
+    @ApiOperation(value = "", nickname = "getAccountsForUser", notes = "Get a list of accounts", response = AccountResponse.class, responseContainer=  "List", tags = { "accounts", })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Accounts for user by its id", response = Account.class, responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Accounts for user by its id", response = AccountResponse.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "invalid operation"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -90,7 +88,7 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/{userid}/users",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<Account>> getAccountsForUser(@ApiParam(value = "",required=true) @PathVariable("userid") Long userId
+    ResponseEntity<List<AccountResponse>> getAccountsForUser(@ApiParam(value = "",required=true) @PathVariable("userid") Long userId
     );
 
 

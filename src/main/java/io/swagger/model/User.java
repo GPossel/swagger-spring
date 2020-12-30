@@ -1,28 +1,39 @@
 package io.swagger.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import javax.validation.constraints.NotEmpty;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * User
  */
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Validated
-
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-18T09:28:40.437Z[GMT]")
 public class User implements UserDetails{
   @Id
@@ -48,24 +59,21 @@ public class User implements UserDetails{
   private String phone = null;
 
   @JsonProperty("birthdate")
-  private String birthdate = null;
+  private Date birthdate = null;
 
   @JsonProperty("registrationdate")
-  private String registrationdate = null;
+  private Timestamp registrationdate = null;
 
-  public User(String firstname, String lastname, String email, String password, String phone, String birthdate, String registrationdate, RankEnum rank, StatusEnum status) {
-    this.firstname = firstname;
-    this.lastname = lastname;
-    this.email = email;
-    this.password = password;
-    this.phone = phone;
-    this.birthdate = birthdate;
-    this.registrationdate = registrationdate;
-    this.rank = rank;
-    this.status = status;
-  }
-
-  public User() {
+  public User(UserRequest ur) {
+    setFirstname(ur.getFirstname());
+    setLastname(ur.getLastname());
+    setEmail(ur.getEmail());
+    setPassword(ur.getPassword(), ur.getrPassword());
+    setPhone(ur.getPhone());
+    setBirthdate(ur.getBirthdate());
+    this.registrationdate = new Timestamp(new Date().getTime());
+    setRank(ur.getRank());
+    this.status = StatusEnum.ACTIVE;
   }
 
     public User(long id, String firstname, String lastname, String email, String password, String phone, String birthdate, String registrationdate, RankEnum rank, StatusEnum status) {
@@ -73,9 +81,10 @@ public class User implements UserDetails{
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
-        this.password = password;
+        setPasswordEncrypt(password);
         this.phone = phone;
-        this.birthdate = birthdate;
+        setBirthdate(birthdate);
+        setRegistrationdate(registrationdate);
         this.rank = rank;
         this.status = status;
   }
@@ -120,8 +129,8 @@ public class User implements UserDetails{
    */
   public enum StatusEnum {
     ACTIVE("Active"),
-
-    BLOCKED("Blocked");
+    BLOCKED("Blocked"),
+    DELETED("Deleted");
 
     private String value;
 
@@ -183,6 +192,9 @@ public class User implements UserDetails{
   }
 
   public void setFirstname(String firstname) {
+    if (!firstname.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$")){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The first or lastname is not valid!");
+    }
     this.firstname = firstname;
   }
 
@@ -202,6 +214,9 @@ public class User implements UserDetails{
   }
 
   public void setLastname(String lastname) {
+    if (!lastname.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$")){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The first or lastname is not valid!");
+    }
     this.lastname = lastname;
   }
 
@@ -221,6 +236,9 @@ public class User implements UserDetails{
   }
 
   public void setEmail(String email) {
+    if (!email.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The Email is not valid!");
+    }
     this.email = email;
   }
 
@@ -276,13 +294,19 @@ public class User implements UserDetails{
     return true;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
+  public void setPassword(String password, String rPassword) {
+    if (!Objects.equals(password, rPassword)){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password and repeat password are not identical");
+    }
+    if (!password.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$")){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password is not valid!");
+    }
+    setPasswordEncrypt(password);
   }
 
   public void setPasswordEncrypt(String password){
     String passwordEncrypted = new BCryptPasswordEncoder().encode(password);
-    setPassword(passwordEncrypted);
+    this.password = passwordEncrypted;
   }
 
   public User phone(String phone) {
@@ -301,12 +325,10 @@ public class User implements UserDetails{
   }
 
   public void setPhone(String phone) {
+    if (!    phone.matches("^((\\+|00(\\s|\\s?\\-\\s?)?)31(\\s|\\s?\\-\\s?)?(\\(0\\)[\\-\\s]?)?|0)[1-9]((\\s|\\s?\\-\\s?)?[0-9])((\\s|\\s?-\\s?)?[0-9])((\\s|\\s?-\\s?)?[0-9])\\s?[0-9]\\s?[0-9]\\s?[0-9]\\s?[0-9]\\s?[0-9]$")){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The Phone number is invalid");
+    }
     this.phone = phone;
-  }
-
-  public User birthdate(String birthdate) {
-    this.birthdate = birthdate;
-    return this;
   }
 
   /**
@@ -315,17 +337,21 @@ public class User implements UserDetails{
    **/
   @ApiModelProperty(value = "")
 
-  public String getBirthdate() {
+  public Date getBirthdate() {
     return birthdate;
   }
 
   public void setBirthdate(String birthdate) {
-    this.birthdate = birthdate;
-  }
+    if (!birthdate.toString().matches("^([1-9]|(0)[1-9]|[1-2][0-9]|(3)[0-1])(-)(((0)[1-9])|([1-9])|((1)[0-2]))(-)(19|20)\\d{2}$")){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The birthdate is invalid");
+    }
 
-  public User registrationdate(String registrationdate) {
-    this.registrationdate = registrationdate;
-    return this;
+    try {
+      DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+      this.birthdate = dateFormat.parse(birthdate);
+    } catch (Exception e){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The birthdate is invalid");
+    }
   }
 
   /**
@@ -334,13 +360,17 @@ public class User implements UserDetails{
    **/
   @ApiModelProperty(value = "")
 
-  public String getRegistrationdate() {
+  public Date getRegistrationdate() {
     return registrationdate;
   }
 
   public void setRegistrationdate(String registrationdate) {
-    this.registrationdate = registrationdate;
-  }
+    try {
+      DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+      this.registrationdate = new Timestamp(dateFormat.parse(registrationdate).getTime());
+    } catch (Exception e){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The registrationDate is invalid");
+    }  }
 
   public User rank(RankEnum rank) {
     this.rank = rank;

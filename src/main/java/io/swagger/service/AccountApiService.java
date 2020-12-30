@@ -2,6 +2,8 @@ package io.swagger.service;
 
 import io.swagger.dao.RepositoryAccount;
 import io.swagger.model.Account;
+import io.swagger.model.AccountRequest;
+import io.swagger.model.AccountResponse;
 import io.swagger.model.User;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -26,70 +30,85 @@ public class AccountApiService {
 
     User loggedInUser;
 
-    // post /accounts
-    public Account createAccount(Account body) {
-        return repositoryAccount.save(body);
+    public AccountResponse create(AccountRequest body) {
+        if (body.getRank() == Account.RankEnum.BANK){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't create an account with rank: BANK");
+        }
+        Account account = repositoryAccount.save(new Account(body));
+        return new AccountResponse(account);
     }
 
-    //get /accounts
-    public Iterable<Account> getAllAccounts() {
+    public Iterable<AccountResponse> getAll() {
         if (this.loggedInUser == null) {
             this.loggedInUser = userApiService.getLoggedInUser();
             if (this.loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
         }
-
-        return repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
+        Iterable<Account> accounts = repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
+        return convertListAccountToResponse(accounts);
     }
 
-    // Get /accounts/{iban}
-    public Account getAccountByIbanWithAuth(String iban) {
-        Account account = this.getAccountByIBAN(iban);
+    public Account getByIBAN(String iban) {
+        Optional<Account> optionalAccount = repositoryAccount.findById(iban);
+        if (!optionalAccount.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return optionalAccount.get();
+    }
+
+    public AccountResponse getByIbanWithAuth(String iban) {
+        Account account = this.getByIBAN(iban);
         if (!UserHasRights(account.getUserId())){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
-        return account;
+
+        return new AccountResponse(account);
     }
 
-    ///Delete /accounts/{iban}
-    public void deleteAccount(String iban)  {
-        Account account = this.getAccountByIBAN(iban);
+    public void delete(String iban)  {
+        Account account = this.getByIBAN(iban);
 
         account.setStatus(Account.StatusEnum.DELETED);
-        Integer i = repositoryAccount.Update(account.getIBAN(), account);
+        Integer i = repositoryAccount.update(account.getIban(), account);
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
-    //get /accounts/{userId}/users
-    public Iterable<Account> getAccountsForUser(Long userId) {
+    public AccountResponse update(String iban, Account body) {
+        Integer i = repositoryAccount.update(iban, body);
+        if (i == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new AccountResponse(this.getByIBAN(iban));
+    }
+
+    public Iterable<AccountResponse> getAccountsForUser(Long userId) {
         if (!UserHasRights(userId)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
-
-        return repositoryAccount.getAccountsForUser(userId);
+        Iterable<Account> accounts = repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
+        return convertListAccountToResponse(accounts);
     }
 
     // Post /accounts/{iban}/deposit
-    public Account depositAccount(String ibanReceiver, double deposit) {
+    public AccountResponse deposit(String ibanReceiver, double deposit) {
         Account account = validateATMRequest(ibanReceiver, deposit);
         account.setBalance(account.getBalance() + deposit);
-        repositoryAccount.Update(ibanReceiver, account);
-        return repositoryAccount.findById(ibanReceiver).get();
-    }
+        return this.update(ibanReceiver, account);
+
+        }
 
     // Post /accounts/{iban}/deposit
-    public Account withdrawAccount(String ibanReceiver, double withdraw) {
+    public AccountResponse withdraw(String ibanReceiver, double withdraw) {
         Account account = validateATMRequest(ibanReceiver, withdraw);
         account.setBalance(account.getBalance() - withdraw);
-        repositoryAccount.Update(ibanReceiver, account);
-        return repositoryAccount.findById(ibanReceiver).get();
+        return this.update(ibanReceiver, account);
     }
 
     private Account validateATMRequest(String iban, double amount) {
-        Account account = getAccountByIBAN(iban);
+        Account account = this.getByIBAN(iban);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loggedInUser = (User)authentication.getPrincipal();
@@ -105,19 +124,18 @@ public class AccountApiService {
         return account;
     }
 
-    public void updateNewBalanceServiceAccounts(double NewBalance, String IBAN) {
-        Account account = this.getAccountByIBAN(IBAN);
+    public void updateNewBalanceServiceAccounts(double NewBalance, String iban) {
+        Account account = this.getByIBAN(iban);
         account.setBalance(NewBalance);
-        repositoryAccount.Update(IBAN, account);
+        repositoryAccount.update(iban, account);
     }
 
-    public Account getAccountByIBAN(String iban) {
-        Optional<Account> optionalAccount = repositoryAccount.findById(iban);
-        if (!optionalAccount.isPresent()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Account account = optionalAccount.get();
-        return account;
+    public Iterable<AccountResponse> convertListAccountToResponse(Iterable<Account> accounts){
+        List<AccountResponse> accountResponseList = new ArrayList<AccountResponse>();
+        accounts.forEach(account -> {
+            accountResponseList.add(new AccountResponse(account));
+        });
+        return accountResponseList;
     }
 
     public boolean UserHasRights(Long userId){
