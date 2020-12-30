@@ -41,8 +41,7 @@ public interface TransactionsApi {
             produces = { "application/json" },
             method = RequestMethod.GET)
     ResponseEntity<List<Transaction>> searchTansaction(
-            @ApiParam(value = "nameSender") @Valid @RequestParam(value = "userPerformer", required = false) Long userPerformer
-            ,@ApiParam(value = "transactionId") @Valid @RequestParam(value = "transactionId", required = false) Long transactionId
+            @ApiParam(value = "userPerformer") @Valid @RequestParam(value = "userPerformer", required = false) String userPerformer
             ,@ApiParam(value = "IBAN") @Valid @RequestParam(value = "IBAN", required = false) String IBAN
             ,@ApiParam(value = "transferAmount") @Valid @RequestParam(value = "transferAmount", required = false) Double transferAmount
             ,@ApiParam(value = "MaxNumberOfResults") @Valid @RequestParam(value = "MaxNumberOfResults", required = false) Integer maxNumberOfResults

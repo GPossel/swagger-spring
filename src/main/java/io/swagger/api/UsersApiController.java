@@ -81,9 +81,10 @@ public class UsersApiController implements UsersApi {
         }
     }
 
-    @PreAuthorize("hasAuthority('Employee')")
+    @PreAuthorize("hasAuthority('Admin')")
     public ResponseEntity<Void> delete(@ApiParam(value = "The userId that needs to be deleted", required = true) @PathVariable("userId") Long userId)
     {
+
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
@@ -101,6 +102,7 @@ public class UsersApiController implements UsersApi {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<UserResponse> getById(@ApiParam(value= "", required = true) @PathVariable("userId") Long userId){
         String accept = request.getHeader("Accept");
 
@@ -139,11 +141,12 @@ public class UsersApiController implements UsersApi {
         }
     }
 
+    @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
     public ResponseEntity<UserResponse> update(@ApiParam(value = "Updated user object", required = true) @Valid @RequestBody UserRequest body
-            , @ApiParam(value = "userId that need to be updated", required = true) @PathVariable("userId") Long userId
-    ) {
+            , @ApiParam(value = "userId that need to be updated", required = true) @PathVariable("userId") Long userId) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
+
         if (accept != null && content.contains("application/json")) {
             try {
                 return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.update(userId, body)), UserResponse.class), HttpStatus.OK);

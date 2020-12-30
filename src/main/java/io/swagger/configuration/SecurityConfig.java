@@ -4,7 +4,6 @@ import io.swagger.filters.JwtRequestFilter;
 import io.swagger.service.UserApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -15,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -49,15 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/UpdateUsers.html").permitAll()
                 .antMatchers("/Transactions.html").permitAll()
                 .antMatchers("/TransactionsJSON.js").permitAll()
-                .antMatchers("/authenticate").permitAll()
+                .antMatchers("/ATM/**").permitAll()
 
-                .antMatchers("/accounts").permitAll()
-                .antMatchers("/accounts/**").permitAll()
-                .antMatchers("/users").access("hasAuthority('Admin') or hasAuthority('Employee')")
-                .antMatchers("/users/**").permitAll()
-                .antMatchers("/transactions").access("hasAuthority('Employee') or hasAuthority('Customer') or hasAuthority('Admin')")
-                .antMatchers("/transactions/**").permitAll()
-                .antMatchers("/**").permitAll()
+                .antMatchers("/accounts").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/accounts/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/users").access("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/users/**").access("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/transactions").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/transactions/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
                 .anyRequest().authenticated()
                 // now we need to add the filter
                 .and()

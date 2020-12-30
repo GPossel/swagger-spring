@@ -1,10 +1,15 @@
 package io.swagger.service;
 
 import io.swagger.dao.RepositoryAccount;
-import io.swagger.model.*;
+import io.swagger.model.Account;
+import io.swagger.model.AccountRequest;
+import io.swagger.model.AccountResponse;
+import io.swagger.model.User;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -87,23 +92,42 @@ public class AccountApiService {
         return convertListAccountToResponse(accounts);
     }
 
+    // Post /accounts/{iban}/deposit
     public AccountResponse deposit(String ibanReceiver, double deposit) {
-        Account account = this.getByIBAN(ibanReceiver);
+        Account account = validateATMRequest(ibanReceiver, deposit);
         account.setBalance(account.getBalance() + deposit);
         return this.update(ibanReceiver, account);
-    }
 
+        }
+
+    // Post /accounts/{iban}/deposit
     public AccountResponse withdraw(String ibanReceiver, double withdraw) {
-        Account account = this.getByIBAN(ibanReceiver);
+        Account account = validateATMRequest(ibanReceiver, withdraw);
         account.setBalance(account.getBalance() - withdraw);
         return this.update(ibanReceiver, account);
     }
 
-    public void updateNewBalanceServiceAccounts(double NewBalance, String IBAN) {
-        Account account = this.getByIBAN(IBAN);
-        account.setBalance(NewBalance);
+    private Account validateATMRequest(String iban, double amount) {
+        Account account = this.getByIBAN(iban);
 
-        repositoryAccount.update(IBAN, account);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = (User)authentication.getPrincipal();
+
+        // validate this account belongs to the logged in user,
+        if(!account.getUserId().equals(loggedInUser.getId())) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Account: " + iban + " is not account of: " + loggedInUser.getEmail());
+        }
+        if(amount < 0) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Amount was negative. Please enter positive amounts only > 0.");
+        }
+
+        return account;
+    }
+
+    public void updateNewBalanceServiceAccounts(double NewBalance, String iban) {
+        Account account = this.getByIBAN(iban);
+        account.setBalance(NewBalance);
+        repositoryAccount.update(iban, account);
     }
 
     public Iterable<AccountResponse> convertListAccountToResponse(Iterable<Account> accounts){

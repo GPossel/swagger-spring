@@ -42,10 +42,9 @@ public class TransactionsApiController implements TransactionsApi {
     private AccountApiService accountApiService;
 
     @Autowired
-    public TransactionsApiController(/*TransactionApiService transactionApiService,*/ ObjectMapper objectMapper, HttpServletRequest request) {
+    public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
-//        this.transactionApiService = transactionApiService;
     }
 
     @PreAuthorize("hasAuthority('Employee')")
@@ -65,7 +64,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @PreAuthorize("hasAuthority('Employee')")
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<Transaction> getTransaction(@Min(0L) @ApiParam(value = "", required = true, allowableValues = "") @PathVariable("transactionId") Long transactionId
     ) {
         String accept = request.getHeader("Accept");
@@ -77,10 +76,9 @@ public class TransactionsApiController implements TransactionsApi {
         return status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 
-    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer') or hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<List<Transaction>> searchTansaction
-            (@ApiParam(value = "") @Valid @RequestParam(value = "userPerformer", required = false) Long userPerformer,
-             @ApiParam(value = "") @Valid @RequestParam(value = "transactionId", required = false) Long transactionId,
+            (@ApiParam(value = "") @Valid @RequestParam(value = "userPerformer", required = false) String userPerformer,
              @ApiParam(value = "") @Valid @RequestParam(value = "IBAN", required = false) String IBAN,
              @ApiParam(value = "") @Valid @RequestParam(value = "transferAmount", required = false) Double transferAmount,
              @ApiParam(value = "") @Valid @RequestParam(value = "MaxNumberOfResults", required = false) Integer maxNumberOfResults) {
@@ -88,7 +86,7 @@ public class TransactionsApiController implements TransactionsApi {
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
             try {
-                    List<Transaction> myList = transactionApiService.FindAllMatches(userPerformer, transactionId, IBAN, transferAmount, maxNumberOfResults);
+                    List<Transaction> myList = transactionApiService.FindAllMatches(userPerformer, IBAN, transferAmount, maxNumberOfResults);
                     return new ResponseEntity<List<Transaction>>(objectMapper.readValue(objectMapper.writeValueAsString(myList), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
@@ -98,7 +96,7 @@ public class TransactionsApiController implements TransactionsApi {
         return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer') or hasAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<Transaction> transferFunds(@ApiParam(value = "Transaction object", required = true) @Valid @RequestBody Transaction body) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");

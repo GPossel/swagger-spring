@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 public class TransactionApiService {
@@ -34,9 +35,11 @@ public class TransactionApiService {
         return (List<Transaction>) repositoryTransaction.findAll();
     }
 
+    // get transaction details -> id, (name sender, iban sender, datum, iban receiver, amount)
     public Transaction getTransaction(Long transactionId) {
         return repositoryTransaction.findById(transactionId).get();
     }
+
 
     public Boolean makeTransaction(Transaction transaction) {
             /// Use account services to
@@ -127,10 +130,6 @@ public class TransactionApiService {
         return true;
     }
 
-    public List<Transaction> getTransactionsFromName(Long username) {
-        return repositoryTransaction.findAllWithUserId(username);
-    }
-
     public List<Transaction> getTransactionsFromIBAN(String IBAN) {
         return repositoryTransaction.getTransactionsFromIBAN(IBAN);
     }
@@ -139,27 +138,18 @@ public class TransactionApiService {
         return repositoryTransaction.getTransactionsFromAmount(transferAmount);
     }
 
-    public List<Transaction> FindAllMatches(Long userPerformer, Long transactionId, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
+    public List<Transaction> FindAllMatches(String userPerformer, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
         List<Transaction> myList = new ArrayList<Transaction>();
         User loggedInUser = userApiService.getLoggedInUser();
 
         if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
             Long userId = loggedInUser.getId();
             // customer could not see any transactions not related to him
+            //TODO: check if this code is right, get multiple accounts
             List<Account> accounts = (List<Account>) accountApiService.getAccountsForUser(userId);
             for (Account account : accounts) {
-                if (userPerformer != null) {
-                    for (Transaction t : repositoryTransaction.findAllWithUserIdCustomer(userPerformer, account.getIban())) {
-                        myList.add(t);
-                    }
-                }
-                if (transactionId != null) {
-                    List<Transaction> transactions = repositoryTransaction.findAllWithUserIdCustomer(transactionId, account.getIban());
-                    for (Transaction t : transactions) {
-                        myList.add(t);
-                    }
-                }
-                if (IBAN != null) {
+
+                if (IBAN != "" && IBAN != null) {
                     for (Transaction t : repositoryTransaction.getTransactionsFromIBANCustomer(IBAN, account.getIban())) {
                         myList.add(t);
                     }
@@ -176,27 +166,33 @@ public class TransactionApiService {
                         myList.add(t);
                     }
                 }
+
+                myList = changeListForView(myList);
+
+                List<Transaction> transactionsMatchingRegex = new ArrayList<>();
+
+                if (userPerformer != "" && userPerformer != null) {
+                    for (Transaction transaction : myList) {
+
+                        String regex = ".*"+ userPerformer +".*";
+                        if(Pattern.matches(regex, transaction.getNameSender())){
+                            transactionsMatchingRegex.add(transaction);
+                        }
+                    }
+
+                    if(transactionsMatchingRegex.size() != 0){
+                        myList = transactionsMatchingRegex;
+                    }
+                }
+
                 if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
                     myList = myList.subList(0, maxNumberOfResults);
                 }
-
             }
 
             return myList;
         }
         else {
-            if (userPerformer != null) {
-                for (Transaction t : getTransactionsFromName(userPerformer)) {
-                    myList.add(t);
-                }
-            }
-            if (transactionId != null) {
-                Transaction transaction = repositoryTransaction.findById(transactionId).get();
-
-                if (transaction != null) {
-                    myList.add(transaction);
-                }
-            }
             if (IBAN != null) {
                 for (Transaction t : getTransactionsFromIBAN(IBAN)) {
                     myList.add(t);
@@ -214,12 +210,50 @@ public class TransactionApiService {
                     myList.add(t);
                 }
             }
+
+            // we want to present the list without transaction id, or user id.
+            // instead we add the sender name
+            myList = changeListForView(myList);
+
+            List<Transaction> transactionsMatchingRegex = new ArrayList<>();
+
+            if (userPerformer != "" && userPerformer != null) {
+                for (Transaction transaction : myList) {
+
+                    String regex = ".*"+ userPerformer +".*";
+                    if(Pattern.matches(regex, transaction.getNameSender())){
+                        transactionsMatchingRegex.add(transaction);
+                    }
+                }
+
+                if(transactionsMatchingRegex.size() != 0){
+                    myList = transactionsMatchingRegex;
+                }
+            }
+
+
+
             if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
                 myList = myList.subList(0, maxNumberOfResults);
             }
 
             return myList;
         }
+    }
+
+    private List<Transaction> changeListForView(List<Transaction> myList) {
+
+        List<Transaction> listAdjustedForView = new ArrayList<>();
+
+        for(Transaction transaction : myList)
+        {
+            User user = userApiService.getById(transaction.getUserPerformer());
+            String sendersName = user.getFirstname() + " " + user.getLastname() + " (" + user.getEmail() + ") ";
+            Transaction transactionForView = new Transaction(sendersName, transaction.getIbanSender(), transaction.getIbanReceiver(), transaction.getTransferAmount(), transaction.getTransactionDate());
+            listAdjustedForView.add(transactionForView);
+        }
+
+        return listAdjustedForView;
     }
 
     public List<Transaction> searchTransactionsUser(UserDetails user) {
@@ -257,4 +291,5 @@ public class TransactionApiService {
         transaction.setUserPerformer(loggedInUser.getId());
         return transaction;
     }
+
 }

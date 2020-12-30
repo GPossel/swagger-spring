@@ -17,7 +17,5 @@ public class LogoutApiService {
     {
         SecurityContextHolder.getContext().setAuthentication(null);
         SecurityContextHolder.clearContext();
-        //     repositoryApiKey.deleteByUsername(username);
-        System.out.println("succesfull logout");
     }
 }
