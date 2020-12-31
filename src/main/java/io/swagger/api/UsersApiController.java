@@ -63,22 +63,20 @@ public class UsersApiController implements UsersApi {
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
-    public ResponseEntity<List<UserResponse>> getAll() {
+    public ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "", required = false) @Valid @RequestBody (required = false) UserRequest body) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
 
         if (accept != null && content.contains("application/json")) {
             try {
-                return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getAll()), List.class), HttpStatus.OK);
+                return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getAll(body)), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
         }
-        else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
 
     @PreAuthorize("hasAuthority('Admin')")
@@ -117,28 +115,6 @@ public class UsersApiController implements UsersApi {
             }
         }
         return new ResponseEntity<UserResponse>(HttpStatus.BAD_REQUEST);
-    }
-
-    @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
-    public ResponseEntity<List<UserResponse>> getUsers(@ApiParam(value = "") @Valid @RequestParam(value = "firstname", required = false) String firstname
-            , @ApiParam(value = "") @Valid @RequestParam(value = "lastname", required = false) String lastname
-            , @ApiParam(value = "", allowableValues = "Customer, Employee, Admin") @Valid @RequestParam(value = "RankOfUser", required = false) String rankOfUser
-            , @ApiParam(value = "", allowableValues = "Active, Blocked") @Valid @RequestParam(value = "StatusOfUser", required = false) String statusOfUser
-    ) {
-        String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
-        if (accept != null && content.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getUsersForFilters(firstname, lastname, rankOfUser, statusOfUser)), List.class), HttpStatus.OK);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
-                return responseEntity;
-            }
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
