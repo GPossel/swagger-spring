@@ -17,10 +17,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @NoArgsConstructor
@@ -37,13 +39,17 @@ public class UserApiService implements UserDetailsService {
         return new UserResponse(user);
     }
 
-    public Iterable<UserResponse> getAll() {
-        Iterable<User> users = repositoryUser.findAll();
-        List<UserResponse> userResponse = new ArrayList<>();
-        users.forEach(user -> {
-            userResponse.add(new UserResponse(user));
-        });
-        return userResponse;
+    public Iterable<UserResponse> getAll(UserRequest body) {
+//        if(body == null){
+//            Iterable<User> users = repositoryUser.findAll();
+//            List<UserResponse> userResponse = new ArrayList<>();
+//            users.forEach(user -> {
+//                userResponse.add(new UserResponse(user));
+//            });
+//            return userResponse;
+//        }
+//        Iterable<User> users = repositoryUser.findAll();
+        return null;
     }
 
     public User getById(Long id) {
@@ -75,10 +81,6 @@ public class UserApiService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
         return new UserResponse(this.getById(id));
-    }
-
-    public Iterable<User> getUsersForFilters(String firstname, String lastname, String rank, String status) {
-        return new ArrayList<>();
     }
 
     public User getLoggedInUser(){

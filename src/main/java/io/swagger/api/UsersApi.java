@@ -46,7 +46,7 @@ public interface UsersApi {
     @RequestMapping(value = "/users",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<UserResponse>> getAll();
+    ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "", required = false) @Valid @RequestBody (required = false) UserRequest body);
 
     @ApiOperation(value = "Delete user", nickname = "deleteUser", notes = "Deletes a user, only the current user or an employee can delete a user.", authorizations = {
         @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })
@@ -89,11 +89,7 @@ public interface UsersApi {
     @RequestMapping(value = "/users/filters",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<UserResponse>> getUsers(@ApiParam(value = "") @Valid @RequestParam(value = "firstname", required = false) String firstname
-, @ApiParam(value = "") @Valid @RequestParam(value = "lastname", required = false) String lastname
-, @ApiParam(value = "", allowableValues = "Customer, Employee, Admin") @Valid @RequestParam(value = "RankOfUser", required = false) String rankOfUser
-, @ApiParam(value = "", allowableValues = "Active, Blocked") @Valid @RequestParam(value = "StatusOfUser", required = false) String statusOfUser
-);
+    ResponseEntity<List<UserResponse>> getUsers(@ApiParam(value = "") @Valid @RequestBody UserRequest body);
 
     @ApiOperation(value = "Updated user", nickname = "updateUser", notes = "Updates the current logged in user.", response = UserResponse.class, responseContainer = "List", authorizations = {
             @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })

@@ -146,7 +146,8 @@ public class TransactionApiService {
             Long userId = loggedInUser.getId();
             // customer could not see any transactions not related to him
             //TODO: check if this code is right, get multiple accounts
-            List<Account> accounts = (List<Account>) accountApiService.getAccountsForUser(userId);
+            List<Account> accounts = new ArrayList<>();
+//            List<Account> accounts = (List<Account>) accountApiService.getAccountsForUser(userId);
             for (Account account : accounts) {
 
                 if (IBAN != "" && IBAN != null) {
