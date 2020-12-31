@@ -48,7 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/Transactions.html").permitAll()
                 .antMatchers("/TransactionsJSON.js").permitAll()
                 .antMatchers("/ATM/**").permitAll()
-
                 .antMatchers("/accounts").access("hasAuthority('Employee') or hasAuthority('Customer')")
                 .antMatchers("/accounts/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
                 .antMatchers("/users").access("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")

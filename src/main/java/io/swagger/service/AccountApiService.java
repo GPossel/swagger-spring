@@ -1,10 +1,7 @@
 package io.swagger.service;
 
 import io.swagger.dao.RepositoryAccount;
-import io.swagger.model.Account;
-import io.swagger.model.AccountRequest;
-import io.swagger.model.AccountResponse;
-import io.swagger.model.User;
+import io.swagger.model.*;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,9 +36,9 @@ public class AccountApiService {
     }
 
     public Iterable<AccountResponse> getAll() {
-        if (this.loggedInUser == null) {
-            this.loggedInUser = userApiService.getLoggedInUser();
-            if (this.loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
+        if (loggedInUser == null) {
+            loggedInUser = userApiService.getLoggedInUser();
+            if (loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
         }
@@ -58,7 +55,7 @@ public class AccountApiService {
     }
 
     public AccountResponse getByIbanWithAuth(String iban) {
-        Account account = this.getByIBAN(iban);
+        Account account = getByIBAN(iban);
         if (!UserHasRights(account.getUserId())){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
@@ -67,7 +64,7 @@ public class AccountApiService {
     }
 
     public void delete(String iban)  {
-        Account account = this.getByIBAN(iban);
+        Account account = getByIBAN(iban);
 
         account.setStatus(Account.StatusEnum.DELETED);
         Integer i = repositoryAccount.update(account.getIban(), account);
@@ -76,12 +73,12 @@ public class AccountApiService {
         }
     }
 
-    public AccountResponse update(String iban, Account body) {
+    public Account update(String iban, Account body) {
         Integer i = repositoryAccount.update(iban, body);
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
-        return new AccountResponse(this.getByIBAN(iban));
+        return getByIBAN(iban);
     }
 
     public Iterable<AccountResponse> getAccountsForUser(Long userId) {
@@ -92,23 +89,28 @@ public class AccountApiService {
         return convertListAccountToResponse(accounts);
     }
 
-    // Post /accounts/{iban}/deposit
-    public AccountResponse deposit(String ibanReceiver, double deposit) {
-        Account account = validateATMRequest(ibanReceiver, deposit);
-        account.setBalance(account.getBalance() + deposit);
-        return this.update(ibanReceiver, account);
+    public ATMResponse deposit(ATMRequest body) {
+        Account account = validateATMRequest(body.getIBAN(), body.getTransferAmount());
 
-        }
+        Double oldBalance = account.getBalance();
+        account.setBalance(account.getBalance() + body.getTransferAmount());
 
-    // Post /accounts/{iban}/deposit
-    public AccountResponse withdraw(String ibanReceiver, double withdraw) {
-        Account account = validateATMRequest(ibanReceiver, withdraw);
-        account.setBalance(account.getBalance() - withdraw);
-        return this.update(ibanReceiver, account);
+        account = update(account.getIban(), account);
+        return new ATMResponse(account, oldBalance);
+    }
+
+    public ATMResponse withdraw(ATMRequest body) {
+        Account account = validateATMRequest(body.getIBAN(), body.getTransferAmount());
+
+        Double oldBalance = account.getBalance();
+        account.setBalance(account.getBalance() - body.getTransferAmount());
+
+        account = update(account.getIban(), account);
+        return new ATMResponse(account, oldBalance) ;
     }
 
     private Account validateATMRequest(String iban, double amount) {
-        Account account = this.getByIBAN(iban);
+        Account account = getByIBAN(iban);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loggedInUser = (User)authentication.getPrincipal();
@@ -125,7 +127,7 @@ public class AccountApiService {
     }
 
     public void updateNewBalanceServiceAccounts(double NewBalance, String iban) {
-        Account account = this.getByIBAN(iban);
+        Account account = getByIBAN(iban);
         account.setBalance(NewBalance);
         repositoryAccount.update(iban, account);
     }
@@ -139,12 +141,12 @@ public class AccountApiService {
     }
 
     public boolean UserHasRights(Long userId){
-        if (this.loggedInUser == null) {
-            this.loggedInUser = userApiService.getLoggedInUser();
+        if (loggedInUser == null) {
+            loggedInUser = userApiService.getLoggedInUser();
         }
 
-        if (this.loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
-            if (!this.loggedInUser.getId().equals(userId)){
+        if (loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
+            if (!loggedInUser.getId().equals(userId)){
                 return false;
             }
         }

@@ -19,9 +19,9 @@ import javax.validation.Valid;
 @Api(value = "login", description = "the login API")
 public interface LoginApi {
 
-    @ApiOperation(value = "Logges in user", nickname = "loginUser", notes = "Authenticates a user with a given username/password combination, and returns an authentication token for future requests.", response = ApiKey.class, tags={ "Authentication","Customer operation", })
+    @ApiOperation(value = "Logs in user", nickname = "loginUser", notes = "Authenticates a user, and sets securitycontext", tags={ "authentications"})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "You have succesfully logged in. Your authtoken can be found in the response. header", response = ApiKey.class),
+            @ApiResponse(code = 200, message = "You have succesfully logged in. Your authtoken can be found in the response. header"),
             @ApiResponse(code = 400, message = "Something went wrong, your request could not be understood."),
             @ApiResponse(code = 401, message = "Something went wrong with your username or password. Please try again."),
             @ApiResponse(code = 403, message = "You are not allowed to access this page."),

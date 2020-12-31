@@ -35,8 +35,6 @@ import java.util.List;
 @Controller
 public class LoginApiController implements LoginApi {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginApiController.class);
-
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
@@ -59,15 +57,16 @@ public class LoginApiController implements LoginApi {
         this.request = request;
     }
 
-    public ResponseEntity<?> loginUser(@ApiParam(value = "created users", required = true) @Valid @RequestBody Login authenticationRequest
+    public ResponseEntity<AuthenticationResponse> loginUser(@ApiParam(value = "created users", required = true) @Valid @RequestBody Login authenticationRequest
     ) throws Exception {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
             try {
                 authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-                );
+                        new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+
+
             } catch (BadCredentialsException e) {
                 throw new Exception("Incorrect username or password", e);
             }
@@ -75,13 +74,11 @@ public class LoginApiController implements LoginApi {
                     .loadUserByUsername(authenticationRequest.getUsername());
 
             final String jwt = jwtTokenUtil.generateToken(userDetails);
-
             loginApiService.checkForBlocks(userDetails);
 
             return ResponseEntity.ok(new AuthenticationResponse(jwt));
         }
-
-        return (ResponseEntity<?>) ResponseEntity.status(400);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }

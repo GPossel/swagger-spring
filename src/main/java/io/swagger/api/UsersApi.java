@@ -76,20 +76,6 @@ public interface UsersApi {
             method = RequestMethod.GET)
     ResponseEntity<UserResponse> getById(@ApiParam(value = "",required=true) @PathVariable("userId") Long userId
     );
-    @ApiOperation(value = "returns list of users", nickname = "getUsers", notes = "", response = UserResponse.class, responseContainer = "List", authorizations = {
-        @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Succesful request.", response = UserResponse.class, responseContainer = "List"),
-            @ApiResponse(code = 400, message = "invalid operation"),
-            @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "Not Found"),
-            @ApiResponse(code = 500, message = "Internal Server Error"),
-    })
-    @RequestMapping(value = "/users/filters",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<UserResponse>> getUsers(@ApiParam(value = "") @Valid @RequestBody UserRequest body);
 
     @ApiOperation(value = "Updated user", nickname = "updateUser", notes = "Updates the current logged in user.", response = UserResponse.class, responseContainer = "List", authorizations = {
             @Authorization(value = "ApiKeyAuth")    }, tags={ "users", })

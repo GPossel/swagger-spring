@@ -2,6 +2,7 @@ package io.swagger.service;
 
 import io.cucumber.java.Before;
 import io.swagger.model.User;
+import io.swagger.model.UserRequest;
 import io.swagger.model.UserResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class UserServiceTest {
 
     @Test
     public void ListMustNotBeNull() throws Exception {
-        Iterable<UserResponse> users = userApiService.getAll();
+        Iterable<UserResponse> users = userApiService.getAll(new UserRequest());
         assertNotNull(users);
     }
 }

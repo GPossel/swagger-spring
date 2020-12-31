@@ -51,18 +51,18 @@ public class MyAppRunnerConfig implements ApplicationRunner {
 
         List<Transaction> transactions = new ArrayList<>(
                 Arrays.asList(
-                        new Transaction("NL33INHO3333333333", "NL77INHO0123456789", 1000054L, 140D),
-                        new Transaction("NL77INHO0123456789", "NL22INHO9876543210", 1000052L, 10D),
-                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000055L, 9D),
-                        new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
-                        new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, 100D),
-                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, 100D),
-                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, 100D),
-                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, 100D),
-                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, 100D),
-                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000053L, 100D),
-                        new Transaction("NL11INHO1111111111", "NL22INHO9876543210", 1000055L, 90D),
-                        new Transaction("NL11INHO1111111111", "NL33INHO3333333333", 1000055L, 73D)
+                        new Transaction("NL33INHO3333333333", "NL77INHO0123456789", 1000054L, "20-10-1990 12:23:23", 140D),
+                        new Transaction("NL77INHO0123456789", "NL22INHO9876543210", 1000052L, "20-10-1990 12:23:23", 10D),
+                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000055L, "20-10-1990 12:23:23", 9D),
+                        new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, "20-10-1990 12:23:23", 100D),
+                        new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, "20-10-1990 12:23:23", 100D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 100D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 100D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 100D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 100D),
+                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000053L, "20-10-1990 12:23:23", 100D),
+                        new Transaction("NL11INHO1111111111", "NL22INHO9876543210", 1000055L, "20-10-1990 12:23:23", 90D),
+                        new Transaction("NL11INHO1111111111", "NL33INHO3333333333", 1000055L, "20-10-1990 12:23:23", 73D)
                 )
         );
 

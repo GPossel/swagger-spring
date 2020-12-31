@@ -27,8 +27,6 @@ public class LogoutApiController implements LogoutApi {
     @Autowired
     private LogoutApiService logoutApiService;
 
-    private static final Logger log = LoggerFactory.getLogger(LogoutApiController.class);
-
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
