@@ -1,10 +1,8 @@
 package io.swagger.service;
 
 import io.swagger.dao.RepositoryTransaction;
-import io.swagger.model.Account;
-import io.swagger.model.Transaction;
-import io.swagger.model.TransactionRequest;
-import io.swagger.model.User;
+import io.swagger.model.*;
+import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MaxValidatorForNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -79,7 +77,123 @@ public class TransactionApiService {
         return repositoryTransaction.getTransactionsFromIBAN(iban);
     }
 
+    public List<Transaction> getTransactionsFromAmount(Double transferAmount) {
+        return repositoryTransaction.getTransactionsFromAmount(transferAmount);
+    }
 
+    public List<TransactionResponse> FindAllMatches(String nameUser, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
+            List<Transaction> transactionList;
+            User loggedInUser = userApiService.getLoggedInUser();
+
+            if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
+                transactionList = FindMatchesCustomer(nameUser, IBAN, transferAmount);
+            }
+            else {
+                transactionList = FindMatches(nameUser, IBAN, transferAmount);
+            }
+
+            List<TransactionResponse> transactionResponses = changeListForView(transactionList);
+
+            if (nameUser != "" && nameUser != null) {
+                transactionResponses = FindByUserName(nameUser, transactionResponses);
+            }
+
+            if((maxNumberOfResults != null) && (maxNumberOfResults < transactionList.size())) {
+                transactionResponses = transactionResponses.subList(0, maxNumberOfResults);
+            }
+
+            return  transactionResponses;
+        }
+
+    private List<TransactionResponse> FindByUserName(String nameUser, List<TransactionResponse> transactionResponses) {
+        List<TransactionResponse> transactionsMatchingRegex = new ArrayList<>();
+
+        for (TransactionResponse transaction : transactionResponses) {
+
+            String regex = ".*"+ nameUser +".*";
+            if(Pattern.matches(regex, transaction.getNameSender())){
+                transactionsMatchingRegex.add(transaction);
+            }
+            if(Pattern.matches(regex, transaction.getNameReciever())){
+                transactionsMatchingRegex.add(transaction);
+            }
+            if(Pattern.matches(regex, transaction.getUserSender())){
+                transactionsMatchingRegex.add(transaction);
+            }
+        }
+
+        return transactionResponses;
+    }
+
+    private List<Transaction> FindMatches(String userPerformer, String IBAN, Double transferAmount){
+
+    List<Transaction> myList = new ArrayList<Transaction>();
+        if (IBAN != null) {
+            for (Transaction t : getTransactionsFromIBAN(IBAN)) {
+                myList.add(t);
+            }
+        }
+        if (transferAmount != null) {
+            List<Transaction> transactions = getTransactionsFromAmount(transferAmount);
+            for (Transaction t : transactions) {
+                myList.add(t);
+            }
+        }
+        if (myList.size() == 0) {
+            Iterable<Transaction> transactions = getAll();
+            for (Transaction t : transactions) {
+                myList.add(t);
+            }
+        }
+
+        return myList;
+    }
+
+    private List<Transaction> FindMatchesCustomer(String userPerformer, String IBAN, Double transferAmount) {
+
+        List<Transaction> myList = new ArrayList<Transaction>();
+        Long userId = loggedInUser.getId();
+
+        Iterable<Account> accounts =  accountApiService.getAccountsForUser(userId);
+        for (Account account : accounts) {
+
+            if (IBAN != "" && IBAN != null) {
+                for (Transaction t : repositoryTransaction.getTransactionsFromIBANCustomer(IBAN, account.getIban())) {
+                    myList.add(t);
+                }
+            }
+            if (transferAmount != null) {
+                List<Transaction> transactions = repositoryTransaction.getTransactionsFromAmountCustomer(transferAmount, account.getIban());
+                for (Transaction t : transactions) {
+                    myList.add(t);
+                }
+            }
+            if (myList.size() == 0) {
+                List<Transaction> transactions = repositoryTransaction.getAllTransactionsFromCustomer(account.getIban());
+                for (Transaction t : transactions) {
+                    myList.add(t);
+                }
+            }
+        }
+
+        return myList;
+    }
+
+    public void validateDailyLimit(Account account, Double transferAmount) {
+        Double transferAmountToday = 0.00;
+        Timestamp startPeriod = getDateWithoutTimeUsingCalendar();
+        long oneDay = 1 * 24 * 60 * 60 * 1000; // 84600000 milliseconds in a day
+        Timestamp endPeriod = new Timestamp(startPeriod.getTime() + oneDay);
+
+
+        List<Transaction> transactions = repositoryTransaction.getTransactionsForAccountAndToday(account.getIban(), startPeriod, endPeriod);
+        for (Transaction transaction : transactions) {
+            transferAmountToday += transaction.getTransferAmount();
+        }
+        if ((transferAmountToday + transferAmount) > account.getDailyLimit()){
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Reached day limit");
+        }
+    }
 
     public void checkValidTransaction(Transaction transaction, Account accountSender, Account accountReceiver) {
 
@@ -124,150 +238,25 @@ public class TransactionApiService {
         return true;
     }
 
+    private List<TransactionResponse> changeListForView(List<Transaction> transactions) {
 
+        List<TransactionResponse> responseList = new ArrayList<>();
 
-    public List<Transaction> getTransactionsFromAmount(Double transferAmount) {
-        return repositoryTransaction.getTransactionsFromAmount(transferAmount);
-    }
-
-    public List<Transaction> FindAllMatches(String userPerformer, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
-        List<Transaction> myList = new ArrayList<Transaction>();
-        User loggedInUser = userApiService.getLoggedInUser();
-
-        if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
-            Long userId = loggedInUser.getId();
-            // customer could not see any transactions not related to him
-            //TODO: check if this code is right, get multiple accounts
-            List<Account> accounts = new ArrayList<>();
-//            List<Account> accounts = (List<Account>) accountApiService.getAccountsForUser(userId);
-            for (Account account : accounts) {
-
-                if (IBAN != "" && IBAN != null) {
-                    for (Transaction t : repositoryTransaction.getTransactionsFromIBANCustomer(IBAN, account.getIban())) {
-                        myList.add(t);
-                    }
-                }
-                if (transferAmount != null) {
-                    List<Transaction> transactions = repositoryTransaction.getTransactionsFromAmountCustomer(transferAmount, account.getIban());
-                    for (Transaction t : transactions) {
-                        myList.add(t);
-                    }
-                }
-                if (myList.size() == 0) {
-                    List<Transaction> transactions = repositoryTransaction.getAllTransactionsFromCustomer(account.getIban());
-                    for (Transaction t : transactions) {
-                        myList.add(t);
-                    }
-                }
-
-                myList = changeListForView(myList);
-
-                List<Transaction> transactionsMatchingRegex = new ArrayList<>();
-
-                if (userPerformer != "" && userPerformer != null) {
-                    for (Transaction transaction : myList) {
-
-                        String regex = ".*"+ userPerformer +".*";
-                        if(Pattern.matches(regex, transaction.getNameSender())){
-                            transactionsMatchingRegex.add(transaction);
-                        }
-                    }
-
-                    if(transactionsMatchingRegex.size() != 0){
-                        myList = transactionsMatchingRegex;
-                    }
-                }
-
-                if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
-                    myList = myList.subList(0, maxNumberOfResults);
-                }
-            }
-
-            return myList;
-        }
-        else {
-            if (IBAN != null) {
-                for (Transaction t : getTransactionsFromIBAN(IBAN)) {
-                    myList.add(t);
-                }
-            }
-            if (transferAmount != null) {
-                List<Transaction> transactions = getTransactionsFromAmount(transferAmount);
-                for (Transaction t : transactions) {
-                    myList.add(t);
-                }
-            }
-            if (myList.size() == 0) {
-                Iterable<Transaction> transactions = getAll();
-                for (Transaction t : transactions) {
-                    myList.add(t);
-                }
-            }
-
-            // we want to present the list without transaction id, or user id.
-            // instead we add the sender name
-            myList = changeListForView(myList);
-
-            List<Transaction> transactionsMatchingRegex = new ArrayList<>();
-
-            if (userPerformer != "" && userPerformer != null) {
-                for (Transaction transaction : myList) {
-
-                    String regex = ".*"+ userPerformer +".*";
-                    if(Pattern.matches(regex, transaction.getNameSender())){
-                        transactionsMatchingRegex.add(transaction);
-                    }
-                }
-
-                if(transactionsMatchingRegex.size() != 0){
-                    myList = transactionsMatchingRegex;
-                }
-            }
-
-
-
-            if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
-                myList = myList.subList(0, maxNumberOfResults);
-            }
-
-            return myList;
-        }
-    }
-
-    private List<Transaction> changeListForView(List<Transaction> myList) {
-
-        List<Transaction> listAdjustedForView = new ArrayList<>();
-
-        for(Transaction transaction : myList)
+        for(Transaction transaction : transactions)
         {
             User user = userApiService.getById(transaction.getUserPerformer());
-            String sendersName = user.getFirstname() + " " + user.getLastname() + " (" + user.getEmail() + ") ";
-            Transaction transactionForView = new Transaction(sendersName, transaction.getIbanSender(), transaction.getIbanReceiver(), transaction.getTransferAmount(), transaction.getTransactionDate());
-            listAdjustedForView.add(transactionForView);
+            User userSender = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanSender()).getUserId());
+            User userReciever = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanReceiver()).getUserId());
+
+            String userName = user.getFirstname() + " " + user.getLastname() + " (" + user.getEmail() + ") ";
+            String nameSender = userSender.getFirstname() + " " + userSender.getLastname() + " (" + user.getEmail() + ") ";
+            String nameReciever = userReciever.getFirstname() + " " + userReciever.getLastname() + " (" + user.getEmail() + ") ";
+
+            TransactionResponse transactionResponse = new TransactionResponse(transaction, userName, nameSender, nameReciever);
+            responseList.add(transactionResponse);
         }
 
-        return listAdjustedForView;
-    }
-
-    public List<Transaction> searchTransactionsUser(UserDetails user) {
-        List<Transaction> transactionsForUser = new ArrayList<Transaction>();
-        return transactionsForUser;
-    }
-
-    public void validateDailyLimit(Account account, Double transferAmount) {
-        Double transferAmountToday = 0.00;
-        Timestamp startPeriod = getDateWithoutTimeUsingCalendar();
-        long oneDay = 1 * 24 * 60 * 60 * 1000; // 84600000 milliseconds in a day
-        Timestamp endPeriod = new Timestamp(startPeriod.getTime() + oneDay);
-
-
-        List<Transaction> transactions = repositoryTransaction.getTransactionsForAccountAndToday(account.getIban(), startPeriod, endPeriod);
-        for (Transaction transaction : transactions) {
-            transferAmountToday += transaction.getTransferAmount();
-        }
-        if ((transferAmountToday + transferAmount) > account.getDailyLimit()){
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Reached day limit");
-        }
+        return responseList;
     }
 
     public static Timestamp getDateWithoutTimeUsingCalendar() {
@@ -277,12 +266,6 @@ public class TransactionApiService {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return new Timestamp(calendar.getTimeInMillis());
-    }
-
-    public Transaction FillInTransactionSpecifics(Transaction transaction) {
-        User loggedInUser = userApiService.getLoggedInUser();
-        transaction.setUserPerformer(loggedInUser.getId());
-        return transaction;
     }
 
     public boolean UserHasRights(Long userId){

@@ -8,6 +8,7 @@ package io.swagger.api;
 import io.swagger.annotations.*;
 import io.swagger.model.Transaction;
 import io.swagger.model.TransactionRequest;
+import io.swagger.model.TransactionResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,16 +69,16 @@ public interface TransactionsApi {
     ResponseEntity<List<Transaction>> getTransactionsForAccount(@ApiParam(value = "Iban of an account",required=true) @PathVariable("iban") String iban
     );
 
-    @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = Transaction.class, responseContainer = "List", tags={ "transactions", })
+    @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = TransactionResponse.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Succesful request.", response = Transaction.class, responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Succesful request.", response = TransactionResponse.class, responseContainer = "List"),
             @ApiResponse(code = 401, message = "Authorization information is missing or invalid."),
             @ApiResponse(code = 404, message = "An account with the specified IBAN was not found."),
             @ApiResponse(code = 500, message = "Unexpected error.") })
-    @RequestMapping(value = "/transactions",
+    @RequestMapping(value = "/transactions/search",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<Transaction>> searchTansaction(
+    ResponseEntity<List<TransactionResponse>> searchTansaction(
             @ApiParam(value = "userPerformer") @Valid @RequestParam(value = "userPerformer", required = false) String userPerformer
             ,@ApiParam(value = "IBAN") @Valid @RequestParam(value = "IBAN", required = false) String IBAN
             ,@ApiParam(value = "transferAmount") @Valid @RequestParam(value = "transferAmount", required = false) Double transferAmount

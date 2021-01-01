@@ -5,7 +5,6 @@
  */
 package io.swagger.api;
 
-import io.swagger.model.ApiKey;
 import io.swagger.model.Login;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;

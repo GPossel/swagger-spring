@@ -61,15 +61,6 @@ public class Transaction {
     setTransactionDate(transactionDate);
   }
 
-  //RESPONSE
-  public Transaction(String nameSender, String ibanSender, String ibanReceiver, Double transferAmount, Timestamp transactionDate) {
-    this.ibanSender = ibanSender;
-    this.ibanReceiver = ibanReceiver;
-    this.nameSender = nameSender;
-    this.transactionDate = transactionDate;
-    this.transferAmount = transferAmount;
-  }
-
 
   public Transaction(TransactionRequest t, Long userPerformer) {
     setIbanSender(t.getIbanSender());

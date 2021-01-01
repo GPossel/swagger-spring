@@ -65,14 +65,15 @@ public class AccountApiService {
 
     public void delete(String iban)  {
         Account account = getByIBAN(iban);
-
         account.setStatus(Account.StatusEnum.DELETED);
+
         Integer i = repositoryAccount.update(account.getIban(), account);
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
+    //TODO CHECK OP NULL IN MODEL
     public Account update(String iban, Account body) {
         Integer i = repositoryAccount.update(iban, body);
         if (i == 0) {
@@ -81,11 +82,15 @@ public class AccountApiService {
         return getByIBAN(iban);
     }
 
-    public Iterable<AccountResponse> getAccountsForUser(Long userId) {
+    public Iterable<Account> getAccountsForUser(Long userId) {
         if (!UserHasRights(userId)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
-        Iterable<Account> accounts = repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
+        return repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
+    }
+
+    public Iterable<AccountResponse> responseGetAccountsForUser(Long userId) {
+        Iterable<Account> accounts = getAccountsForUser(userId);
         return convertListAccountToResponse(accounts);
     }
 

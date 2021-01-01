@@ -130,7 +130,7 @@ public class AccountsApiController implements AccountsApi {
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
                 try {
-                    Iterable<AccountResponse> accounts = accountApiService.getAccountsForUser(userId);
+                    Iterable<AccountResponse> accounts = accountApiService.responseGetAccountsForUser(userId);
                     return new ResponseEntity<List<AccountResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);

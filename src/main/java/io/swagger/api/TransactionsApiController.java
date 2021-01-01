@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.model.Transaction;
 import io.swagger.model.TransactionRequest;
+import io.swagger.model.TransactionResponse;
 import io.swagger.service.AccountApiService;
 import io.swagger.service.TransactionApiService;
 import org.slf4j.Logger;
@@ -56,23 +57,14 @@ public class TransactionsApiController implements TransactionsApi {
         if (accept != null && content.contains("application/json")) {
             try {
                 Transaction transaction = transactionApiService.create(body);
-                // adding the userperformer and transaction time data
-                transaction = transactionApiService.FillInTransactionSpecifics(transaction);
-
-                transactionApiService.checkValidTransaction(transaction);
-                Boolean transSucces = transactionApiService.makeTransaction(transaction);
-                if (transSucces == true) {
-                    return new ResponseEntity<Transaction>(objectMapper.readValue(objectMapper.writeValueAsString(transaction), Transaction.class), HttpStatus.CREATED);
-                } else {
-                    ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", "The transaction was not succesful"));
-                    return responseEntity;
-                }
-            } catch (Exception e) {
-                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
+                return new ResponseEntity<Transaction>(objectMapper.readValue(objectMapper.writeValueAsString(transaction), Transaction.class), HttpStatus.CREATED);
+            } catch (IOException e) {
+                log.error("Couldn't serialize response for content type application/json", e);
+                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
         }
-        return null;
+        return new ResponseEntity<Transaction>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAnyAuthority('Customer')")
@@ -130,7 +122,7 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
-    public ResponseEntity<List<Transaction>> searchTansaction
+    public ResponseEntity<List<TransactionResponse>> searchTansaction
             (@ApiParam(value = "") @Valid @RequestParam(value = "userPerformer", required = false) String userPerformer,
              @ApiParam(value = "") @Valid @RequestParam(value = "IBAN", required = false) String IBAN,
              @ApiParam(value = "") @Valid @RequestParam(value = "transferAmount", required = false) Double transferAmount,
@@ -139,14 +131,14 @@ public class TransactionsApiController implements TransactionsApi {
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
             try {
-                    List<Transaction> myList = transactionApiService.FindAllMatches(userPerformer, IBAN, transferAmount, maxNumberOfResults);
-                    return new ResponseEntity<List<Transaction>>(objectMapper.readValue(objectMapper.writeValueAsString(myList), List.class), HttpStatus.OK);
+                List<TransactionResponse> transactions = transactionApiService.FindAllMatches(userPerformer, IBAN, transferAmount, maxNumberOfResults);
+                return new ResponseEntity<List<TransactionResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(transactions), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<List<TransactionResponse>>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<TransactionResponse>>(HttpStatus.BAD_REQUEST);
     }
 }
 

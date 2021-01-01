@@ -21,6 +21,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -40,6 +41,7 @@ public class UserApiService implements UserDetailsService {
     }
 
     public Iterable<UserResponse> getAll(UserRequest body) {
+//        checkNull(body);
 //        if(body == null){
 //            Iterable<User> users = repositoryUser.findAll();
 //            List<UserResponse> userResponse = new ArrayList<>();
@@ -49,6 +51,8 @@ public class UserApiService implements UserDetailsService {
 //            return userResponse;
 //        }
 //        Iterable<User> users = repositoryUser.findAll();
+//        return repositoryUser.findAll();
+
         return null;
     }
 
@@ -69,13 +73,20 @@ public class UserApiService implements UserDetailsService {
         return new UserResponse(user);
     }
 
-    public void delete(Long id) {
-        repositoryUser.deleteById(id);
+    public void delete(Long id)  {
+        User user = getById(id);
+        user.setStatus(User.StatusEnum.DELETED);
+
+        Integer i = repositoryUser.update(user.getId(), user);
+        if (i == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     public UserResponse update(Long id, UserRequest body) {
         getByIdWithAuth(id); //checks if user exist and has rights to delete
 
+        //TODO CHECK OP NULL IN MODEL
         Integer i = repositoryUser.update(id, new User(body));
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
@@ -101,11 +112,16 @@ public class UserApiService implements UserDetailsService {
         return true;
     }
 
+    public boolean checkNull(UserRequest userR) throws IllegalAccessException {
+        for (Field f : userR.getClass().getDeclaredFields())
+            if (f.get(this) != null)
+                return false;
+        return true;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = repositoryUser.findByUserName(username);
         return user;
     }
-
-
 }
