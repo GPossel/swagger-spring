@@ -28,10 +28,9 @@ public interface AccountsApi {
             produces = { "application/json" },
             consumes = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<AccountResponse> create(@ApiParam(value = "created accounts" , required=true )  @Valid @RequestBody AccountRequest body
-    );
+    ResponseEntity<AccountResponse> create(@ApiParam(value = "created accounts" , required=true )  @Valid @RequestBody AccountRequest body);
 
-    @ApiOperation(value = "", nickname = "getAccounts", notes = "Get a list of accounts", response = AccountResponse.class, responseContainer = "List", tags={ "accounts", })
+    @ApiOperation(value = "Get all Accounts", nickname = "getAll", notes = "Get a list of accounts", response = AccountResponse.class, responseContainer = "List", tags={ "accounts", })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "succesful operation", response = AccountResponse.class, responseContainer = "List"),
         @ApiResponse(code = 400, message = "invalid operation"),
@@ -45,7 +44,7 @@ public interface AccountsApi {
         method = RequestMethod.GET)
     ResponseEntity<List<AccountResponse>> getAll();
 
-    @ApiOperation(value = "Get Accounts by iban", nickname = "getAccountByIban", notes = "", response = AccountResponse.class, tags={ "accounts", })
+    @ApiOperation(value = "Get Accounts by iban", nickname = "getAccountByIban", notes = "Get an account by its id", response = AccountResponse.class, tags={ "accounts", })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "account by iban", response = AccountResponse.class),
             @ApiResponse(code = 400, message = "invalid operation"),
@@ -57,11 +56,9 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/{iban}",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<AccountResponse> getByIban(@ApiParam(value = "",required=true) @PathVariable("iban") String iban
-    );
+    ResponseEntity<AccountResponse> getByIban(@ApiParam(value = "",required=true) @PathVariable("iban") String iban);
 
-    @ApiOperation(value = "Delete account", nickname = "deleteAccount", notes = "Deletes a account, only the current account or an employee can delete a account.", authorizations = {
-            @Authorization(value = "ApiKeyAuth")    }, tags={ "accounts", })
+    @ApiOperation(value = "Delete account", nickname = "deleteAccount", notes = "Deletes a account", tags={ "accounts", })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "successfully deleted!"),
             @ApiResponse(code = 400, message = "invalid operation"),
@@ -76,7 +73,7 @@ public interface AccountsApi {
     );
 
 
-    @ApiOperation(value = "", nickname = "getAccountsForUser", notes = "Get a list of accounts", response = AccountResponse.class, responseContainer=  "List", tags = { "accounts", })
+    @ApiOperation(value = "Get Accounts for user by its id", nickname = "getAccountsForUser", notes = "Get a list of accounts for user", response = AccountResponse.class, responseContainer=  "List", tags = { "accounts", })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Accounts for user by its id", response = AccountResponse.class, responseContainer = "List"),
             @ApiResponse(code = 400, message = "invalid operation"),
@@ -88,20 +85,18 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/{userid}/users",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<AccountResponse>> getAccountsForUser(@ApiParam(value = "",required=true) @PathVariable("userid") Long userId
-    );
+    ResponseEntity<List<AccountResponse>> getAccountsForUser(@ApiParam(value = "",required=true) @PathVariable("userid") Long userId);
 
-
-    @ApiOperation(value = "Making a withdraw", nickname = "withdraw", notes = "", response = ResponseEntity.class, responseContainer = "List", tags={ "withdraw", "accounts" })
+    @ApiOperation(value = "Making a withdraw", nickname = "withdraw", notes = "Making a withdraw", response = ATMResponse.class, tags={ "accounts" })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Succesful withdraw.", response = ResponseEntity.class, responseContainer = "List"),
+            @ApiResponse(code = 201, message = "Succesful withdraw.", response = ATMResponse.class),
             @ApiResponse(code = 403, message = "Authorization information is missing or invalid."),
             @ApiResponse(code = 404, message = "An account with the specified IBAN was not found."),
             @ApiResponse(code = 500, message = "Unexpected error.") })
     @RequestMapping(value = "/accounts/withdraw",
             produces = { "application/json" },
             method = RequestMethod.PUT)
-    ResponseEntity withdraw(@ApiParam(value = "created withdraw" , required=true)  @Valid @RequestBody ATMrequest body);
+    ResponseEntity<ATMResponse> withdraw(@ApiParam(value = "created withdraw" , required=true)  @Valid @RequestBody ATMRequest body);
 
 
     @ApiOperation(value = "Making a deposit", nickname = "deposit", notes = "", response = ResponseEntity.class, responseContainer = "List", tags={ "deposit", "accounts" })
@@ -113,7 +108,5 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts/deposit",
             produces = { "application/json" },
             method = RequestMethod.PUT)
-    ResponseEntity deposit(@ApiParam(value = "created deposit" , required=true)  @Valid @RequestBody ATMrequest body);
-
-
+    ResponseEntity deposit(@ApiParam(value = "created deposit" , required=true)  @Valid @RequestBody ATMRequest body);
 }

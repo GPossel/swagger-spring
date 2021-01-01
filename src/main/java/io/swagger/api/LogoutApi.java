@@ -26,10 +26,13 @@ import java.util.Map;
 @Api(value = "logout", description = "the logout API")
 public interface LogoutApi {
 
-    @ApiOperation(value = "Logout & removes keys", nickname = "logout", notes = "Log the user out.", tags={ "users", })
+    @ApiOperation(value = "Logout & removes keys", nickname = "logout", notes = "Log the user out.", tags={ "authentications", })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "succesfull logout"),
-            @ApiResponse(code = 404, message = "User not found") })
+            @ApiResponse(code = 400, message = "invalid operation"),
+            @ApiResponse(code = 404, message = "User not found"),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @RequestMapping(value = "/logout",
             method = RequestMethod.DELETE)
     ResponseEntity<Void> logout();

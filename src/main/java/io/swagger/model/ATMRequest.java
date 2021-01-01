@@ -1,18 +1,16 @@
 package io.swagger.model;
 
-public class ATMrequest {
+public class ATMRequest {
 
     private String IBAN;
     private Integer pincode;
     private Double transferAmount;
 
-    public ATMrequest(String IBAN, Integer pincode, Double transferAmount) {
+    public ATMRequest(String IBAN, Integer pincode, Double transferAmount) {
         this.IBAN = IBAN;
         this.pincode = pincode;
         this.transferAmount = transferAmount;
     }
-
-
 
     public String getIBAN() {
         return IBAN;
@@ -37,5 +35,4 @@ public class ATMrequest {
     public void setTransferAmount(Double transferAmount) {
         this.transferAmount = transferAmount;
     }
-
 }

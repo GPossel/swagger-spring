@@ -51,7 +51,7 @@ public class TransactionsApiControllerTest{
     public void makeWrongAmountTransactionsShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
         Transaction newObjectInstance = new Transaction("NL22INHO9876543210",
                 "NL33INHO3333333333", 1000055L,
-                new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()),
+                "20-10-2019 12:23:23",
                 40000D);
 
         mvc.perform(MockMvcRequestBuilders.post("/transactions")
@@ -82,7 +82,7 @@ public class TransactionsApiControllerTest{
     public void makeCorrectTransactionsShouldReturnCREATED() throws Exception {
         Transaction newObjectInstance = new Transaction("NL77INHO0123456789",
                 "NL11INHO1111111111", 1000055L,
-                new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()),
+                "20-10-2019 12:23:23",
                 140D);
 
         mvc.perform(MockMvcRequestBuilders.post("/transactions")
@@ -100,7 +100,7 @@ public class TransactionsApiControllerTest{
     public void makeWrongIBANTransactionsShouldReturnINTERNAL_SERVER_ERROR() throws Exception {
         Transaction newObjectInstance = new Transaction("NL22INHO9876543210",
                 "NL33INHO3333333333", 1000055L,
-                new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()),
+                "20-10-2019 12:23:23",
                 40D);
 
         mvc.perform(MockMvcRequestBuilders.post("/transactions")

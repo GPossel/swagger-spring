@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -49,35 +53,21 @@ public class Transaction {
   public Transaction()
   {}
 
-  public Transaction(String ibanSender, String ibanReceiver, Long userPerformer, Timestamp transactionDate, double transferAmount) {
+  public Transaction(String ibanSender, String ibanReceiver, Long userPerformer, String transactionDate, Double transferAmount) {
     this.ibanSender = ibanSender;
     this.ibanReceiver = ibanReceiver;
     this.userPerformer = userPerformer;
-    this.transactionDate = transactionDate;
     this.transferAmount = transferAmount;
+    setTransactionDate(transactionDate);
   }
 
-  public Transaction(String nameSender, String ibanSender, String ibanReceiver, Double transferAmount, Timestamp transactionDate) {
-    this.ibanSender = ibanSender;
-    this.ibanReceiver = ibanReceiver;
-    this.nameSender = nameSender;
-    this.transactionDate = transactionDate;
-    this.transferAmount = transferAmount;
-  }
 
-  public Transaction(String ibanSender, String ibanReceiver, Long userPerformer, Double transferAmount) {
-    this.ibanSender = ibanSender;
-    this.ibanReceiver = ibanReceiver;
+  public Transaction(TransactionRequest t, Long userPerformer) {
+    setIbanSender(t.getIbanSender());
+    setIbanReceiver(t.getIbanReceiver());
+    this.transactionDate = new Timestamp(new Date().getTime());
+    setTransferAmount(t.getTransferAmount());
     this.userPerformer = userPerformer;
-    this.transactionDate = new Timestamp(new Date().getTime());
-    this.transferAmount = transferAmount;
-  }
-
-  public Transaction(String ibanSender, String ibanReceiver, Double transferAmount) {
-    this.ibanSender = ibanSender;
-    this.ibanReceiver = ibanReceiver;
-    this.transactionDate = new Timestamp(new Date().getTime());
-    this.transferAmount = transferAmount;
   }
 
 
@@ -89,11 +79,17 @@ public class Transaction {
   @ApiModelProperty(value = "")
 
   public String getIbanSender() {
+    if (!ibanSender.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d")) {
+      throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX");
+    }
     return ibanSender;
   }
 
   public void setIbanSender(String ibanSender) {
-    this.ibanSender = ibanSender;
+    if (!ibanSender.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d")) {
+      throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX");
+    }
+    this.ibanReceiver = ibanReceiver;
   }
 
   /**
@@ -112,7 +108,6 @@ public class Transaction {
   }
 
   public void setIbanReceiver(String ibanReceiver) {
-
     if(!ibanReceiver.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d"))
     {
       throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX");
@@ -157,8 +152,13 @@ public class Transaction {
     return transactionDate;
   }
 
-  public void setTransactionDate(Timestamp transactionDate) {
-    this.transactionDate = transactionDate;
+  public void setTransactionDate(String transactionDate) {
+    try {
+      DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+      this.transactionDate = new Timestamp(dateFormat.parse(transactionDate).getTime());
+    } catch (Exception e){
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The registrationDate is invalid");
+    }
   }
 
   public Transaction transferAmount(Double transferAmount) {
@@ -177,7 +177,9 @@ public class Transaction {
   }
 
   public void setTransferAmount(Double transferAmount) {
-    if (transferAmount < 0) throw new IllegalArgumentException("Amount cannot be below zero");
+    if (transferAmount <= 0) {
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Transaction must be above 0");
+    }
     this.transferAmount = transferAmount;
   }
 

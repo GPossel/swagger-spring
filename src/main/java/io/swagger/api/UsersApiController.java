@@ -53,8 +53,9 @@ public class UsersApiController implements UsersApi {
 
         if (accept != null && content.contains("application/json")) {
             try {
-                return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.create(body)), UserResponse.class), HttpStatus.CREATED);
-            }  catch (Exception e) {
+                UserResponse user =userApiService.create(body);
+                return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(user), UserResponse.class), HttpStatus.CREATED);
+            }  catch (IOException e) {
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
@@ -63,13 +64,14 @@ public class UsersApiController implements UsersApi {
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
-    public ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "", required = false) @Valid @RequestBody (required = false) UserRequest body) {
+    public ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "parameters to search for", required = false) @Valid @RequestBody (required = false) UserRequest body) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
 
         if (accept != null && content.contains("application/json")) {
             try {
-                return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.getAll(body)), List.class), HttpStatus.OK);
+                Iterable<UserResponse> users = userApiService.getAll(body);
+                return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(users), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
@@ -82,9 +84,9 @@ public class UsersApiController implements UsersApi {
     @PreAuthorize("hasAuthority('Admin')")
     public ResponseEntity<Void> delete(@ApiParam(value = "The userId that needs to be deleted", required = true) @PathVariable("userId") Long userId)
     {
-
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
+
         if (accept != null && content.contains("application/json")) {
             try {
                 userApiService.delete(userId);
@@ -95,16 +97,15 @@ public class UsersApiController implements UsersApi {
                 return responseEntity;
             }
         }
-        else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
-    public ResponseEntity<UserResponse> getById(@ApiParam(value= "", required = true) @PathVariable("userId") Long userId){
+    public ResponseEntity<UserResponse> getById(@ApiParam(value= "the id from a user", required = true) @PathVariable("userId") Long userId){
         String accept = request.getHeader("Accept");
+        String content = request.getHeader("Content-Type");
 
-        if (accept != null) {
+        if (accept != null && content.contains("application/json")) {
             try {
                 UserResponse user = userApiService.getByIdWithAuth(userId);
                 return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(user), UserResponse.class), HttpStatus.OK);
@@ -125,17 +126,14 @@ public class UsersApiController implements UsersApi {
 
         if (accept != null && content.contains("application/json")) {
             try {
-                return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(userApiService.update(userId, body)), UserResponse.class), HttpStatus.OK);
+                UserResponse user = userApiService.update(userId, body);
+                return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(user), UserResponse.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
         }
-        else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
-
-
 }

@@ -1,9 +1,8 @@
 package io.swagger.service;
 
 import io.swagger.dao.RepositoryTransaction;
-import io.swagger.model.Account;
-import io.swagger.model.Transaction;
-import io.swagger.model.User;
+import io.swagger.model.*;
+import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MaxValidatorForNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -28,238 +27,156 @@ public class TransactionApiService {
     @Autowired
     private  UserApiService userApiService;
 
+    private User loggedInUser;
+
     public TransactionApiService() {
     }
 
-    public List<Transaction> getTransactions() {
-        return (List<Transaction>) repositoryTransaction.findAll();
-    }
+    public Transaction create(TransactionRequest body){
+        if (loggedInUser == null){
+            loggedInUser = userApiService.getLoggedInUser();
+        }
 
-    // get transaction details -> id, (name sender, iban sender, datum, iban receiver, amount)
-    public Transaction getTransaction(Long transactionId) {
-        return repositoryTransaction.findById(transactionId).get();
-    }
-
-
-    public Boolean makeTransaction(Transaction transaction) {
-            /// Use account services to
-            /// Find account receiver & sender
-            Account receiver = accountApiService.getByIBAN(transaction.getIbanReceiver());
-            Account sender = accountApiService.getByIBAN(transaction.getIbanSender());
-
-            // Calculate new balance for account receiver
-            Double Rbalance = receiver.getBalance();
-            Double Sbalance = sender.getBalance();
-
-            Rbalance += transaction.getTransferAmount();
-            Sbalance -= transaction.getTransferAmount();
-
-            receiver.setBalance(Rbalance);
-            sender.setBalance(Sbalance);
-
-            // UPDATE accounts in database with included new balance
-            accountApiService.updateNewBalanceServiceAccounts(receiver.getBalance(), receiver.getIban());
-            accountApiService.updateNewBalanceServiceAccounts(sender.getBalance(), sender.getIban());
-
-            // now the transaction was successful save the transaction
-            repositoryTransaction.save(transaction);
-            return true;
-    }
-
-
-    public void checkValidTransaction(Transaction body) throws Exception {
         Account accountSender = accountApiService.getByIBAN(body.getIbanSender());
         Account accountReceiver = accountApiService.getByIBAN(body.getIbanReceiver());
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loggedInUser = (User)authentication.getPrincipal();
+        Transaction transaction = new Transaction(body, loggedInUser.getId());
+        checkValidTransaction(transaction, accountSender, accountReceiver);
 
-            // validate this account belongs to the logged in user,
-        if(!accountSender.getUserId().equals(loggedInUser.getId())) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transactions from: " + body.getIbanSender() + " is not account of: " + loggedInUser.getEmail());
-        }
+        accountSender.setBalance(accountSender.getBalance() - transaction.getTransferAmount());
+        accountReceiver.setBalance(accountReceiver.getBalance() + transaction.getTransferAmount());
 
-        // validate the account is still active and the receivers account is active
-        if (accountSender.getStatus() != Account.StatusEnum.ACTIVE || accountReceiver.getStatus() != Account.StatusEnum.ACTIVE) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transactions from: " + body.getIbanSender() + " is not account of: " + loggedInUser.getEmail());
-        }
+        accountApiService.update(accountSender.getIban(), accountSender);
+        accountApiService.update(accountReceiver.getIban(), accountReceiver);
 
-        if ((accountSender == null) || accountReceiver == null) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Account sender or receiver does not exists!");
-        }
-
-        //	The maximum amount per transaction cannot be higher than a predefined number, referred to a transaction limit
-        if (loggedInUser.getRank() == User.RankEnum.CUSTOMER) {
-            this.validateDailyLimit(accountSender, body.getTransferAmount());
-        }
-
-        if (body.getTransferAmount() > accountSender.getTransferLimit()) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transfer amount is more than the limit");
-        }
-
-        // Make more transaction daily limit
-        if ((body.getTransferAmount() < 0) || (body.getTransferAmount() >= accountSender.getDailyLimit())) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transaction must be between 0 and " + accountSender.getDailyLimit().toString() + "!");
-            //    Transaction must be between 0 and the daily limit
-        }
-        //     Account has not enough money
-        else if (body.getTransferAmount() > (accountSender.getBalance() - 500)) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Sender account has not enough money");
-        }
-
-        // Checks if accounts are from type saving and if so, has same owner then proceed transaction,
-        if (!validateAccountForAccountByType(accountSender, accountReceiver)) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transactions from or to a savings account must be from the owner");
-        }
+        return repositoryTransaction.save(transaction);
     }
 
-    // Checks if account is a saving and if so is this account from same owner then allowed to proceed,
-    private Boolean validateAccountForAccountByType(Account sender, Account receiver) {
-        if((sender.getRank() == Account.RankEnum.SAVING) || (receiver.getRank() == Account.RankEnum.SAVING))
-        {
-            if(receiver.getUserId() == sender.getUserId())
-            {
-                // Account is linked with same owner. Allow transactions to be made
-                return true;
-            }
+    public Iterable<Transaction> getAll() {
+        return repositoryTransaction.findAll();
+    }
 
-            // Saving does NOT have same owner, must return false
-            return false;
+    public Transaction getById(Long id) {
+        Optional<Transaction> optionalTransaction = repositoryTransaction.findById(id);
+        if (!optionalTransaction.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        // Account is not saving
-        return true;
+        return optionalTransaction.get();
     }
 
     public List<Transaction> getTransactionsFromIBAN(String IBAN) {
         return repositoryTransaction.getTransactionsFromIBAN(IBAN);
     }
 
+    public Iterable<Transaction> getTransactionsForAccountByIBAN(String iban) {
+        Account account = accountApiService.getByIBAN(iban);
+        if (!UserHasRights(account.getUserId())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        return repositoryTransaction.getTransactionsFromIBAN(iban);
+    }
+
     public List<Transaction> getTransactionsFromAmount(Double transferAmount) {
         return repositoryTransaction.getTransactionsFromAmount(transferAmount);
     }
 
-    public List<Transaction> FindAllMatches(String userPerformer, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
-        List<Transaction> myList = new ArrayList<Transaction>();
-        User loggedInUser = userApiService.getLoggedInUser();
+    public List<TransactionResponse> FindAllMatches(String nameUser, String IBAN, Double transferAmount, Integer maxNumberOfResults) {
+            List<Transaction> transactionList;
+            User loggedInUser = userApiService.getLoggedInUser();
 
-        if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
-            Long userId = loggedInUser.getId();
-            // customer could not see any transactions not related to him
-            //TODO: check if this code is right, get multiple accounts
-            List<Account> accounts = new ArrayList<>();
-//            List<Account> accounts = (List<Account>) accountApiService.getAccountsForUser(userId);
-            for (Account account : accounts) {
-
-                if (IBAN != "" && IBAN != null) {
-                    for (Transaction t : repositoryTransaction.getTransactionsFromIBANCustomer(IBAN, account.getIban())) {
-                        myList.add(t);
-                    }
-                }
-                if (transferAmount != null) {
-                    List<Transaction> transactions = repositoryTransaction.getTransactionsFromAmountCustomer(transferAmount, account.getIban());
-                    for (Transaction t : transactions) {
-                        myList.add(t);
-                    }
-                }
-                if (myList.size() == 0) {
-                    List<Transaction> transactions = repositoryTransaction.getAllTransactionsFromCustomer(account.getIban());
-                    for (Transaction t : transactions) {
-                        myList.add(t);
-                    }
-                }
-
-                myList = changeListForView(myList);
-
-                List<Transaction> transactionsMatchingRegex = new ArrayList<>();
-
-                if (userPerformer != "" && userPerformer != null) {
-                    for (Transaction transaction : myList) {
-
-                        String regex = ".*"+ userPerformer +".*";
-                        if(Pattern.matches(regex, transaction.getNameSender())){
-                            transactionsMatchingRegex.add(transaction);
-                        }
-                    }
-
-                    if(transactionsMatchingRegex.size() != 0){
-                        myList = transactionsMatchingRegex;
-                    }
-                }
-
-                if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
-                    myList = myList.subList(0, maxNumberOfResults);
-                }
+            if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
+                transactionList = FindMatchesCustomer(nameUser, IBAN, transferAmount);
+            }
+            else {
+                transactionList = FindMatches(nameUser, IBAN, transferAmount);
             }
 
-            return myList;
+            List<TransactionResponse> transactionResponses = changeListForView(transactionList);
+
+            if (nameUser != "" && nameUser != null) {
+                transactionResponses = FindByUserName(nameUser, transactionResponses);
+            }
+
+            if((maxNumberOfResults != null) && (maxNumberOfResults < transactionList.size())) {
+                transactionResponses = transactionResponses.subList(0, maxNumberOfResults);
+            }
+
+            return  transactionResponses;
         }
-        else {
-            if (IBAN != null) {
-                for (Transaction t : getTransactionsFromIBAN(IBAN)) {
+
+    private List<TransactionResponse> FindByUserName(String nameUser, List<TransactionResponse> transactionResponses) {
+        List<TransactionResponse> transactionsMatchingRegex = new ArrayList<>();
+
+        for (TransactionResponse transaction : transactionResponses) {
+
+            String regex = ".*"+ nameUser +".*";
+            if(Pattern.matches(regex, transaction.getNameSender())){
+                transactionsMatchingRegex.add(transaction);
+            }
+            if(Pattern.matches(regex, transaction.getNameReciever())){
+                transactionsMatchingRegex.add(transaction);
+            }
+            if(Pattern.matches(regex, transaction.getUserSender())){
+                transactionsMatchingRegex.add(transaction);
+            }
+        }
+
+        return transactionResponses;
+    }
+
+    private List<Transaction> FindMatches(String userPerformer, String IBAN, Double transferAmount){
+
+    List<Transaction> myList = new ArrayList<Transaction>();
+        if (IBAN != null) {
+            for (Transaction t : getTransactionsFromIBAN(IBAN)) {
+                myList.add(t);
+            }
+        }
+        if (transferAmount != null) {
+            List<Transaction> transactions = getTransactionsFromAmount(transferAmount);
+            for (Transaction t : transactions) {
+                myList.add(t);
+            }
+        }
+        if (myList.size() == 0) {
+            Iterable<Transaction> transactions = getAll();
+            for (Transaction t : transactions) {
+                myList.add(t);
+            }
+        }
+
+        return myList;
+    }
+
+    private List<Transaction> FindMatchesCustomer(String userPerformer, String IBAN, Double transferAmount) {
+
+        List<Transaction> myList = new ArrayList<Transaction>();
+        Long userId = loggedInUser.getId();
+
+        Iterable<Account> accounts =  accountApiService.getAccountsForUser(userId);
+        for (Account account : accounts) {
+
+            if (IBAN != "" && IBAN != null) {
+                for (Transaction t : repositoryTransaction.getTransactionsFromIBANCustomer(IBAN, account.getIban())) {
                     myList.add(t);
                 }
             }
             if (transferAmount != null) {
-                List<Transaction> transactions = getTransactionsFromAmount(transferAmount);
+                List<Transaction> transactions = repositoryTransaction.getTransactionsFromAmountCustomer(transferAmount, account.getIban());
                 for (Transaction t : transactions) {
                     myList.add(t);
                 }
             }
             if (myList.size() == 0) {
-                List<Transaction> transactions = getTransactions();
+                List<Transaction> transactions = repositoryTransaction.getAllTransactionsFromCustomer(account.getIban());
                 for (Transaction t : transactions) {
                     myList.add(t);
                 }
             }
-
-            // we want to present the list without transaction id, or user id.
-            // instead we add the sender name
-            myList = changeListForView(myList);
-
-            List<Transaction> transactionsMatchingRegex = new ArrayList<>();
-
-            if (userPerformer != "" && userPerformer != null) {
-                for (Transaction transaction : myList) {
-
-                    String regex = ".*"+ userPerformer +".*";
-                    if(Pattern.matches(regex, transaction.getNameSender())){
-                        transactionsMatchingRegex.add(transaction);
-                    }
-                }
-
-                if(transactionsMatchingRegex.size() != 0){
-                    myList = transactionsMatchingRegex;
-                }
-            }
-
-
-
-            if ((maxNumberOfResults != null) && (maxNumberOfResults < myList.size())) {
-                myList = myList.subList(0, maxNumberOfResults);
-            }
-
-            return myList;
-        }
-    }
-
-    private List<Transaction> changeListForView(List<Transaction> myList) {
-
-        List<Transaction> listAdjustedForView = new ArrayList<>();
-
-        for(Transaction transaction : myList)
-        {
-            User user = userApiService.getById(transaction.getUserPerformer());
-            String sendersName = user.getFirstname() + " " + user.getLastname() + " (" + user.getEmail() + ") ";
-            Transaction transactionForView = new Transaction(sendersName, transaction.getIbanSender(), transaction.getIbanReceiver(), transaction.getTransferAmount(), transaction.getTransactionDate());
-            listAdjustedForView.add(transactionForView);
         }
 
-        return listAdjustedForView;
-    }
-
-    public List<Transaction> searchTransactionsUser(UserDetails user) {
-        List<Transaction> transactionsForUser = new ArrayList<Transaction>();
-        return transactionsForUser;
+        return myList;
     }
 
     public void validateDailyLimit(Account account, Double transferAmount) {
@@ -278,6 +195,70 @@ public class TransactionApiService {
         }
     }
 
+    public void checkValidTransaction(Transaction transaction, Account accountSender, Account accountReceiver) {
+
+        validateDailyLimit(accountSender, transaction.getTransferAmount());
+
+        // validate this account belongs to the logged in user, or is employee
+        if(!UserHasRights(accountSender.getUserId())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Transactions from: " + transaction.getIbanSender() + " is not account of: " + loggedInUser.getEmail());
+        }
+
+        // validate the account is still active and the receivers account is active
+        if (accountSender.getStatus() != Account.StatusEnum.ACTIVE || accountReceiver.getStatus() != Account.StatusEnum.ACTIVE) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "One of the accounts is not Active, it might blocked or deleted");
+        }
+
+        if (transaction.getTransferAmount() > accountSender.getTransferLimit()) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transfer amount is more than the limit");
+        }
+
+        //     Account has not enough money
+        if (transaction.getTransferAmount() > (accountSender.getBalance() - 500)) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Sender account has not enough money");
+        }
+
+        // Checks if accounts are from type saving and if so, has same owner then proceed transaction,
+        if (!validateAccountForAccountByType(accountSender, accountReceiver)) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transactions from or to a savings account must be from the owner");
+        }
+    }
+
+    // Checks if account is a saving and if so is this account from same owner then allowed to proceed,
+    private Boolean validateAccountForAccountByType(Account accountSender, Account accountReciever) {
+
+        // Account is liked with same owner. Allow transactions to be made
+        if(accountReciever.getUserId() != accountSender.getUserId())
+        {
+            if((accountSender.getRank() == Account.RankEnum.SAVING) || (accountReciever.getRank() == Account.RankEnum.SAVING))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<TransactionResponse> changeListForView(List<Transaction> transactions) {
+
+        List<TransactionResponse> responseList = new ArrayList<>();
+
+        for(Transaction transaction : transactions)
+        {
+            User user = userApiService.getById(transaction.getUserPerformer());
+            User userSender = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanSender()).getUserId());
+            User userReciever = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanReceiver()).getUserId());
+
+            String userName = user.getFirstname() + " " + user.getLastname() + " (" + user.getEmail() + ") ";
+            String nameSender = userSender.getFirstname() + " " + userSender.getLastname() + " (" + user.getEmail() + ") ";
+            String nameReciever = userReciever.getFirstname() + " " + userReciever.getLastname() + " (" + user.getEmail() + ") ";
+
+            TransactionResponse transactionResponse = new TransactionResponse(transaction, userName, nameSender, nameReciever);
+            responseList.add(transactionResponse);
+        }
+
+        return responseList;
+    }
+
     public static Timestamp getDateWithoutTimeUsingCalendar() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -287,10 +268,17 @@ public class TransactionApiService {
         return new Timestamp(calendar.getTimeInMillis());
     }
 
-    public Transaction FillInTransactionSpecifics(Transaction transaction) {
-        User loggedInUser = userApiService.getLoggedInUser();
-        transaction.setUserPerformer(loggedInUser.getId());
-        return transaction;
+    public boolean UserHasRights(Long userId){
+        if (loggedInUser == null) {
+            loggedInUser = userApiService.getLoggedInUser();
+        }
+
+        if (loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
+            if (!loggedInUser.getId().equals(userId)){
+                return false;
+            }
+        }
+        return true;
     }
 
 }

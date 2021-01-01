@@ -64,15 +64,15 @@ public class User implements UserDetails{
   @JsonProperty("registrationdate")
   private Timestamp registrationdate = null;
 
-  public User(UserRequest ur) {
-    setFirstname(ur.getFirstname());
-    setLastname(ur.getLastname());
-    setEmail(ur.getEmail());
-    setPassword(ur.getPassword(), ur.getrPassword());
-    setPhone(ur.getPhone());
-    setBirthdate(ur.getBirthdate());
+  public User(UserRequest u) {
+    setFirstname(u.getFirstname());
+    setLastname(u.getLastname());
+    setEmail(u.getEmail());
+    setPassword(u.getPassword(), u.getrPassword());
+    setPhone(u.getPhone());
+    setBirthdate(u.getBirthdate());
     this.registrationdate = new Timestamp(new Date().getTime());
-    setRank(ur.getRank());
+    setRank(u.getRank());
     this.status = StatusEnum.ACTIVE;
   }
 
@@ -192,9 +192,12 @@ public class User implements UserDetails{
   }
 
   public void setFirstname(String firstname) {
-    if (!firstname.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$")){
+    if (firstname == null || firstname.isEmpty()) {
+      return;
+    } else if (!firstname.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$")){
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The first or lastname is not valid!");
     }
+
     this.firstname = firstname;
   }
 
@@ -214,7 +217,9 @@ public class User implements UserDetails{
   }
 
   public void setLastname(String lastname) {
-    if (!lastname.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$")){
+    if (lastname == null || lastname.isEmpty()) {
+      return;
+    } else if (!lastname.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$")){
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The first or lastname is not valid!");
     }
     this.lastname = lastname;
@@ -236,7 +241,9 @@ public class User implements UserDetails{
   }
 
   public void setEmail(String email) {
-    if (!email.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")){
+    if (email == null || email.isEmpty()) {
+      return;
+    } else if (!email.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")){
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The Email is not valid!");
     }
     this.email = email;
@@ -325,7 +332,7 @@ public class User implements UserDetails{
   }
 
   public void setPhone(String phone) {
-    if (!    phone.matches("^((\\+|00(\\s|\\s?\\-\\s?)?)31(\\s|\\s?\\-\\s?)?(\\(0\\)[\\-\\s]?)?|0)[1-9]((\\s|\\s?\\-\\s?)?[0-9])((\\s|\\s?-\\s?)?[0-9])((\\s|\\s?-\\s?)?[0-9])\\s?[0-9]\\s?[0-9]\\s?[0-9]\\s?[0-9]\\s?[0-9]$")){
+    if (!phone.matches("^((\\+|00(\\s|\\s?\\-\\s?)?)31(\\s|\\s?\\-\\s?)?(\\(0\\)[\\-\\s]?)?|0)[1-9]((\\s|\\s?\\-\\s?)?[0-9])((\\s|\\s?-\\s?)?[0-9])((\\s|\\s?-\\s?)?[0-9])\\s?[0-9]\\s?[0-9]\\s?[0-9]\\s?[0-9]\\s?[0-9]$")){
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The Phone number is invalid");
     }
     this.phone = phone;

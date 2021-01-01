@@ -130,7 +130,7 @@ public class AccountsApiController implements AccountsApi {
         String content = request.getHeader("Content-Type");
         if (accept != null && content.contains("application/json")) {
                 try {
-                    Iterable<AccountResponse> accounts = accountApiService.getAccountsForUser(userId);
+                    Iterable<AccountResponse> accounts = accountApiService.responseGetAccountsForUser(userId);
                     return new ResponseEntity<List<AccountResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
@@ -142,64 +142,38 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
-    public ResponseEntity withdraw(@ApiParam(value = "created withdraw", required = true) @Valid @RequestBody ATMrequest body)
+    public ResponseEntity<ATMResponse> withdraw(@ApiParam(value = "created withdraw", required = true) @Valid @RequestBody ATMRequest body)
     {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
+
         if (accept != null && content.contains("application/json")) {
             try {
-                Double oldBalance = 0d;
-                Double newBalance = 0d;
-
-                if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-                    //TODO: check response
-                    Account account = accountApiService.getByIBAN(body.getIBAN());
-                    oldBalance = account.getBalance();
-                    AccountResponse accountResponse = accountApiService.withdraw(body.getIBAN(), body.getTransferAmount());
-                    newBalance = account.getBalance();
-                }
-
-                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body((JsonNode) objectMapper.createObjectNode().put("message", "Old balance was: "
-                + oldBalance.toString() + "\n New balance: " + newBalance.toString() + "\n withdraw: -" + body.getTransferAmount().toString()));
-                return responseEntity;
-
-            } catch (Exception e) {
-                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
+                ATMResponse atmResponse = accountApiService.withdraw(body);
+                return new ResponseEntity<ATMResponse>(objectMapper.readValue(objectMapper.writeValueAsString(atmResponse), ATMResponse.class), HttpStatus.OK);
+            } catch (IOException e) {
+                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
         }
-        ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body((JsonNode) objectMapper.createObjectNode().put("message", "Wrong headers"));
-        return responseEntity;
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
-    public ResponseEntity deposit(@ApiParam(value = "created deposit", required = true) @Valid @RequestBody ATMrequest body)
+    public ResponseEntity<ATMResponse> deposit(@ApiParam(value = "created deposit", required = true) @Valid @RequestBody ATMRequest body)
     {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
+
         if (accept != null && content.contains("application/json")) {
             try {
-                Double oldBalance = 0d;
-                Double newBalance = 0d;
-
-                if(body.getPincode().equals(1234) && !(body.getTransferAmount() < 0)){
-                    //TODO: check response
-                    Account account = accountApiService.getByIBAN(body.getIBAN());
-                    oldBalance = account.getBalance();
-                    AccountResponse accountResponse = accountApiService.deposit(body.getIBAN(), body.getTransferAmount());
-                    newBalance = account.getBalance();
-                }
-
-                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body((JsonNode) objectMapper.createObjectNode().put("message", "Old balance was: "
-                        + oldBalance.toString() + "\n New balance: " + newBalance.toString() + "\n deposit: +" + body.getTransferAmount().toString()));
-                return responseEntity;
-
-            } catch (Exception e) {
-                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", "Wrong user or no user was logged in. No Authentication. \n" + e.getMessage()));
+                ATMResponse atmResponse = accountApiService.deposit(body);
+                return new ResponseEntity<ATMResponse>(objectMapper.readValue(objectMapper.writeValueAsString(atmResponse), ATMResponse.class), HttpStatus.OK);
+            } catch (IOException e) {
+                ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
         }
-        ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body((JsonNode) objectMapper.createObjectNode().put("message", "Headers failed: Accept:" + accept + " & Content-Type:" + content));
-        return responseEntity;
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
