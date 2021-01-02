@@ -19,7 +19,7 @@ public interface RepositoryUser extends CrudRepository<User, Long> {
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u = :user WHERE u.id = :id")
-    Integer update( @Param("id") Long id, @Param("user") User user);
+    Integer update(@Param("user") User user, @Param("id") Long id);
 
     @Query("select u from User u where u.email =:email")
     User findByUserName(@Param("email") String username);

@@ -17,12 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -77,20 +72,22 @@ public class UserApiService implements UserDetailsService {
         User user = getById(id);
         user.setStatus(User.StatusEnum.DELETED);
 
-        Integer i = repositoryUser.update(user.getId(), user);
+        Integer i = repositoryUser.update(user, user.getId());
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
     public UserResponse update(Long id, UserRequest body) {
-        getByIdWithAuth(id); //checks if user exist and has rights to delete
+        getByIdWithAuth(id); //checks if user exist and has rights to update
 
         //TODO CHECK OP NULL IN MODEL
-        Integer i = repositoryUser.update(id, new User(body));
+        User user = new User(body);
+        Integer i = repositoryUser.update(user, id);
         if (i == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
+
         return new UserResponse(this.getById(id));
     }
 
@@ -100,11 +97,10 @@ public class UserApiService implements UserDetailsService {
     }
 
     public boolean UserHasRights(Long userId){
-        if (this.loggedInUser == null) {
-            this.loggedInUser = this.getLoggedInUser();
-        }
 
-        if (this.loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
+        loggedInUser = getLoggedInUser();
+
+        if (!loggedInUser.getRank().equals(User.RankEnum.EMPLOYEE)){
             if (!this.loggedInUser.getId().equals(userId)){
                 return false;
             }

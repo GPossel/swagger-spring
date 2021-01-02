@@ -31,16 +31,16 @@ public interface TransactionsApi {
             method = RequestMethod.POST)
     ResponseEntity<Transaction> create(@ApiParam(value = "Transaction created", required = true) @Valid @RequestBody TransactionRequest body);
 
-    @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = Transaction.class, responseContainer = "List", tags={ "transactions", })
+    @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = TransactionResponse.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Succesful request.", response = Transaction.class, responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Succesful request.", response = TransactionResponse.class, responseContainer = "List"),
             @ApiResponse(code = 401, message = "Authorization information is missing or invalid."),
             @ApiResponse(code = 404, message = "An account with the specified IBAN was not found."),
             @ApiResponse(code = 500, message = "Unexpected error.") })
     @RequestMapping(value = "/transactions",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<Transaction>> getAll();
+    ResponseEntity<List<TransactionResponse>> getAll();
 
     @ApiOperation(value = "Get a transaction by its id", nickname = "getTransactionById", notes = "Get a transaction by its id", response = Transaction.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {
@@ -53,20 +53,20 @@ public interface TransactionsApi {
     @RequestMapping(value = "transactions/{transactionId}",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<Transaction> getById(@ApiParam(value = "id of a transaction", required=true) @PathVariable("transactionId") Long id);
+    ResponseEntity<TransactionResponse> getById(@ApiParam(value = "id of a transaction", required=true) @PathVariable("transactionId") Long id);
 
     @ApiOperation(value = "Get a list of transactions", nickname = "getTransactionsForAccountByIBAN", notes = "Get a list of transactions for account by iban", response = Transaction.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Succesful request.", response = Transaction.class, responseContainer = "List"),
-            @ApiResponse(code = 400, message = "Bad request. Account ID must be an integer and larger than 0."),
+            @ApiResponse(code = 400, message = "Bad request."),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "An account with the specified ID was not found."),
+            @ApiResponse(code = 404, message = "An account with the specified Iban was not found."),
             @ApiResponse(code = 500, message = "Unexpected error.") })
     @RequestMapping(value = "transactions/{iban}/accounts",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<Transaction>> getTransactionsForAccount(@ApiParam(value = "Iban of an account",required=true) @PathVariable("iban") String iban
+    ResponseEntity<List<TransactionResponse>> getTransactionsForAccount(@ApiParam(value = "Iban of an account",required=true) @PathVariable("iban") String iban
     );
 
     @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = TransactionResponse.class, responseContainer = "List", tags={ "transactions", })

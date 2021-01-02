@@ -25,4 +25,7 @@ public interface RepositoryAccount extends CrudRepository<Account, String> {
     @Modifying
     @Query(value = "UPDATE Account a SET a = :ACCOUNT WHERE a.iban = :IBAN")
     Integer update(@Param("IBAN") String IBAN, @Param("ACCOUNT") Account ACCOUNT);
+
+    @Query(value = "select a from Account a where a.userId = :userId and not (a.rank = :rank)")
+    Iterable<Account> getAccountsForCustomer(@Param("userId") Long userId, @Param("rank")Account.RankEnum rank);
 }

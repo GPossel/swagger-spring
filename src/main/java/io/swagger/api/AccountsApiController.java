@@ -42,7 +42,6 @@ public class AccountsApiController implements AccountsApi {
 
     @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<AccountResponse> create(@ApiParam(value = "created accounts", required = true) @Valid @RequestBody AccountRequest body
-
     ) {
         System.out.println(1);
         System.out.println(body);
@@ -68,9 +67,7 @@ public class AccountsApiController implements AccountsApi {
     @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<List<AccountResponse>> getAll(){
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-type");
-
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
                 try {
                     Iterable<AccountResponse> accounts = accountApiService.getAll();
                     return new ResponseEntity<List<AccountResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
@@ -105,9 +102,8 @@ public class AccountsApiController implements AccountsApi {
     @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<Void> delete(@ApiParam(value = "The iban that needs to be deleted", required = true) @PathVariable("iban") String iban) {
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-type");
 
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 User loggedInUser = (User)authentication.getPrincipal();

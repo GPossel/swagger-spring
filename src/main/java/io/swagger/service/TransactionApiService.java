@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionApiService {
@@ -52,29 +53,37 @@ public class TransactionApiService {
         return repositoryTransaction.save(transaction);
     }
 
-    public Iterable<Transaction> getAll() {
+    public List<TransactionResponse> getAllTransactionsResponses() {
+        List<Transaction> transactions = (List<Transaction>) repositoryTransaction.findAll();
+        return changeListForView(transactions);
+    }
+
+    public Iterable<Transaction> getAll()
+    {
         return repositoryTransaction.findAll();
     }
 
-    public Transaction getById(Long id) {
+    public TransactionResponse getById(Long id) {
         Optional<Transaction> optionalTransaction = repositoryTransaction.findById(id);
         if (!optionalTransaction.isPresent()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return optionalTransaction.get();
+        TransactionResponse transactionResponse = convertTransactionToResponse(optionalTransaction.get());
+        return transactionResponse;
     }
 
     public List<Transaction> getTransactionsFromIBAN(String IBAN) {
         return repositoryTransaction.getTransactionsFromIBAN(IBAN);
     }
 
-    public Iterable<Transaction> getTransactionsForAccountByIBAN(String iban) {
+    public List<TransactionResponse> getTransactionsForAccountByIBAN(String iban) {
         Account account = accountApiService.getByIBAN(iban);
         if (!UserHasRights(account.getUserId())){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        return repositoryTransaction.getTransactionsFromIBAN(iban);
+        List<Transaction> transactions = repositoryTransaction.getTransactionsFromIBAN(iban);
+        return changeListForView(transactions);
     }
 
     public List<Transaction> getTransactionsFromAmount(Double transferAmount) {
@@ -85,7 +94,7 @@ public class TransactionApiService {
             List<Transaction> transactionList;
             User loggedInUser = userApiService.getLoggedInUser();
 
-            if(loggedInUser.getRank() == User.RankEnum.CUSTOMER){
+            if(loggedInUser.getRank().equals(User.RankEnum.CUSTOMER)){
                 transactionList = FindMatchesCustomer(nameUser, IBAN, transferAmount);
             }
             else {
@@ -122,7 +131,12 @@ public class TransactionApiService {
             }
         }
 
-        return transactionResponses;
+        // remove duplicates
+        List<TransactionResponse> transactionsMatchingRegexDistinct = transactionsMatchingRegex.stream()
+                .distinct()
+                .collect(Collectors.toList());
+
+        return transactionsMatchingRegexDistinct;
     }
 
     private List<Transaction> FindMatches(String userPerformer, String IBAN, Double transferAmount){
@@ -244,6 +258,15 @@ public class TransactionApiService {
 
         for(Transaction transaction : transactions)
         {
+            TransactionResponse transactionResponse = convertTransactionToResponse(transaction);
+            responseList.add(transactionResponse);
+        }
+
+        return responseList;
+    }
+
+    private TransactionResponse convertTransactionToResponse(Transaction transaction) {
+
             User user = userApiService.getById(transaction.getUserPerformer());
             User userSender = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanSender()).getUserId());
             User userReciever = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanReceiver()).getUserId());
@@ -253,10 +276,8 @@ public class TransactionApiService {
             String nameReciever = userReciever.getFirstname() + " " + userReciever.getLastname() + " (" + user.getEmail() + ") ";
 
             TransactionResponse transactionResponse = new TransactionResponse(transaction, userName, nameSender, nameReciever);
-            responseList.add(transactionResponse);
-        }
 
-        return responseList;
+            return transactionResponse;
     }
 
     public static Timestamp getDateWithoutTimeUsingCalendar() {
@@ -268,13 +289,17 @@ public class TransactionApiService {
         return new Timestamp(calendar.getTimeInMillis());
     }
 
-    public boolean UserHasRights(Long userId){
-        if (loggedInUser == null) {
-            loggedInUser = userApiService.getLoggedInUser();
-        }
+    public User getLoggedInUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (User)authentication.getPrincipal();
+    }
 
-        if (loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
-            if (!loggedInUser.getId().equals(userId)){
+    public boolean UserHasRights(Long userId){
+
+        loggedInUser = getLoggedInUser();
+
+        if (!loggedInUser.getRank().equals(User.RankEnum.EMPLOYEE)){
+            if (!this.loggedInUser.getId().equals(userId)){
                 return false;
             }
         }
