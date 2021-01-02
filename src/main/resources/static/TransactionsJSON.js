@@ -3,7 +3,7 @@ window.addEventListener("load", function (name, value) {
 
     document.getElementById('btn_allTransactions').addEventListener('click',function (e) {
         xhr = new XMLHttpRequest();
-        var url = 'http://localhost:8080/transactions'
+        var url = 'http://localhost:8080/transactions/search'
         console.log(url);
 
         var userPerformer = document.getElementById('userPerformer_search').value;

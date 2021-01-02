@@ -53,7 +53,7 @@ public class UsersApiController implements UsersApi {
 
         if (accept != null && content.contains("application/json")) {
             try {
-                UserResponse user =userApiService.create(body);
+                UserResponse user = userApiService.create(body);
                 return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(user), UserResponse.class), HttpStatus.CREATED);
             }  catch (IOException e) {
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
@@ -85,9 +85,8 @@ public class UsersApiController implements UsersApi {
     public ResponseEntity<Void> delete(@ApiParam(value = "The userId that needs to be deleted", required = true) @PathVariable("userId") Long userId)
     {
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
 
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
             try {
                 userApiService.delete(userId);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body((JsonNode) objectMapper.createObjectNode().put("message", "Deleted Successfully!"));
@@ -103,9 +102,8 @@ public class UsersApiController implements UsersApi {
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<UserResponse> getById(@ApiParam(value= "the id from a user", required = true) @PathVariable("userId") Long userId){
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
 
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
             try {
                 UserResponse user = userApiService.getByIdWithAuth(userId);
                 return new ResponseEntity<UserResponse>(objectMapper.readValue(objectMapper.writeValueAsString(user), UserResponse.class), HttpStatus.OK);

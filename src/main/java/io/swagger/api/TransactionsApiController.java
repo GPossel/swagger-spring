@@ -68,54 +68,51 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAnyAuthority('Customer')")
-    public ResponseEntity<List<Transaction>> getAll() {
+    public ResponseEntity<List<TransactionResponse>> getAll() {
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
 
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
             try {
-                Iterable<Transaction> transactions = transactionApiService.getAll();
-                return new ResponseEntity<List<Transaction>>(objectMapper.readValue(objectMapper.writeValueAsString(transactions), List.class), HttpStatus.OK);
+                List<TransactionResponse> transactions = transactionApiService.getAllTransactionsResponses();
+                return new ResponseEntity<List<TransactionResponse> >(objectMapper.readValue(objectMapper.writeValueAsString(transactions), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<List<TransactionResponse> >(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<List<Transaction>>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<List<TransactionResponse> >(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAnyAuthority('Customer')")
-    public ResponseEntity<List<Transaction>> getTransactionsForAccount(@ApiParam(value = "Iban of an account", required = true) @PathVariable("iban") String iban) {
+    public ResponseEntity<List<TransactionResponse>> getTransactionsForAccount(@ApiParam(value = "Iban of an account", required = true) @PathVariable("iban") String iban) {
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
 
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
             try {
-                Iterable<Transaction> myList = transactionApiService.getTransactionsForAccountByIBAN(iban);
-                return new ResponseEntity<List<Transaction>>(objectMapper.readValue(objectMapper.writeValueAsString(myList), List.class), HttpStatus.OK);
+                List<TransactionResponse> myList = transactionApiService.getTransactionsForAccountByIBAN(iban);
+                return new ResponseEntity<List<TransactionResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(myList), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Transaction>>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<List<TransactionResponse>>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<List<Transaction>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<List<TransactionResponse>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
-    public ResponseEntity<Transaction> getById(@ApiParam(value = "id of transaction", required = true) @PathVariable("transactionId") Long id
+    public ResponseEntity<TransactionResponse> getById(@ApiParam(value = "id of transaction", required = true) @PathVariable("transactionId") Long id
     ) {
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
 
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
             try {
-                Transaction transaction = transactionApiService.getById(id);
-                return new ResponseEntity<Transaction>(objectMapper.readValue(objectMapper.writeValueAsString(transaction), Transaction.class), HttpStatus.OK);
+                TransactionResponse transaction = transactionApiService.getById(id);
+                return new ResponseEntity<TransactionResponse>(objectMapper.readValue(objectMapper.writeValueAsString(transaction), TransactionResponse.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Transaction>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<TransactionResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
         return status(HttpStatus.BAD_REQUEST).build();
@@ -128,8 +125,7 @@ public class TransactionsApiController implements TransactionsApi {
              @ApiParam(value = "") @Valid @RequestParam(value = "transferAmount", required = false) Double transferAmount,
              @ApiParam(value = "") @Valid @RequestParam(value = "MaxNumberOfResults", required = false) Integer maxNumberOfResults) {
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
             try {
                 List<TransactionResponse> transactions = transactionApiService.FindAllMatches(userPerformer, IBAN, transferAmount, maxNumberOfResults);
                 return new ResponseEntity<List<TransactionResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(transactions), List.class), HttpStatus.OK);

@@ -254,16 +254,16 @@ public class User implements UserDetails{
     return this;
   }
 
-  //  String ROLE_PREFIX = "ROLE_"; ROLE_PREFIX +
+   String ROLE_PREFIX = "ROLE_";
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
-    String role = this.rank.toString(); // "ROLE_EMPLOYEE";//
-    String status = this.status.toString(); // "ROLE_Active / ROLE_ACTIVE / Active //"
-    list.add(new SimpleGrantedAuthority(role));
-    list.add(new SimpleGrantedAuthority(status));
-    return list;
+    Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+//    String role = this.rank.toString(); // "ROLE_EMPLOYEE";//
+//    String status = this.status.toString(); // "ROLE_Active / ROLE_ACTIVE / Active //"
+    authorities.add(new SimpleGrantedAuthority(this.rank.toString()));
+    authorities.add(new SimpleGrantedAuthority(this.status.toString()));
+    return authorities;
   }
 
   /**

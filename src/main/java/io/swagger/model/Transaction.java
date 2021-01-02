@@ -89,7 +89,7 @@ public class Transaction {
     if (!ibanSender.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d")) {
       throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX");
     }
-    this.ibanReceiver = ibanReceiver;
+    this.ibanSender = ibanSender;
   }
 
   /**

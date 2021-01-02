@@ -28,7 +28,7 @@ public class AccountApiService {
     User loggedInUser;
 
     public AccountResponse create(AccountRequest body) {
-        if (body.getRank() == Account.RankEnum.BANK){
+        if (body.getRank().equals(Account.RankEnum.BANK)){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't create an account with rank: BANK");
         }
         Account account = repositoryAccount.save(new Account(body));
@@ -38,10 +38,11 @@ public class AccountApiService {
     public Iterable<AccountResponse> getAll() {
         if (loggedInUser == null) {
             loggedInUser = userApiService.getLoggedInUser();
-            if (loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
+            if (!loggedInUser.getRank().equals(User.RankEnum.EMPLOYEE)){
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
         }
+
         Iterable<Account> accounts = repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
         return convertListAccountToResponse(accounts);
     }
@@ -86,7 +87,8 @@ public class AccountApiService {
         if (!UserHasRights(userId)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
-        return repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
+
+        return repositoryAccount.getAccountsForUser(userId); //param !rank
     }
 
     public Iterable<AccountResponse> responseGetAccountsForUser(Long userId) {
@@ -145,13 +147,17 @@ public class AccountApiService {
         return accountResponseList;
     }
 
-    public boolean UserHasRights(Long userId){
-        if (loggedInUser == null) {
-            loggedInUser = userApiService.getLoggedInUser();
-        }
+    public User getLoggedInUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (User)authentication.getPrincipal();
+    }
 
-        if (loggedInUser.getRank() != User.RankEnum.EMPLOYEE){
-            if (!loggedInUser.getId().equals(userId)){
+    public boolean UserHasRights(Long userId){
+
+        loggedInUser = getLoggedInUser();
+
+        if (!loggedInUser.getRank().equals(User.RankEnum.EMPLOYEE)){
+            if (!this.loggedInUser.getId().equals(userId)){
                 return false;
             }
         }

@@ -57,10 +57,10 @@ public class MyAppRunnerConfig implements ApplicationRunner {
                         new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, "20-10-1990 12:23:23", 100D),
                         new Transaction("NL22INHO9999999999", "NL22INHO9876543210", 1000053L, "20-10-1990 12:23:23", 100D),
                         new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 100D),
-                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 100D),
-                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 100D),
-                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 100D),
-                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000053L, "20-10-1990 12:23:23", 100D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 200D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 300D),
+                        new Transaction("NL33INHO3333333333", "NL22INHO9999999999", 1000054L, "20-10-1990 12:23:23", 400D),
+                        new Transaction("NL22INHO9876543210", "NL33INHO3333333333", 1000053L, "20-10-1990 12:23:23", 500D),
                         new Transaction("NL11INHO1111111111", "NL22INHO9876543210", 1000055L, "20-10-1990 12:23:23", 90D),
                         new Transaction("NL11INHO1111111111", "NL33INHO3333333333", 1000055L, "20-10-1990 12:23:23", 73D)
                 )
@@ -71,7 +71,7 @@ public class MyAppRunnerConfig implements ApplicationRunner {
 
         List<User> users = new ArrayList<>(
                 Arrays.asList(
-                        new User(1000053L, "Bill", "Nye", "billnye@email.com", "test", "0612345678", "20-10-1990", "20-10-1990 12:23:23", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE),
+                        new User(1000052L, "Bill", "Nye", "billnye@email.com", "test", "0612345678", "20-10-1990", "20-10-1990 12:23:23", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE),
                         new User(1000053L, "Henk", "Anders", "customer@email.com", "test", "0687654321", "20-10-1990","20-10-2019 12:23:23", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE),
                         new User(1000054L,"Klaas", "Vaak", "klaasvaak@email.com", "test", "0600112233", "20-10-1990", "20-10-2019 12:23:23", User.RankEnum.CUSTOMER, User.StatusEnum.ACTIVE),
                         new User(1000055L, "Test", "Nye", "test@email.com", "test", "0612345678", "20-10-1990", "20-10-2019 12:23:23", User.RankEnum.EMPLOYEE, User.StatusEnum.ACTIVE),
