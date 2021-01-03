@@ -1,15 +1,9 @@
 package io.swagger.service;
 
-import ch.qos.logback.core.joran.conditional.ThenOrElseActionBase;
 import io.swagger.dao.RepositoryUser;
 import io.swagger.model.*;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.MethodParameter;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.data.repository.query.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import javax.persistence.EntityManager;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Field;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 @Service

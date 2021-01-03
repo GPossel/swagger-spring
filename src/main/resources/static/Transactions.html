@@ -24,6 +24,9 @@
                 <a class="nav-link" href="user/AddUser.html">Add Users</a>
             </li>
             <li class="nav-item active">
+                <a class="nav-link" href="user/AddUser.html">Update Users</a>
+            </li>
+            <li class="nav-item active">
                 <a class="nav-link" href="../Transactions.html">Transactions</a>
             </li>
             <li class="nav-item active">
@@ -88,5 +91,56 @@
     </section>
 
 
+<section id="getById">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Show Transaction by ID</h2>
+                <hr class="star-primary">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 ">
+                <form>
+                    <h2>Get Transaction by ID</h2>
+                    <input id="transactionID_search"> Transaction ID</input> <br><br>
+                </form>
+                <button id="btn_transactionById" type="submit" class="btn btn-success btn-lg">Show Transaction by ID</button>
+                <section id="result-success-transaction-byId">
+                    <h4>
+                        <div id="result-byId" class="col-lg-12 text-center"></div>
+                    </h4>
+                    <table id="showData-byId" border='1' class="col-lg-12 text-center table"> </table>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="getByIBAN">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Show Transaction by IBAN</h2>
+                <hr class="star-primary">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 ">
+                <form>
+                    <h2>Get Transaction by IBAN</h2>
+                    <input id="transactionIBAN_search"> Transaction IBAN </input> <br><br>
+                </form>
+                <button id="btn_transactionByIBAN" type="submit" class="btn btn-success btn-lg">Show Transaction by IBAN</button>
+                <section id="result-success-transaction-byIBAN">
+                    <h4>
+                        <div id="result-byIBAN" class="col-lg-12 text-center"></div>
+                    </h4>
+                    <table id="showData-byIBAN" border='1' class="col-lg-12 text-center table"> </table>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
 </body>
 </html>

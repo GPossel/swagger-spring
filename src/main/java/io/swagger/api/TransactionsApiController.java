@@ -70,7 +70,6 @@ public class TransactionsApiController implements TransactionsApi {
     @PreAuthorize("hasAuthority('Employee') or hasAnyAuthority('Customer')")
     public ResponseEntity<List<TransactionResponse>> getAll() {
         String accept = request.getHeader("Accept");
-
         if (accept != null) {
             try {
                 List<TransactionResponse> transactions = transactionApiService.getAllTransactionsResponses();
@@ -87,7 +86,6 @@ public class TransactionsApiController implements TransactionsApi {
     @PreAuthorize("hasAuthority('Employee') or hasAnyAuthority('Customer')")
     public ResponseEntity<List<TransactionResponse>> getTransactionsForAccount(@ApiParam(value = "Iban of an account", required = true) @PathVariable("iban") String iban) {
         String accept = request.getHeader("Accept");
-
         if (accept != null) {
             try {
                 List<TransactionResponse> myList = transactionApiService.getTransactionsForAccountByIBAN(iban);
@@ -105,7 +103,6 @@ public class TransactionsApiController implements TransactionsApi {
     public ResponseEntity<TransactionResponse> getById(@ApiParam(value = "id of transaction", required = true) @PathVariable("transactionId") Long id
     ) {
         String accept = request.getHeader("Accept");
-
         if (accept != null) {
             try {
                 TransactionResponse transaction = transactionApiService.getById(id);
