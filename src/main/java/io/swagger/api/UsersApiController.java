@@ -38,7 +38,6 @@ public class UsersApiController implements UsersApi {
     @Autowired
     private JwtUtil jwtUtil;
 
-
     @Autowired
     public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -64,12 +63,12 @@ public class UsersApiController implements UsersApi {
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
-    public ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "parameters to search for", required = false) @Valid @RequestBody (required = false) UserRequest body) {
+    public ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "", required = false) @Valid @RequestBody (required = false) UserRequest body)
+    {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
-
-        if (accept != null) {
-            try {
+        if (accept != null && content.contains("application/json")) {
+            try{
                 Iterable<UserResponse> users = userApiService.getAll(body);
                 return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(users), List.class), HttpStatus.OK);
             } catch (IOException e) {

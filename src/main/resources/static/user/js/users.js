@@ -41,10 +41,25 @@ $(document).ready(function (){
         };
         xhr.open('GET', url);
         const session = sessionStorage.getItem("Authorization");
-        xhr.setRequestHeader("Accept", "application/json");
+        xhr.setRequestHeader("Accept", "*/*");
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.setRequestHeader("Authorization", session);
-        xhr.send();
+        let firstname = $("#firstname").val();
+        let lastname = $("#lastname").val();
+        let rank = $("#rank").val();
+        let status = $("#status").val();
+        let data = JSON.stringify({
+            "firstname": firstname,
+            "lastname": lastname,
+            "email": "",
+            "password": "",
+            "rPassword" : "",
+            "phone": "",
+            "birthdate" : "",
+            "rank": rank,
+            "status": status
+        });
+        xhr.send(data);
     }
 
     $('body').on('click', '.delete', function(){
@@ -127,12 +142,9 @@ $(document).ready(function (){
 
         let url = "http://localhost:8080/users";
 
-        let firstname = $("#firstname").val();
-        let lastname = $("#lastname").val();
-        let rank = $("#rank").val();
-        let status = $("#status").val();
 
-        url += "?firstname=" + firstname + "&lastname=" + lastname + "&RankOfUser=" + rank + "&StatusOfUser=" + status;
+
+     //   url += "?firstname=" + firstname + "&lastname=" + lastname + "&RankOfUser=" + rank + "&StatusOfUser=" + status;
 
         loadUsers(url);
     });
