@@ -20,16 +20,16 @@ import java.util.List;
 @Api(value = "transactions", description = "the transactions API")
 public interface TransactionsApi {
 
-    @ApiOperation(value = "Creating a transaction", nickname = "createTransaction", notes = "Creating a transaction", response = Transaction.class, tags={ "transactions", })
+    @ApiOperation(value = "Creating a transaction", nickname = "createTransaction", notes = "Creating a transaction", response = TransactionResponse.class, tags={ "transactions", })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Succesful post.", response = Transaction.class),
+            @ApiResponse(code = 201, message = "Succesful post.", response = TransactionResponse.class),
             @ApiResponse(code = 401, message = "Authorization information is missing or invalid."),
             @ApiResponse(code = 404, message = "An account with the specified IBAN was not found."),
             @ApiResponse(code = 500, message = "Unexpected error.") })
     @RequestMapping(value = "/transactions",
             produces = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<Transaction> create(@ApiParam(value = "Transaction created", required = true) @Valid @RequestBody TransactionRequest body);
+    ResponseEntity<TransactionResponse> create(@ApiParam(value = "Transaction created", required = true) @Valid @RequestBody TransactionRequest body);
 
     @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = TransactionResponse.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {

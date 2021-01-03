@@ -64,13 +64,9 @@ public class AccountApiService {
         Account account = getByIBAN(iban);
         account.setStatus(Account.StatusEnum.DELETED);
 
-        Integer i = repositoryAccount.update(account.getIban(), account);
-        if (i == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
-        }
+        repositoryAccount.update(account.getIban(), account);
     }
 
-    //TODO CHECK OP NULL IN MODEL
     public Account update(String iban, Account body) {
         Integer i = repositoryAccount.update(iban, body);
         if (i == 0) {

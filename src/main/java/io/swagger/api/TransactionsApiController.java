@@ -50,21 +50,21 @@ public class TransactionsApiController implements TransactionsApi {
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
-    public ResponseEntity<Transaction> create(@ApiParam(value = "Transaction object", required = true) @Valid @RequestBody TransactionRequest body) {
+    public ResponseEntity<TransactionResponse> create(@ApiParam(value = "Transaction object", required = true) @Valid @RequestBody TransactionRequest body) {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
 
         if (accept != null && content.contains("application/json")) {
             try {
-                Transaction transaction = transactionApiService.create(body);
-                return new ResponseEntity<Transaction>(objectMapper.readValue(objectMapper.writeValueAsString(transaction), Transaction.class), HttpStatus.CREATED);
+                TransactionResponse transaction = transactionApiService.create(body);
+                return new ResponseEntity<TransactionResponse>(objectMapper.readValue(objectMapper.writeValueAsString(transaction), TransactionResponse.class), HttpStatus.CREATED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
             }
         }
-        return new ResponseEntity<Transaction>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<TransactionResponse>(HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAuthority('Employee') or hasAnyAuthority('Customer')")

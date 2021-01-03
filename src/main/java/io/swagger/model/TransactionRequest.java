@@ -1,18 +1,22 @@
 package io.swagger.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
+@NoArgsConstructor
+@Validated
 public class TransactionRequest {
 
     private String ibanSender;
 
-    private String ibanReceiver;
+    private String ibanReciever;
 
     private Double transferAmount;
 
-    public TransactionRequest(String ibanSender, String ibanReceiver, Double transferAmount) {
+    public TransactionRequest(String ibanSender, String ibanReciever, Double transferAmount) {
         this.ibanSender = ibanSender;
-        this.ibanReceiver = ibanReceiver;
+        this.ibanReciever = ibanReciever;
         this.transferAmount = transferAmount;
     }
 
@@ -20,8 +24,8 @@ public class TransactionRequest {
         return ibanSender;
     }
 
-    public String getIbanReceiver() {
-        return ibanReceiver;
+    public String getIbanReciever() {
+        return ibanReciever;
     }
 
     public Double getTransferAmount() {

@@ -33,24 +33,24 @@ public class TransactionApiService {
     public TransactionApiService() {
     }
 
-    public Transaction create(TransactionRequest body){
+    public TransactionResponse create(TransactionRequest body){
         if (loggedInUser == null){
             loggedInUser = userApiService.getLoggedInUser();
         }
 
         Account accountSender = accountApiService.getByIBAN(body.getIbanSender());
-        Account accountReceiver = accountApiService.getByIBAN(body.getIbanReceiver());
+        Account accountReciever = accountApiService.getByIBAN(body.getIbanReciever());
 
         Transaction transaction = new Transaction(body, loggedInUser.getId());
-        checkValidTransaction(transaction, accountSender, accountReceiver);
+        checkValidTransaction(transaction, accountSender, accountReciever);
 
         accountSender.setBalance(accountSender.getBalance() - transaction.getTransferAmount());
-        accountReceiver.setBalance(accountReceiver.getBalance() + transaction.getTransferAmount());
+        accountReciever.setBalance(accountReciever.getBalance() + transaction.getTransferAmount());
 
         accountApiService.update(accountSender.getIban(), accountSender);
-        accountApiService.update(accountReceiver.getIban(), accountReceiver);
+        accountApiService.update(accountReciever.getIban(), accountReciever);
 
-        return repositoryTransaction.save(transaction);
+        return new TransactionResponse(repositoryTransaction.save(transaction));
     }
 
     public List<TransactionResponse> getAllTransactionsResponses() {
@@ -209,7 +209,7 @@ public class TransactionApiService {
         }
     }
 
-    public void checkValidTransaction(Transaction transaction, Account accountSender, Account accountReceiver) {
+    public void checkValidTransaction(Transaction transaction, Account accountSender, Account accountReciever) {
 
         validateDailyLimit(accountSender, transaction.getTransferAmount());
 
@@ -218,8 +218,8 @@ public class TransactionApiService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Transactions from: " + transaction.getIbanSender() + " is not account of: " + loggedInUser.getEmail());
         }
 
-        // validate the account is still active and the receivers account is active
-        if (accountSender.getStatus() != Account.StatusEnum.ACTIVE || accountReceiver.getStatus() != Account.StatusEnum.ACTIVE) {
+        // validate the account is still active and the Recievers account is active
+        if (accountSender.getStatus() != Account.StatusEnum.ACTIVE || accountReciever.getStatus() != Account.StatusEnum.ACTIVE) {
             throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "One of the accounts is not Active, it might blocked or deleted");
         }
 
@@ -233,7 +233,7 @@ public class TransactionApiService {
         }
 
         // Checks if accounts are from type saving and if so, has same owner then proceed transaction,
-        if (!validateAccountForAccountByType(accountSender, accountReceiver)) {
+        if (!validateAccountForAccountByType(accountSender, accountReciever)) {
             throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Transactions from or to a savings account must be from the owner");
         }
     }
@@ -269,7 +269,7 @@ public class TransactionApiService {
 
             User user = userApiService.getById(transaction.getUserPerformer());
             User userSender = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanSender()).getUserId());
-            User userReciever = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanReceiver()).getUserId());
+            User userReciever = userApiService.getById(accountApiService.getByIBAN(transaction.getIbanReciever()).getUserId());
 
             String userName = user.getFirstname() + " " + user.getLastname() + " (" + user.getEmail() + ") ";
             String nameSender = userSender.getFirstname() + " " + userSender.getLastname() + " (" + user.getEmail() + ") ";
