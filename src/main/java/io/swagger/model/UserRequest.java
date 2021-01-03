@@ -15,6 +15,7 @@ public class UserRequest {
     public String birthdate;
     public User.RankEnum rank;
 
+
     public UserRequest(String firstname, String lastname, String email, String password, String rPassword, String phone, String birthdate, User.RankEnum rank) {
         this.firstname = firstname;
         this.lastname = lastname;
@@ -25,6 +26,7 @@ public class UserRequest {
         this.birthdate = birthdate;
         this.rank = rank;
     }
+
 
     public String getFirstname() {
         return firstname;
@@ -57,4 +59,5 @@ public class UserRequest {
     public User.RankEnum getRank() {
         return rank;
     }
+
 }

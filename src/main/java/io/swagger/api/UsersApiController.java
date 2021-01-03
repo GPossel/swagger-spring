@@ -38,7 +38,6 @@ public class UsersApiController implements UsersApi {
     @Autowired
     private JwtUtil jwtUtil;
 
-
     @Autowired
     public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;

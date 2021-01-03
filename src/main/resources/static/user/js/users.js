@@ -6,7 +6,7 @@ $(document).ready(function (){
         let xhr = new XMLHttpRequest();
         xhr.open('GET', url);
         const session = sessionStorage.getItem("Authorization");
-        xhr.setRequestHeader("Accept", "application/json");
+        xhr.setRequestHeader("Accept", "*/*");
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.setRequestHeader("Authorization", session);
 
@@ -156,6 +156,7 @@ $(document).ready(function (){
         let email = $("#email").val();
 
         url += "?firstname=" + firstname + "&lastname=" + lastname + "&email" + email;
+
 
         loadUsers(url);
     });

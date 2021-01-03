@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create new ATM request</title>
-
+    <title>Users</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="ATMrequest.js"></script>
-    <script src="logout.js"></script>
+    <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./js/getbyid.js"></script>
+    <script src="./logout.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -20,16 +19,13 @@
         <ul class="navbar-nav mr-auto">
             <button id="button_logout">Logout</button>
             <li class="nav-item active">
-                <a class="nav-link" href="../user/AllUsers.html">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="AllUsers.html">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="../user/AddUser.html">Add Users</a>
+                <a class="nav-link" href="AddUser.html">Add Users</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="../user/AllUsers.html">All Users</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="../user/UpdateUsers.html">Update Users</a>
+                <a class="nav-link" href="UpdateUsers.html">Update Users</a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="../Transactions.html">Transactions</a>
@@ -40,51 +36,61 @@
         </ul>
     </div>
 </nav>
+
+<section id="result-success">
+    <table id="result" class="col-lg-12 text-center table">
+        <thead class="thead-dark">
+        <tr>
+            <th>id</th>
+            <th>firstname</th>
+            <th>lastname</th>
+            <th>email</th>
+            <th>password</th>
+            <th>phone</th>
+            <th>birthdate</th>
+            <th>registration</th>
+            <th>rank</th>
+            <th>status</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+    </table>
+</section>
+<form>
     <section id="create">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2>Create Transaction</h2>
+                    <h2>Filters</h2>
                     <hr class="star-primary">
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 ">
-                    <form name="createTransaction" id="createTransaction" >
+                    <form name="loadUserById" id="loadUserById" >
                         <div id="result-add" class="row control-group">
-                            <label for="IBAN">Account (IBAN): </label>
-                            <input type="text" name="IBAN" id="IBAN" class="form-control" value="NLxxINHOxxxxxxxxxx">
-
-                            <label for="pincode">pincode: </label>
-                            <input type="text" name="pincode" id="pincode" class="form-control" value="1234">
-
-                            <label for="transferAmount">Amount to transfer: </label>
-                            <input type="number" name="transferAmount" id="transferAmount" class="form-control" value="10">
-
-
-                            <label for="request">request: </label>
-                            <select name="request" id="request" class="form-control">
-                                <option value="deposit">Deposit</option>
-                                <option value="withdraw">Withdraw</option>
-                            </select>
-
+                            <label for="userId">user ID: </label>
+                            <input type="text" name="userId" id="userId" class="form-control" value="">
                             <p class="help-block text-danger"></p>
                         </div>
                         <br>
                         <div class="row">
                             <div class="form-group col-xs-12">
+                                <button id="userId_search" type="button" class="btn btn-primary btn-lg">Search</button>
                             </div>
                         </div>
                     </form>
-                    <button id="submit" type="submit" class="btn btn-warning btn-lg">Make ATM request</button>
+                    <section id="result-success-user">
+                        <h4>
+                            <div id="result-userById" class="col-lg-12 text-center"></div>
+                        </h4>
+                        <table id="showData" border='1' class="col-lg-12 text-center table"> </table>
+                    </section>
                 </div>
             </div>
         </div>
     </section>
-<section id="result-success">
-    <h4>
-        <div id="result" class="col-lg-12 text-center"></div>
-    </h4>
-</section>
+</form>
 </body>
 </html>

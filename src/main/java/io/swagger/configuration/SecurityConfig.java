@@ -63,6 +63,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ).permitAll()//SWAGGER API DOCUMENTATION
 
                 .antMatchers("/accounts/", "/accounts/**", "/transactions", "/transactions/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/Login.html").permitAll()
+                .antMatchers("/loginIn.js").permitAll()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/logout.js").permitAll()
+                .antMatchers("/user/js/**").permitAll()
+                .antMatchers("/user/**").permitAll()
+                .antMatchers("/Transactions.html").permitAll()
+                .antMatchers("/TransactionsJSON.js").permitAll()
+                .antMatchers("/ATM/**").permitAll()
+                .antMatchers("/accounts").permitAll()
+                .antMatchers("/accounts/").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/accounts/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
+                .antMatchers("/users").permitAll()
                 .antMatchers("/users/**").access("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
                 .anyRequest().authenticated()
                 // now we need to add the filter
