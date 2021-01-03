@@ -18,8 +18,8 @@ public interface RepositoryAccount extends CrudRepository<Account, String> {
     @Query("select a from Account a where a.userId =:userId")
     Iterable<Account> getAccountsForUser(@Param("userId") Long userId);
 
-    @Query(value = "select a from Account a where not(a.rank = :rank)")
-    Iterable<Account> getAccountsForEmployee(@Param("rank")Account.RankEnum rank);
+    @Query(value = "select a from Account a where not (a.rank = :bank) and (a.rank = :rank or :rank is null) and (a.status = :status or :status is null)")
+    Iterable<Account> getAccountsForEmployee(@Param("rank")Account.RankEnum rank, @Param("status")Account.StatusEnum status, @Param("bank") Account.RankEnum bank);
 
     @Transactional
     @Modifying

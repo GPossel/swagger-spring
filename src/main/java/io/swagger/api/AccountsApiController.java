@@ -65,11 +65,11 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAuthority('Employee')")
-    public ResponseEntity<List<AccountResponse>> getAll(){
+    public ResponseEntity<List<AccountResponse>> getAll(@ApiParam(value = "parameters to search for", required = false) @Valid @RequestBody (required = false) AccountRequest body){
         String accept = request.getHeader("Accept");
         if (accept != null) {
                 try {
-                    Iterable<AccountResponse> accounts = accountApiService.getAll();
+                    Iterable<AccountResponse> accounts = accountApiService.getAll(body);
                     return new ResponseEntity<List<AccountResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);

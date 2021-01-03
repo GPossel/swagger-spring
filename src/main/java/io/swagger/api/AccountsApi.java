@@ -42,7 +42,7 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<AccountResponse>> getAll();
+    ResponseEntity<List<AccountResponse>> getAll(@ApiParam(value = "", required = false) @Valid @RequestBody (required = false) AccountRequest body);
 
     @ApiOperation(value = "Get Accounts by iban", nickname = "getAccountByIban", notes = "Get an account by its id", response = AccountResponse.class, tags={ "accounts", })
     @ApiResponses(value = {

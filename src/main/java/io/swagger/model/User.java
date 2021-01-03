@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -349,12 +350,12 @@ public class User implements UserDetails{
   }
 
   public void setBirthdate(String birthdate) {
-    if (!birthdate.toString().matches("^([1-9]|(0)[1-9]|[1-2][0-9]|(3)[0-1])(-)(((0)[1-9])|([1-9])|((1)[0-2]))(-)(19|20)\\d{2}$")){
+    if (!birthdate.toString().matches("^(19|20)\\d{2}(-)(((0)[1-9])|([1-9])|((1)[0-2]))(-)([1-9]|(0)[1-9]|[1-2][0-9]|(3)[0-1])$")){
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The birthdate is invalid");
     }
 
     try {
-      DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       this.birthdate = dateFormat.parse(birthdate);
     } catch (Exception e){
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The birthdate is invalid");
@@ -373,7 +374,7 @@ public class User implements UserDetails{
 
   public void setRegistrationdate(String registrationdate) {
     try {
-      DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
       this.registrationdate = new Timestamp(dateFormat.parse(registrationdate).getTime());
     } catch (Exception e){
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The registrationDate is invalid");
@@ -415,6 +416,25 @@ public class User implements UserDetails{
 
   public void setStatus(StatusEnum status) {
     this.status = status;
+  }
+
+  public User checkNull(User user, UserRequest body) throws IllegalAccessException, NoSuchFieldException {
+    for (Field f: body.getClass().getDeclaredFields()){
+      if (f.get(body) != null){
+        for (Field f2 : user.getClass().getDeclaredFields()){
+          if (f2.getName().equals(f.getName())){
+            if (f.getName().equals("password")){
+              setPassword(body.getPassword(), body.getrPassword());
+              body.getClass().getField("rPassword").set(body, null);
+            }
+            else {
+              f2.set(user, f.get(body).toString());
+            }
+          }
+        }
+      }
+    }
+    return user;
   }
 
 

@@ -154,7 +154,7 @@ public class Transaction {
 
   public void setTransactionDate(String transactionDate) {
     try {
-      DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
       this.transactionDate = new Timestamp(dateFormat.parse(transactionDate).getTime());
     } catch (Exception e){
       throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The registrationDate is invalid");

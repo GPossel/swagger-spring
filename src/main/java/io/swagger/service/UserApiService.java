@@ -2,12 +2,14 @@ package io.swagger.service;
 
 import ch.qos.logback.core.joran.conditional.ThenOrElseActionBase;
 import io.swagger.dao.RepositoryUser;
-import io.swagger.model.Account;
-import io.swagger.model.User;
-import io.swagger.model.UserRequest;
-import io.swagger.model.UserResponse;
+import io.swagger.model.*;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.MethodParameter;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.query.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +19,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityManager;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 @Service
@@ -36,19 +41,15 @@ public class UserApiService implements UserDetailsService {
     }
 
     public Iterable<UserResponse> getAll(UserRequest body) {
-//        checkNull(body);
-//        if(body == null){
-//            Iterable<User> users = repositoryUser.findAll();
-//            List<UserResponse> userResponse = new ArrayList<>();
-//            users.forEach(user -> {
-//                userResponse.add(new UserResponse(user));
-//            });
-//            return userResponse;
-//        }
-//        Iterable<User> users = repositoryUser.findAll();
-//        return repositoryUser.findAll();
+        List<User> users;
+        if(body == null){
+            users = (List<User>) repositoryUser.findAll();
+        }
+        else {
+            users = repositoryUser.findByUserParams(body.getFirstname(), body.getLastname(), body.getEmail());
+        }
 
-        return null;
+        return convertListAccountToResponse(users);
     }
 
     public User getById(Long id) {
@@ -78,22 +79,28 @@ public class UserApiService implements UserDetailsService {
         }
     }
 
-    public UserResponse update(Long id, UserRequest body) {
-        getByIdWithAuth(id); //checks if user exist and has rights to update
-
-        //TODO CHECK OP NULL IN MODEL
-        User user = new User(body);
-        Integer i = repositoryUser.update(user, id);
-        if (i == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+    public UserResponse update(Long id, UserRequest body) throws NoSuchFieldException, IllegalAccessException {
+        User user = getById(id);
+        if (!UserHasRights(id)){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
+        user = user.checkNull(user, body);
+        repositoryUser.update(user, id);
 
-        return new UserResponse(this.getById(id));
+        return new UserResponse(user);
     }
 
     public User getLoggedInUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (User)authentication.getPrincipal();
+    }
+
+    public Iterable<UserResponse> convertListAccountToResponse(Iterable<User> users){
+        List<UserResponse> userResponses = new ArrayList<UserResponse>();
+        users.forEach(user -> {
+            userResponses.add(new UserResponse(user));
+        });
+        return userResponses;
     }
 
     public boolean UserHasRights(Long userId){
@@ -105,13 +112,6 @@ public class UserApiService implements UserDetailsService {
                 return false;
             }
         }
-        return true;
-    }
-
-    public boolean checkNull(UserRequest userR) throws IllegalAccessException {
-        for (Field f : userR.getClass().getDeclaredFields())
-            if (f.get(this) != null)
-                return false;
         return true;
     }
 

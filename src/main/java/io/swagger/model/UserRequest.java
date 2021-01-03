@@ -6,14 +6,14 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Validated
 public class UserRequest {
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String password;
-    private String rPassword;
-    private String phone;
-    private String birthdate;
-    private User.RankEnum rank;
+    public String firstname;
+    public String lastname;
+    public String email;
+    public String password;
+    public String rPassword;
+    public String phone;
+    public String birthdate;
+    public User.RankEnum rank;
 
     public UserRequest(String firstname, String lastname, String email, String password, String rPassword, String phone, String birthdate, User.RankEnum rank) {
         this.firstname = firstname;

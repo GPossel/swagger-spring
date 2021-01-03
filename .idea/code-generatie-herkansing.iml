@@ -95,7 +95,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.vintage:junit-vintage-engine:5.5.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-engine:1.5.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-junit-jupiter:3.1.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.assertj:assertj-core:3.13.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest:2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: net.bytebuddy:byte-buddy:1.10.8" level="project" />
@@ -165,5 +164,6 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-context:5.2.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.2.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:20.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.assertj:assertj-core:3.13.2" level="project" />
   </component>
 </module>

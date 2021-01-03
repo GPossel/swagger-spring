@@ -26,7 +26,7 @@ import java.util.Random;
 @Setter
 @NoArgsConstructor
 @ToString
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "IBAN"})})
+@Table(name = "Accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "IBAN"})})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-05-18T09:28:40.437Z[GMT]")
