@@ -33,7 +33,7 @@ public class TransactionApiService {
     public TransactionApiService() {
     }
 
-    public Transaction create(TransactionRequest body){
+    public TransactionResponse create(TransactionRequest body){
         if (loggedInUser == null){
             loggedInUser = userApiService.getLoggedInUser();
         }
@@ -50,7 +50,8 @@ public class TransactionApiService {
         accountApiService.update(accountSender.getIban(), accountSender);
         accountApiService.update(accountReceiver.getIban(), accountReceiver);
 
-        return repositoryTransaction.save(transaction);
+        Transaction t = repositoryTransaction.save(transaction);
+        return convertTransactionToResponse(t);
     }
 
     public List<TransactionResponse> getAllTransactionsResponses() {
