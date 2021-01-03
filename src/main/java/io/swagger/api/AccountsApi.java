@@ -42,7 +42,8 @@ public interface AccountsApi {
     @RequestMapping(value = "/accounts",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<AccountResponse>> getAll(@ApiParam(value = "", required = false) @Valid @RequestBody (required = false) AccountRequest body);
+    ResponseEntity<List<AccountResponse>> getAll(@ApiParam(value = "rank of an account", required = false) @Valid @RequestParam (value = "rank", required = false) Account.RankEnum rank,
+                                                 @ApiParam(value = "status of an account", required = false) @Valid @RequestParam (value = "status", required = false)Account.StatusEnum status);
 
     @ApiOperation(value = "Get Accounts by iban", nickname = "getAccountByIban", notes = "Get an account by its id", response = AccountResponse.class, tags={ "accounts", })
     @ApiResponses(value = {
@@ -99,7 +100,7 @@ public interface AccountsApi {
     ResponseEntity<ATMResponse> withdraw(@ApiParam(value = "created withdraw" , required=true)  @Valid @RequestBody ATMRequest body);
 
 
-    @ApiOperation(value = "Making a deposit", nickname = "deposit", notes = "", response = ResponseEntity.class, responseContainer = "List", tags={ "deposit", "accounts" })
+    @ApiOperation(value = "Making a deposit", nickname = "deposit", notes = "", response = ResponseEntity.class, responseContainer = "List", tags={ "accounts" })
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Succesful withdraw.", response = ResponseEntity.class, responseContainer = "List"),
             @ApiResponse(code = 403, message = "Authorization information is missing or invalid."),

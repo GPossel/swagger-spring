@@ -29,15 +29,8 @@ public class UserApiService implements UserDetailsService {
         return new UserResponse(user);
     }
 
-    public Iterable<UserResponse> getAll(UserRequest body) {
-        List<User> users;
-        if(body == null){
-            users = (List<User>) repositoryUser.findAll();
-        }
-        else {
-            users = repositoryUser.findByUserParams(body.getFirstname(), body.getLastname(), body.getEmail());
-        }
-
+    public Iterable<UserResponse> getAll(String firstname, String lastname, String email) {
+        List<User> users = repositoryUser.findByParams(firstname, lastname, email);
         return convertListAccountToResponse(users);
     }
 

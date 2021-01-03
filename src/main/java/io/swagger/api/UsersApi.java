@@ -45,7 +45,10 @@ public interface UsersApi {
     @RequestMapping(value = "/users",
             produces = { "application/json" },
             method = RequestMethod.GET)
-    ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "", required = false) @Valid @RequestBody (required = false) UserRequest body);
+    ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "firstname of an user") @Valid @RequestParam(value = "firstname", required = false) String firstname,
+                                              @ApiParam(value = "lastname of an user") @Valid @RequestParam(value = "lastname", required = false) String lastname,
+                                              @ApiParam(value = "email of an user") @Valid @RequestParam(value = "email", required = false) String email
+    );
 
     @ApiOperation(value = "Delete user", nickname = "deleteUser", notes = "Deletes a user, only the current user or an employee can delete a user.", tags={ "users", })
     @ApiResponses(value = {

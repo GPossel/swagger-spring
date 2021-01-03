@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -43,15 +44,14 @@ public class AccountsApiController implements AccountsApi {
     @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<AccountResponse> create(@ApiParam(value = "created accounts", required = true) @Valid @RequestBody AccountRequest body
     ) {
-        System.out.println(1);
-        System.out.println(body);
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-type");
 
         if (accept != null && content.contains("application/json")) {
             try {
                 if (body != null) {
-                    return new ResponseEntity<AccountResponse>(objectMapper.readValue(objectMapper.writeValueAsString(accountApiService.create(body)), AccountResponse.class), HttpStatus.CREATED);
+                    AccountResponse account = accountApiService.create(body);
+                    return new ResponseEntity<AccountResponse>(objectMapper.readValue(objectMapper.writeValueAsString(account), AccountResponse.class), HttpStatus.CREATED);
                 }
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);
@@ -65,15 +65,17 @@ public class AccountsApiController implements AccountsApi {
     }
 
     @PreAuthorize("hasAuthority('Employee')")
-    public ResponseEntity<List<AccountResponse>> getAll(@ApiParam(value = "parameters to search for", required = false) @Valid @RequestBody (required = false) AccountRequest body){
+    public ResponseEntity<List<AccountResponse>> getAll(@ApiParam(value = "rank of an account") @Valid @RequestParam(value = "rank", required = false) Account.RankEnum rank,
+                                                           @ApiParam(value = "status of an account") @Valid @RequestParam(value = "status", required = false) Account.StatusEnum status){
         String accept = request.getHeader("Accept");
+
         if (accept != null) {
                 try {
-                    Iterable<AccountResponse> accounts = accountApiService.getAll(body);
+                    Iterable<AccountResponse> accounts = accountApiService.getAll(rank, status);
                     return new ResponseEntity<List<AccountResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);
                 } catch (IOException e) {
                     log.error("Couldn't serialize response for content type application/json", e);
-                    ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
+                    ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                     return responseEntity;
                 }
             }
@@ -83,9 +85,8 @@ public class AccountsApiController implements AccountsApi {
     @PreAuthorize("hasAuthority('Employee')")
     public ResponseEntity<AccountResponse> getByIban(@ApiParam(value= "", required = true) @PathVariable("iban") String iban){
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-type");
 
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
                 try {
                     AccountResponse account = accountApiService.getByIbanWithAuth(iban);
                     return new ResponseEntity<AccountResponse>(objectMapper.readValue(objectMapper.writeValueAsString(account), AccountResponse.class), HttpStatus.OK);
@@ -123,8 +124,8 @@ public class AccountsApiController implements AccountsApi {
     @PreAuthorize("hasAuthority('Employee') or hasAuthority('Customer')")
     public ResponseEntity<List<AccountResponse>> getAccountsForUser(@ApiParam(value= "", required = true) @PathVariable("userid") Long userId){
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
-        if (accept != null && content.contains("application/json")) {
+
+        if (accept != null) {
                 try {
                     Iterable<AccountResponse> accounts = accountApiService.responseGetAccountsForUser(userId);
                     return new ResponseEntity<List<AccountResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(accounts), List.class), HttpStatus.OK);

@@ -24,7 +24,7 @@ public class UserServiceTest {
 
     @Test
     public void ListMustNotBeNull() throws Exception {
-        Iterable<UserResponse> users = userApiService.getAll(new UserRequest());
+        Iterable<UserResponse> users = userApiService.getAll("", "", "");
         assertNotNull(users);
     }
 }

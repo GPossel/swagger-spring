@@ -37,6 +37,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/Login.html",
+                        "/loginIn.js",
+                        "/login",
+                        "/logout.js",
+                        "/user/js/**",
+                        "/user/AllAccounts.html",
+                        "/user/AddAccount.html",
+                        "/user/UpdateAccounts.html",
+                        "/account/**",
+                        "/account/js/**",
+                        "/user/js/**",
+                        "/user/**",
+                        "/Transactions.html",
+                        "/TransactionsJSON.js",
+                        "/ATM/**",
+                        "/accounts",
+                        "/users"
+                ).permitAll()
+
+                .antMatchers("/api-docs/**",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**"
+                ).permitAll()//SWAGGER API DOCUMENTATION
+
+                .antMatchers("/accounts/", "/accounts/**", "/transactions", "/transactions/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
                 .antMatchers("/Login.html").permitAll()
                 .antMatchers("/loginIn.js").permitAll()
                 .antMatchers("/login").permitAll()
@@ -51,8 +77,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/accounts/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
                 .antMatchers("/users").permitAll()
                 .antMatchers("/users/**").access("hasAuthority('Admin') or hasAuthority('Employee') or hasAuthority('Customer')")
-                .antMatchers("/transactions").access("hasAuthority('Employee') or hasAuthority('Customer')")
-                .antMatchers("/transactions/**").access("hasAuthority('Employee') or hasAuthority('Customer')")
                 .anyRequest().authenticated()
                 // now we need to add the filter
                 .and()
