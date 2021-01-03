@@ -68,7 +68,7 @@ public class UsersApiController implements UsersApi {
         String accept = request.getHeader("Accept");
         String content = request.getHeader("Content-Type");
 
-        if (accept != null && content.contains("application/json")) {
+        if (accept != null) {
             try {
                 Iterable<UserResponse> users = userApiService.getAll(body);
                 return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(users), List.class), HttpStatus.OK);
@@ -130,6 +130,10 @@ public class UsersApiController implements UsersApi {
                 log.error("Couldn't serialize response for content type application/json", e);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((JsonNode) objectMapper.createObjectNode().put("message", e.getMessage()));
                 return responseEntity;
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
             }
         }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

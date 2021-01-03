@@ -35,15 +35,11 @@ public class AccountApiService {
         return new AccountResponse(account);
     }
 
-    public Iterable<AccountResponse> getAll() {
-        if (loggedInUser == null) {
-            loggedInUser = userApiService.getLoggedInUser();
-            if (!loggedInUser.getRank().equals(User.RankEnum.EMPLOYEE)){
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-            }
+    public Iterable<AccountResponse> getAll(AccountRequest body) {
+        if (body == null){
+            body = new AccountRequest();
         }
-
-        Iterable<Account> accounts = repositoryAccount.getAccountsForEmployee(Account.RankEnum.BANK); //param !rank
+        Iterable<Account> accounts = repositoryAccount.getAccountsForEmployee(body.getRank(), body.getStatus(), Account.RankEnum.BANK);
         return convertListAccountToResponse(accounts);
     }
 
@@ -131,12 +127,6 @@ public class AccountApiService {
         }
 
         return account;
-    }
-
-    public void updateNewBalanceServiceAccounts(double NewBalance, String iban) {
-        Account account = getByIBAN(iban);
-        account.setBalance(NewBalance);
-        repositoryAccount.update(iban, account);
     }
 
     public Iterable<AccountResponse> convertListAccountToResponse(Iterable<Account> accounts){

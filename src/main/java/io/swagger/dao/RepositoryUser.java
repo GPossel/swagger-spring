@@ -1,18 +1,21 @@
 package io.swagger.dao;
 
-import io.swagger.model.Account;
-import io.swagger.model.Transaction;
-import io.swagger.model.User;
+import io.swagger.model.*;
+import net.bytebuddy.TypeCache;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.query.Parameter;
 import org.springframework.stereotype.Repository;
 import org.threeten.bp.LocalDate;
 
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Filter;
 
 @Repository
 public interface RepositoryUser extends CrudRepository<User, Long> {
@@ -35,4 +38,7 @@ public interface RepositoryUser extends CrudRepository<User, Long> {
 
     @Query("select u from User u where u.status = :status")
     List<User> findByStatus(@Param("status") User.StatusEnum status);
+
+    @Query(value = "select u from User u where (u.firstname = :firstname or :firstname is null) and (u.lastname = :lastname or :lastname is null) and (u.email = :email or :email is null)")
+    List<User> findByUserParams(@Param("firstname") String firstname, @Param("lastname") String lastname, @Param("email") String email);
 }
