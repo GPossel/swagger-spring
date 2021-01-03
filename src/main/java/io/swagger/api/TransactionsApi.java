@@ -29,7 +29,7 @@ public interface TransactionsApi {
     @RequestMapping(value = "/transactions",
             produces = { "application/json" },
             method = RequestMethod.POST)
-    ResponseEntity<Transaction> create(@ApiParam(value = "Transaction created", required = true) @Valid @RequestBody TransactionRequest body);
+    ResponseEntity<TransactionResponse> create(@ApiParam(value = "Transaction created", required = true) @Valid @RequestBody TransactionRequest body);
 
     @ApiOperation(value = "Getting a transaction by seach", nickname = "searchTansaction", notes = "", response = TransactionResponse.class, responseContainer = "List", tags={ "transactions", })
     @ApiResponses(value = {
