@@ -31,15 +31,15 @@ public class AccountApiService {
         if (body.getRank().equals(Account.RankEnum.BANK)){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't create an account with rank: BANK");
         }
+        if (!UserHasRights(body.getUserId())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         Account account = repositoryAccount.save(new Account(body));
         return new AccountResponse(account);
     }
 
-    public Iterable<AccountResponse> getAll(AccountRequest body) {
-        if (body == null){
-            body = new AccountRequest();
-        }
-        Iterable<Account> accounts = repositoryAccount.getAccountsForEmployee(body.getRank(), body.getStatus(), Account.RankEnum.BANK);
+    public Iterable<AccountResponse> getAll(Account.RankEnum rank, Account.StatusEnum status) {
+        Iterable<Account> accounts = repositoryAccount.getAccountsForEmployee(rank, status, Account.RankEnum.BANK);
         return convertListAccountToResponse(accounts);
     }
 

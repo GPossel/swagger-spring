@@ -39,6 +39,6 @@ public interface RepositoryUser extends CrudRepository<User, Long> {
     @Query("select u from User u where u.status = :status")
     List<User> findByStatus(@Param("status") User.StatusEnum status);
 
-    @Query(value = "select u from User u where (u.firstname = :firstname or :firstname is null) and (u.lastname = :lastname or :lastname is null) and (u.email = :email or :email is null)")
-    List<User> findByUserParams(@Param("firstname") String firstname, @Param("lastname") String lastname, @Param("email") String email);
+    @Query(value = "select u from User u where (u.firstname = :firstname or :firstname is null or :firstname = '') and (u.lastname = :lastname or :lastname is null or :lastname = '') and (u.email = :email or :email is null or :email = '')")
+    List<User> findByParams(@Param("firstname") String firstname, @Param("lastname") String lastname, @Param("email") String email);
 }

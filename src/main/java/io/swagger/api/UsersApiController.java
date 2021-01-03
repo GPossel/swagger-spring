@@ -64,13 +64,14 @@ public class UsersApiController implements UsersApi {
     }
 
     @PreAuthorize("hasAuthority('Admin') or hasAuthority('Employee')")
-    public ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "parameters to search for", required = false) @Valid @RequestBody (required = false) UserRequest body) {
+    public ResponseEntity<List<UserResponse>> getAll(@ApiParam(value = "firstname of an user") @Valid @RequestParam(value = "firstname", required = false) String firstname,
+                                                     @ApiParam(value = "lastname of an user") @Valid @RequestParam(value = "lastname", required = false) String lastname,
+                                                     @ApiParam(value = "email of an user") @Valid @RequestParam(value = "email", required = false) String email) {
         String accept = request.getHeader("Accept");
-        String content = request.getHeader("Content-Type");
 
         if (accept != null) {
             try {
-                Iterable<UserResponse> users = userApiService.getAll(body);
+                Iterable<UserResponse> users = userApiService.getAll(firstname, lastname, email);
                 return new ResponseEntity<List<UserResponse>>(objectMapper.readValue(objectMapper.writeValueAsString(users), List.class), HttpStatus.OK);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);

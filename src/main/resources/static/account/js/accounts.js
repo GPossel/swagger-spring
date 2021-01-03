@@ -1,20 +1,25 @@
 
 $(document).ready(function (){
 
-    function loadUsers(url) {
+    $('body').on('click', '#filters', function(){
+        let url = "http://localhost:8080/accounts";
+
+        let rank = $("#rank").val();
+        let status = $("#status").val();
+
+        url += "&rank=" + rank.toLocaleUpperCase() + "&status=" + status.toUpperCase();
 
         let xhr = new XMLHttpRequest();
-        xhr.open('GET', url);
-        const session = sessionStorage.getItem("Authorization");
+        xhr.open("GET", url);
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("Authorization", session);
+        const session = sessionStorage.getItem("Authorization");
+        xhr.setRequestHeader("Authorization", session)
 
         xhr.onload = (e) => {
             switch (xhr.status) {
                 case 200:
                 case 201:
-                    console.log(1);
                     $("#result thead tr  td").parent().remove();
 
                     let responsData = JSON.parse(xhr.responseText);
@@ -67,9 +72,9 @@ $(document).ready(function (){
                     break;
             }
         }
-
         xhr.send();
-    }
+
+    });
 
     $('body').on('click', '.delete', function(){
         let xhr = new XMLHttpRequest();
@@ -100,7 +105,7 @@ $(document).ready(function (){
             }
         };
         let userId = $(this).attr('rel');
-        xhr.open('DELETE', 'http://localhost:8080/users/' + userId);
+        xhr.open('DELETE', 'http://localhost:8080/accounts/' + userId);
         const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
@@ -139,27 +144,14 @@ $(document).ready(function (){
         };
 
         let userId = $(this).attr('rel');
-        xhr.open('GET', 'http://localhost:8080/users/' + userId);
+        xhr.open('GET', 'http://localhost:8080/accounts/' + userId);
         const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.setRequestHeader("Authorization", session);
+
         xhr.send();
     });
-
-    $('body').on('click', '#filters', function(){
-
-        let url = "http://localhost:8080/users";
-
-        let firstname = $("#firstname").val();
-        let lastname = $("#lastname").val();
-        let email = $("#email").val();
-
-        url += "?firstname=" + firstname + "&lastname=" + lastname + "&email" + email;
-
-        loadUsers(url);
-    });
-
 });
 
 
