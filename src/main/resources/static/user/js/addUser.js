@@ -9,15 +9,13 @@
         let rPassword = $("#rPassword").val();
         let phone = $("#phone").val();
         let birthdate = $("#birthdate").val();
-        let registrationdate = $("#registrationdate").val();
         let rank = $("#rank").val();
-        let status = $("#status").val();
 
         if (password !== rPassword){
             alert("Passwords don't match!");
             return;
         }
-        if (firstname === "" || lastname === "" || email === "" || password === "" || rPassword === "" || phone === "" || birthdate === "" || registrationdate === "" || rank === "" || status === "") {
+        if (firstname === "" || lastname === "" || email === "" || password === "" || rPassword === "" || phone === "" || birthdate === "" || rank === "") {
             alert("A field is empty");
             return;
         }
@@ -60,11 +58,10 @@
            "lastname": lastname,
            "email": email,
            "password": password,
+           "rPassword": rPassword,
            "phone": phone,
            "birthdate": birthdate,
-           "registrationdate": new Date().toLocaleDateString(),
-           "rank": rank,
-           "status": status
+           "rank": rank
         });
 
         xhr.send(data);
