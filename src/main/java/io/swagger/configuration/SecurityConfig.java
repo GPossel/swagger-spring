@@ -53,7 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/TransactionsJSON.js",
                         "/ATM/**",
                         "/accounts",
-                        "/users"
+                        "/users",
+                        "/css/**",
+                        "/css"
                 ).permitAll()
 
                 .antMatchers("/api-docs/**",
