@@ -1,0 +1,15 @@
+{
+  "name": "vendor_name/code-generatie-Submission_2",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "gentl",
+      "email": "639567@student.inholland.nl"
+    }
+  ],
+  "require": {
+    
+  }
+}
