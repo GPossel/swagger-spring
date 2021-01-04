@@ -54,6 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/ATM/**",
                         "/accounts",
                         "/users",
+                        "/ATM",
+                        "/ATM/**",
                         "/css/**",
                         "/css"
                 ).permitAll()

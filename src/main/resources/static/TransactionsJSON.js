@@ -62,7 +62,7 @@ window.addEventListener("load", function (name, value) {
         }
         xhr.send(JSON.stringify({
             "ibanSender": document.getElementById('ibanSender').value,
-            "ibanReceiver": document.getElementById('ibanReceiver').value,
+            "ibanReciever": document.getElementById('ibanReciever').value,
             "transferAmount": document.getElementById('transferAmount').value
         }, ));
 

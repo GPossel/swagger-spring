@@ -32,7 +32,7 @@ class TransactionModelTest {
     public void iBanMustMatchFormat()
     {
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> transaction.setIbanReceiver("abababbaba"));
+                () -> transaction.setIbanReciever("abababbaba"));
         assertEquals("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX", exception.getMessage());
     }
 
