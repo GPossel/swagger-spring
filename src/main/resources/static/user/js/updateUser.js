@@ -39,7 +39,7 @@
         }
 
         let xhr = new XMLHttpRequest();
-        xhr.open("PUT", "http://localhost:8080/users/"+ urlParam("id"));
+        xhr.open("PUT", "https://devopsdeployment-1.herokuapp.com/users/"+ urlParam("id"));
         const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
@@ -48,7 +48,7 @@
             switch (xhr.status) {
                 case 201:
                     alert("Successful added User.");
-                    $(location).attr('href', 'http://localhost:8080/user/AllUsers.html');
+                    $(location).attr('href', 'https://devopsdeployment-1.herokuapp.com/user/AllUsers.html');
                     break;
                 case 401:
                     alert("Unauthorized action.");

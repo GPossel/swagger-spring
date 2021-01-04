@@ -23,7 +23,7 @@
         }
 
        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:8080/users");
+        xhr.open("POST", "https://devopsdeployment-1.herokuapp.com/users");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
         const session = sessionStorage.getItem("Authorization");
@@ -32,7 +32,7 @@
            switch (xhr.status) {
                case 201:
                    alert("Successful added User.");
-                   $(location).attr('href', 'http://localhost:8080/user/AllUsers.html');
+                   $(location).attr('href', 'https://devopsdeployment-1.herokuapp.com/user/AllUsers.html');
                    break;
                case 400:
                    alert(xhr.status + ":" + xhr.responseText);

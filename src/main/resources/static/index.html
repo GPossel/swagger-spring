@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="TransactionsJSON.js"></script>
+    <script src="logout.js"></script>
+    <link rel="stylesheet" href="css/navigationBar.css">
+    <script>
+        /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+        function myFunction(myDropdown) {
+            document.getElementById(myDropdown).classList.toggle("show");
+        }
+
+        // Close the dropdown menu if the user clicks outside of it
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="http://localhost:8080/">Bank api</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <!--  <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
+    <ul class="navbar-nav mr-auto">
+        <div class="dropdown">
+            <button class="dropbtn" id="button_logout" type="submit">Logout</button>
+        </div>
+        <div class="dropdown">
+            <a class="dropbtn" href="user/AllUsers.html" type="submit">Home <span class="sr-only">(current)</span></a>
+        </div>
+        <div class="dropdown">
+            <button onclick="myFunction('myDropdownUser')" class="dropbtn">Users</button>
+            <div id="myDropdownUser" class="dropdown-content">
+                <a href="user/AddUser.html">Add Users</a>
+                <a href="user/AllUsers.html">All Users</a>
+                <a href="user/GetByIdUser.html">Get User By Id</a>
+                <a href="user/UpdateUsers.html">Update Users</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <a class="dropbtn" href="Transactions.html" type="submit">Transactions</a>
+        </div>
+        </div>
+        <div class="dropdown">
+            <button onclick="myFunction('myDropdownAccount')" class="dropbtn">Account</button>
+            <div id="myDropdownAccount" class="dropdown-content">
+                <a href="account/AddAccount.html">Add Account</a>
+                <a href="account/AllAccounts.html">All Accounts</a>
+                <a href="account/GetDetails.html">Get Details</a>
+                <a href="account/UpdateAccounts.html">Update Account</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <a class="dropbtn" href="ATM/ATM.html" type="submit">ATM</a>
+        </div>
+    </ul>
+    </div>
+</nav>
+<section id="create">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Create Transaction</h2>
+                <hr class="star-primary">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 ">
+                <h2>Make a new transaction</h2>
+                <form id="transaction-form">
+                    <input id="ibanSender"  value="NL11INHO1111111111"> ibanSender </input> <br><br>
+                    <input id="ibanReciever"  value="NL22INHO9999999999"> ibanReciever </input> <br><br>
+                    <input id="transferAmount" value="10"> transferAmount </input> <br><br>
+                </form>
+                <button id="btn_sendTransaction" type="submit" role="button" class="btn btn-success btn-lg">Send new Transactions</button>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <h4  id="errorResponses" border='5' class="col-lg-12 text-center h4">
+        <div id="error" class="col-lg-12 text-center div"></div>
+    </h4>
+</section>
+<section id="get">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Show Transaction</h2>
+                <hr class="star-primary">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 ">
+                <form>
+                    <h2>Show all Transactions</h2>
+                    <input id="userPerformer_search"> Name sender </input> <br><br>
+                    <input id="IBAN_search"> IBAN </input> <br><br>
+                    <input id="transferAmount_search"> TransferAmount </input> <br><br>
+                    <input id ="MaxNumberOfResults_search"> Max number of results </input> <br><br>
+                </form>
+                <button id="btn_allTransactions" type="submit" class="btn btn-success btn-lg">Show all Transactions</button>
+                <section id="result-success">
+                    <h4>
+                        <div id="result" class="col-lg-12 text-center"></div>
+                    </h4>
+                    <table id="showData" border='1' class="col-lg-12 text-center table"> </table>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="getById">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Show Transaction by ID</h2>
+                <hr class="star-primary">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 ">
+                <form>
+                    <h2>Get Transaction by ID</h2>
+                    <input id="transactionID_search"> Transaction ID</input> <br><br>
+                </form>
+                <button id="btn_transactionById" type="submit" class="btn btn-success btn-lg">Show Transaction by ID</button>
+                <section id="result-success-transaction-byId">
+                    <h4>
+                        <div id="result-byId" class="col-lg-12 text-center"></div>
+                    </h4>
+                    <table id="showData-byId" border='1' class="col-lg-12 text-center table"> </table>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="getByIBAN">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Show Transaction by IBAN</h2>
+                <hr class="star-primary">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 ">
+                <form>
+                    <h2>Get Transaction by IBAN</h2>
+                    <input id="transactionIBAN_search"> Transaction IBAN </input> <br><br>
+                </form>
+                <button id="btn_transactionByIBAN" type="submit" class="btn btn-success btn-lg">Show Transaction by IBAN</button>
+                <section id="result-success-transaction-byIBAN">
+                    <h4>
+                        <div id="result-byIBAN" class="col-lg-12 text-center"></div>
+                    </h4>
+                    <table id="showData-byIBAN" border='1' class="col-lg-12 text-center table"> </table>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

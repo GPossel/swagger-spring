@@ -2,7 +2,7 @@
 $(document).ready(function (){
 
     $('body').on('click', '#filters', function () {
-        let url = "http://localhost:8080/accounts";
+        let url = "https://devopsdeployment-1.herokuapp.com/accounts";
         let rank = $("#rank").val();
         let status = $("#status").val();
         url += "?rank=" + rank.toLocaleUpperCase() + "&status=" + status.toUpperCase();
@@ -13,7 +13,7 @@ $(document).ready(function (){
     $('body').on('click', '#AccountsForUser', function () {
         let userId = $("#userId").val();
         if (userId.length > 0){
-            loadUsers("http://localhost:8080/accounts/" + userId + "/users");
+            loadUsers("https://devopsdeployment-1.herokuapp.com/accounts/" + userId + "/users");
         }
     });
 
@@ -110,7 +110,7 @@ $(document).ready(function (){
         };
         let iban = $(this).attr('rel');
         console.log(iban);
-        xhr.open('DELETE', 'http://localhost:8080/accounts/' + iban);
+        xhr.open('DELETE', 'https://devopsdeployment-1.herokuapp.com/accounts/' + iban);
         const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");

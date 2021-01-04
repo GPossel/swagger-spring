@@ -13,7 +13,7 @@ window.addEventListener("load", function (name, value) {
         }
 
         let xhr = new XMLHttpRequest();
-        let url = "http://localhost:8080/accounts/" + request.valueOf();
+        let url = "https://devopsdeployment-1.herokuapp.com/accounts/" + request.valueOf();
         xhr.open("PUT", url);
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
