@@ -111,13 +111,10 @@ public class AccountApiService {
     private Account validateATMRequest(String iban, double amount) {
         Account account = getByIBAN(iban);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User loggedInUser = (User)authentication.getPrincipal();
-
-        // validate this account belongs to the logged in user,
-        if(!account.getUserId().equals(loggedInUser.getId())) {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Account: " + iban + " is not account of: " + loggedInUser.getEmail());
+        if(!UserHasRights(account.getUserId())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
+
         if(amount < 0) {
             throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Amount was negative. Please enter positive amounts only > 0.");
         }
