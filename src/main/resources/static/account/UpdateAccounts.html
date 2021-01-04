@@ -7,6 +7,29 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="js/updateAccount.js"></script>
+    <script src="../logout.js"></script>
+    <link rel="stylesheet" href="../css/navigationBar.css">
+    <script>
+        /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+        function myFunction(myDropdown) {
+            document.getElementById(myDropdown).classList.toggle("show");
+        }
+
+        // Close the dropdown menu if the user clicks outside of it
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -14,22 +37,42 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="AllAccounts.html">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="AddAccount.html">Add Users</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="../Transactions.html">Transactions</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="../ATM/ATM.html">ATM</a>
-            </li>
-        </ul>
+    <!--  <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
+    <ul class="navbar-nav mr-auto">
+        <div class="dropdown">
+            <button class="dropbtn" id="button_logout" type="submit">Logout</button>
+        </div>
+        <div class="dropdown">
+            <a class="dropbtn" href="../user/AllUsers.html" type="submit">Home <span class="sr-only">(current)</span></a>
+        </div>
+        <div class="dropdown">
+            <button onclick="myFunction('myDropdownUser')" class="dropbtn">Users</button>
+            <div id="myDropdownUser" class="dropdown-content">
+                <a href="../user/AddUser.html">Add Users</a>
+                <a href="../user/AllUsers.html">All Users</a>
+                <a href="../user/GetByIdUser.html">Get User By Id</a>
+                <a href="../user/UpdateUsers.html">Update Users</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <a class="dropbtn" href="../Transactions.html" type="submit">Transactions</a>
+        </div>
+        </div>
+        <div class="dropdown">
+            <button onclick="myFunction('myDropdownAccount')" class="dropbtn">Account</button>
+            <div id="myDropdownAccount" class="dropdown-content">
+                <a href="../account/AddAccount.html">Add Account</a>
+                <a href="../account/AllAccounts.html">All Accounts</a>
+                <a href="../account/DeleteAccount.html">Delete Account</a>
+                <a href="../account/GetAccountsForUser.html">Get Account for user</a>
+                <a href="../account/GetDetails.html">Get Details</a>
+                <a href="../account/UpdateAccounts.html">Update Account</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <a class="dropbtn" href="../ATM/ATM.html" type="submit">ATM</a>
+        </div>
+    </ul>
     </div>
 </nav>
 <form>
@@ -37,7 +80,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2>Create Transaction</h2>
+                    <h2>Update Accounts</h2>
                     <hr class="star-primary">
                 </div>
             </div>

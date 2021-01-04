@@ -12,6 +12,7 @@ window.addEventListener("load", function (name, value) {
         console.log(url);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4){
+                document.getElementById("showData").innerHTML = "";
                 CreateTableFromJSON();
             }
         };
@@ -25,46 +26,30 @@ window.addEventListener("load", function (name, value) {
 });
 
 function CreateTableFromJSON() {
-    var myItems = JSON.parse(xhr.responseText);
+    var data = JSON.parse(xhr.responseText);
+    // console.table(data);
 
-    // EXTRACT VALUE FOR HTML HEADER.
-    // ('Book ID', 'Book Name', 'Category' and 'Price')
-    var col = [];
-    for (var i = 0; i < myItems.length; i++) {
-        for (var key in myItems[i]) {
-            if (col.indexOf(key) === -1) {
-                col.push(key);
-            }
-        }
+    // (C) GENERATE TABLE
+    // (C1) CREATE EMPTY TABLE
+    var table = document.createElement("tableById"), row, cellA, cellB;
+
+    document.getElementById("showData").appendChild(table);
+    for (let key in data) {
+        // (C2) ROWS & CELLS
+        row = document.createElement("tr");
+        cellA = document.createElement("td");
+        cellB = document.createElement("td");
+
+        // (C3) KEY & VALUE
+        cellA.innerHTML = key;
+        cellB.innerHTML = data[key];
+
+        // (C4) ATTACH ROW & CELLS
+        table.appendChild(row);
+        row.appendChild(cellA);
+        row.appendChild(cellB);
     }
-    // CREATE DYNAMIC TABLE.
-    var table = document.createElement("table");
-
-    // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-
-    var tr = table.insertRow(-1);                   // TABLE ROW.
-
-    for (var i = 0; i < col.length; i++) {
-        var th = document.createElement("th");      // TABLE HEADER.
-        th.innerHTML = col[i];
-        tr.appendChild(th);
-    }
-
-    // ADD JSON DATA TO THE TABLE AS ROWS.
-    for (var i = 0; i < myItems.length; i++) {
-
-        tr = table.insertRow(-1);
-
-        for (var j = 0; j < col.length; j++) {
-            var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = myItems[i][col[j]];
-        }
-    }
-
-    // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
-    var divContainer = document.getElementById('showData');
-    divContainer.innerHTML = "";
-    divContainer.appendChild(table);
 }
+
 
 

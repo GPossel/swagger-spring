@@ -80,6 +80,7 @@ window.addEventListener("load", function (name, value) {
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4){
+                document.getElementById("showData-byId").innerHTML = "";
                 CreateTableFromJSONbyID();
             }
         };
@@ -103,6 +104,7 @@ window.addEventListener("load", function (name, value) {
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4){
+                document.getElementById("showData-byIBAN").innerHTML = "";
                 CreateTableFromJSONByIBAN("showData-byIBAN");
             }
         };
