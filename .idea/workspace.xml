@@ -10,19 +10,9 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="composer json">
+    <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="https://devopsdeployment-1.herokuapp.com/ nieuwe adres voor deployment">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/ATM/ATMrequest.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/ATM/ATMrequest.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/TransactionsJSON.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/TransactionsJSON.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/account/js/accounts.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/account/js/accounts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/account/js/addAccount.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/account/js/addAccount.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/account/js/getDetailsAccount.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/account/js/getDetailsAccount.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/account/js/updateAccount.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/account/js/updateAccount.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/loginIn.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/loginIn.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/user/js/addUser.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/user/js/addUser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/user/js/getbyid.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/user/js/getbyid.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/user/js/updateUser.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/user/js/updateUser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/user/js/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/user/js/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/logout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/logout.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -193,7 +183,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609776754667</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="https://devopsdeployment-1.herokuapp.com/ nieuwe adres voor deployment">
+      <created>1609777551868</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1609777551868</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -225,7 +222,8 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="index" />
     <MESSAGE value="composer json" />
-    <option name="LAST_COMMIT_MESSAGE" value="composer json" />
+    <MESSAGE value="https://devopsdeployment-1.herokuapp.com/ nieuwe adres voor deployment" />
+    <option name="LAST_COMMIT_MESSAGE" value="https://devopsdeployment-1.herokuapp.com/ nieuwe adres voor deployment" />
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="182" key="#Inspections" timestamp="1608998127013">
@@ -413,10 +411,10 @@
     <state x="369" y="115" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1607964144051" />
     <state x="442" y="-917" key="SettingsEditor/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742266767" />
     <state x="923" y="145" key="SettingsEditor/0.0.3840.1040@0.0.3840.1040" timestamp="1609000255360" />
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1609776772969">
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1609777566099">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1609776772969" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1609777566099" />
     <state width="775" height="419" key="XDebugger.FullValuePopup" timestamp="1609153747633">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
