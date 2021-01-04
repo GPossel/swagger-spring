@@ -98,7 +98,7 @@ $(document).ready(function (){
             }
         };
         let userId = $(this).attr('rel');
-        xhr.open('DELETE', 'http://localhost:8080/users/' + userId);
+        xhr.open('DELETE', 'https://devopsdeployment-1.herokuapp.com/users/' + userId);
         const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
@@ -137,7 +137,7 @@ $(document).ready(function (){
         };
 
         let userId = $(this).attr('rel');
-        xhr.open('GET', 'http://localhost:8080/users/' + userId);
+        xhr.open('GET', 'https://devopsdeployment-1.herokuapp.com/users/' + userId);
         const session = sessionStorage.getItem("Authorization");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
@@ -147,7 +147,7 @@ $(document).ready(function (){
 
     $('body').on('click', '#filters', function(){
 
-        let url = "http://localhost:8080/users";
+        let url = "https://devopsdeployment-1.herokuapp.com/users";
 
         let firstname = $("#firstname").val();
         let lastname = $("#lastname").val();

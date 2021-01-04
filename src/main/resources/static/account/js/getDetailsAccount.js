@@ -4,7 +4,7 @@ window.addEventListener("load", function (name, value) {
 
 document.getElementById('btn_accountByIBAN').addEventListener('click',function (e) {
     xhr = new XMLHttpRequest();
-    var url = 'http://localhost:8080/accounts/';
+    var url = 'https://devopsdeployment-1.herokuapp.com/accounts/';
     var accountIBAN = document.getElementById('accountIBAN_search').value;
     if(accountIBAN === ""){
         alert("Account IBAN field is empty");

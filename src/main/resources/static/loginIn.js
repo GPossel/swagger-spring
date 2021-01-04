@@ -3,17 +3,17 @@ window.addEventListener("load", function (name, value) {
 
     function RedirectPage(authorization) {
         xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:8080/transactions');
+        xhr.open('GET', 'https://devopsdeployment-1.herokuapp.com/transactions');
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.setRequestHeader("Authorization", authorization);
         xhr.send();
-        window.location.replace("http://localhost:8080/Transactions.html");
+        window.location.replace("https://devopsdeployment-1.herokuapp.com/Transactions.html");
     }
 
     document.getElementById('button_login').addEventListener('click', function (e) {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/login');
+        xhr.open('POST', 'https://devopsdeployment-1.herokuapp.com/login');
         //Send the proper header information along with the request
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");

@@ -3,7 +3,7 @@ window.addEventListener("load", function (name, value) {
 
     document.getElementById('btn_allTransactions').addEventListener('click',function (e) {
         xhr = new XMLHttpRequest();
-        var url = 'http://localhost:8080/transactions/search'
+        var url = 'https://devopsdeployment-1.herokuapp.com/transactions/search'
         console.log(url);
 
         var userPerformer = document.getElementById('userPerformer_search').value;
@@ -31,7 +31,7 @@ window.addEventListener("load", function (name, value) {
 
     document.getElementById('btn_sendTransaction').addEventListener('click', function (e) {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8080/transactions');
+        xhr.open('POST', 'https://devopsdeployment-1.herokuapp.com/transactions');
         //Send the proper header information along with the request
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
@@ -70,7 +70,7 @@ window.addEventListener("load", function (name, value) {
 
     document.getElementById('btn_transactionById').addEventListener('click',function (e) {
         xhr = new XMLHttpRequest();
-        var url = 'http://localhost:8080/transactions/';
+        var url = 'https://devopsdeployment-1.herokuapp.com/transactions/';
         var transactionID = document.getElementById('transactionID_search').value;
         if(transactionID === ""){
             alert("Transaction ID field is empty");
@@ -94,7 +94,7 @@ window.addEventListener("load", function (name, value) {
 
     document.getElementById('btn_transactionByIBAN').addEventListener('click',function (e) {
         xhr = new XMLHttpRequest();
-        var url = 'http://localhost:8080/transactions/';
+        var url = 'https://devopsdeployment-1.herokuapp.com/transactions/';
         var transactionIBAN = document.getElementById('transactionIBAN_search').value;
         if(transactionIBAN === ""){
             alert("Transaction transactionIBAN field is empty");

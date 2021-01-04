@@ -11,7 +11,7 @@ $(document).ready(function (){
         }
 
         let xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:8080/accounts");
+        xhr.open("POST", "https://devopsdeployment-1.herokuapp.com/accounts");
         xhr.setRequestHeader("Accept", "application/json");
         xhr.setRequestHeader("Content-type", "application/json");
         const session = sessionStorage.getItem("Authorization");

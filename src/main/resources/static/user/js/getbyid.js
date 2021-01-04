@@ -3,7 +3,7 @@ window.addEventListener("load", function (name, value) {
 
     document.getElementById('userId_search').addEventListener('click',function (e) {
         xhr = new XMLHttpRequest();
-        var url = 'http://localhost:8080/users/'
+        var url = 'https://devopsdeployment-1.herokuapp.com/users/'
         console.log(url);
 
         var userId = document.getElementById('userId').value;
