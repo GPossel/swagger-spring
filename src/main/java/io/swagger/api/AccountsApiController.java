@@ -106,8 +106,6 @@ public class AccountsApiController implements AccountsApi {
 
         if (accept != null) {
             try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                User loggedInUser = (User)authentication.getPrincipal();
                 accountApiService.delete(iban);
                 ResponseEntity responseEntity = ResponseEntity.status(HttpStatus.OK).body((JsonNode) objectMapper.createObjectNode().put("message", "Deleted Successfully!"));
                 return responseEntity;

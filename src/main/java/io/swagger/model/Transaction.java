@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,8 +36,8 @@ public class Transaction {
   @JsonProperty("ibanSender")
   private String ibanSender = null;
 
-  @JsonProperty("ibanReceiver")
-  private String ibanReceiver = null;
+  @JsonProperty("ibanReciever")
+  private String ibanReciever = null;
 
   @JsonProperty("userPerformer")
   private Long userPerformer = null;
@@ -53,9 +54,9 @@ public class Transaction {
   public Transaction()
   {}
 
-  public Transaction(String ibanSender, String ibanReceiver, Long userPerformer, String transactionDate, Double transferAmount) {
+  public Transaction(String ibanSender, String ibanReciever, Long userPerformer, String transactionDate, Double transferAmount) {
     this.ibanSender = ibanSender;
-    this.ibanReceiver = ibanReceiver;
+    this.ibanReciever = ibanReciever;
     this.userPerformer = userPerformer;
     this.transferAmount = transferAmount;
     setTransactionDate(transactionDate);
@@ -64,7 +65,7 @@ public class Transaction {
 
   public Transaction(TransactionRequest t, Long userPerformer) {
     setIbanSender(t.getIbanSender());
-    setIbanReceiver(t.getIbanReceiver());
+    setIbanReciever(t.getIbanReciever());
     this.transactionDate = new Timestamp(new Date().getTime());
     setTransferAmount(t.getTransferAmount());
     this.userPerformer = userPerformer;
@@ -93,26 +94,26 @@ public class Transaction {
   }
 
   /**
-   * Get ibanReceiver
+   * Get ibanReciever
    *
-   * @return ibanReceiver
-   * @return ibanReceiver
+   * @return ibanReciever
+   * @return ibanReciever
    **/
   @ApiModelProperty(value = "")
 
-  public String getIbanReceiver() {
-  if (!ibanReceiver.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d")) {
+  public String getIbanReciever() {
+  if (!ibanReciever.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d")) {
     throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX");
   }
-    return ibanReceiver;
+    return ibanReciever;
   }
 
-  public void setIbanReceiver(String ibanReceiver) {
-    if(!ibanReceiver.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d"))
+  public void setIbanReciever(String ibanReciever) {
+    if(!ibanReciever.matches("NL\\d\\dINHO\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d"))
     {
       throw new IllegalArgumentException("IBAN MUST BE TYPE OF NLXXINHOXXXXXXXXXX");
     }
-    this.ibanReceiver = ibanReceiver;
+    this.ibanReciever = ibanReciever;
   }
   /**
    * Get transactionId
@@ -157,7 +158,7 @@ public class Transaction {
       DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
       this.transactionDate = new Timestamp(dateFormat.parse(transactionDate).getTime());
     } catch (Exception e){
-      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The registrationDate is invalid");
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The transactionDate is invalid");
     }
   }
 
@@ -166,10 +167,13 @@ public class Transaction {
     return this;
   }
 
-  /**
-   * Get transferAmount
-   * @return transferAmount
-   **/
+
+
+
+    /**
+     * Get transferAmount
+     * @return transferAmount
+     **/
   @ApiModelProperty(value = "")
 
   public Double getTransferAmount() {
@@ -194,7 +198,7 @@ public class Transaction {
     }
     Transaction transaction = (Transaction) o;
     return Objects.equals(this.ibanSender, transaction.ibanSender) &&
-            Objects.equals(this.ibanReceiver, transaction.ibanReceiver) &&
+            Objects.equals(this.ibanReciever, transaction.ibanReciever) &&
             Objects.equals(this.transactionId, transaction.transactionId) &&
             Objects.equals(this.userPerformer, transaction.userPerformer) &&
             Objects.equals(this.transactionDate, transaction.transactionDate) &&
@@ -203,7 +207,7 @@ public class Transaction {
 
   @Override
   public int hashCode() {
-    return Objects.hash(ibanSender, ibanReceiver, transactionId, userPerformer, transactionDate, transferAmount);
+    return Objects.hash(ibanSender, ibanReciever, transactionId, userPerformer, transactionDate, transferAmount);
   }
 
   @Override
@@ -212,7 +216,7 @@ public class Transaction {
     sb.append("class Transaction {\n");
 
     sb.append("    ibanSender: ").append(toIndentedString(ibanSender)).append("\n");
-    sb.append("    ibanReceiver: ").append(toIndentedString(ibanReceiver)).append("\n");
+    sb.append("    ibanReciever: ").append(toIndentedString(ibanReciever)).append("\n");
     sb.append("    transactionId: ").append(toIndentedString(transactionId)).append("\n");
     sb.append("    userPerformer: ").append(toIndentedString(userPerformer)).append("\n");
     sb.append("    transactionDate: ").append(toIndentedString(transactionDate)).append("\n");

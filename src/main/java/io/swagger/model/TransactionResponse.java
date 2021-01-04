@@ -14,8 +14,8 @@ public class TransactionResponse {
     @JsonProperty("ibanSender")
     private String ibanSender = null;
 
-    @JsonProperty("ibanReceiver")
-    private String ibanReceiver = null;
+    @JsonProperty("ibanReciever")
+    private String ibanReciever = null;
 
     @JsonProperty("transactionDate")
     private Timestamp transactionDate = null;
@@ -34,13 +34,21 @@ public class TransactionResponse {
 
     public TransactionResponse(Transaction t, String userName, String nameSender, String nameReciever) {
             this.ibanSender = t.getIbanSender();
-            this.ibanReceiver = t.getIbanReceiver();
+            this.ibanReciever = t.getIbanReciever();
             this.transactionDate = t.getTransactionDate();
             this.transferAmount = t.getTransferAmount();
             this.userSender = userName;
             this.nameSender = nameSender;
             this.nameReciever = nameReciever;
     }
+
+    public TransactionResponse(Transaction t) {
+        this.ibanSender = t.getIbanSender();
+        this.ibanReciever = t.getIbanReciever();
+        this.transactionDate = t.getTransactionDate();
+        this.transferAmount = t.getTransferAmount();
+    }
+
 
     public String getUserSender() {
         return userSender;
