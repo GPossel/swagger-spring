@@ -14,7 +14,6 @@ $(document).ready(function (){
             switch (xhr.status) {
                 case 200:
                 case 201:
-                    console.log(1);
                     $("#result thead tr  td").parent().remove();
 
                     let responsData = JSON.parse(xhr.responseText);
@@ -45,7 +44,6 @@ $(document).ready(function (){
                         row.insertCell(j).innerHTML = "<a class='edit' href='UpdateAccounts.html?" + editUrlStr + "'>edit</a>";
                         row.insertCell(j + 1).innerHTML = "<a class='delete' rel='" + responsData[i].id + "' href=''>delete</a>";
                     }
-                    alert("Successful added User.");
                     break;
                 case 400:
                     alert(xhr.status + ":" + xhr.responseText);
