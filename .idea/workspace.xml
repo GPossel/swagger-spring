@@ -10,10 +10,8 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="front end navigatie balk oude verkeerde html eruit">
+    <list default="true" id="d17557cc-4e03-42fb-bab5-5bccd08e6522" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/user/AddUser.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/user/AddUser.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/user/js/addUser.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/user/js/addUser.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +36,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Early_Submission_1" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1l0m5kMzp5WAIWXulKDzF15aTFb" />
@@ -159,7 +162,8 @@
       <workItem from="1609699926000" duration="8029000" />
       <workItem from="1609751437770" duration="8561000" />
       <workItem from="1609787281297" duration="1910000" />
-      <workItem from="1609793414353" duration="281000" />
+      <workItem from="1609793414353" duration="1034000" />
+      <workItem from="1609888296975" duration="194000" />
     </task>
     <task id="LOCAL-00001" summary="index">
       <created>1609772551552</created>
@@ -426,10 +430,10 @@
     <state x="369" y="115" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1607964144051" />
     <state x="442" y="-917" key="SettingsEditor/0.0.1707.920/1901.-1080.1920.1040/-19.-1080.1920.1040@-19.-1080.1920.1040" timestamp="1606742266767" />
     <state x="923" y="145" key="SettingsEditor/0.0.3840.1040@0.0.3840.1040" timestamp="1609000255360" />
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1609788315080">
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1609793827916">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1609788315080" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1609793827916" />
     <state width="775" height="419" key="XDebugger.FullValuePopup" timestamp="1609153747633">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
